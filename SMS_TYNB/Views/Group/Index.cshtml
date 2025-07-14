@@ -1,0 +1,48 @@
+﻿@model SMS_TYNB.ViewModel.BaseFormViewModel<WpNhom>
+@{
+	ViewBag.Title = "Quản lý nhóm";
+	Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container-fluid">
+	<div class="row">
+		<div class="card p-0">
+			<div class="card-header bg-primary text-white">
+				<h4 class="mb-0">Quản lý nhóm</h4>
+			</div>
+			@* form *@
+			<div id="data-form">
+				@{
+					await Html.RenderPartialAsync("_Form", Model);
+				}
+			</div>
+		</div>
+	</div>
+
+	<div class="row">
+		<div class="d-flex justify-content-end m-2">
+			<label for="searchInput" class="form-label me-2 mb-0">Tìm kiếm:</label>
+			<input type="text" class="form-control form-control-sm" id="searchInput" style="width: 200px;">
+		</div>
+		@* danh sách *@
+		<table class="table table-bordered" id="groupTable">
+			<thead>
+				<tr>
+					<th class="text-center">STT</th>
+					<th>Tên nhóm</th>
+					<th>Nhóm cha</th>
+					<th>Trạng thái</th>
+				</tr>
+			</thead>
+			<tbody id="groupTableBody">
+			</tbody>
+		</table>
+	</div>
+	@{
+		await Html.RenderPartialAsync("_Pagination");
+	}
+</div>
+
+@section Scripts {
+	<script src="~/js/group/group.js"></script>
+}

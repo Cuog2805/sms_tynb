@@ -1,0 +1,75 @@
+﻿@model SMS_TYNB.ViewModel.BaseFormViewModel<WpNhom>
+@{
+	ViewBag.Title = "Phân nhóm";
+	Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container-fluid">
+	<div class="card p-0">
+		<div class="card-header bg-primary text-white">
+			<h4 class="mb-0">Phân nhóm</h4>
+		</div>
+		@* form *@
+		<div class="card-body">
+			<div class="row justify-content-center">
+				<div class="col-md-6">
+					<div class="form-group mb-3">
+						<label for="IdNhom" class="form-label">Tên nhóm <span class="text-danger">*</span></label>
+						@Html.DropDownListFor(
+							model => model.Data.IdNhom,
+							Model.SelectLists["wpNhomSelectList"],
+							"--Chọn nhóm--",
+							htmlAttributes: new {
+								@class = "form-select",
+								@name = "Data.IdNhom", 
+								@id = "IdNhom",
+							}
+						 )
+						@Html.ValidationMessageFor(model => model.Data.IdNhom, "", new { @class = "text-danger" })
+					</div>
+				</div>
+			</div>
+			
+			<!-- Tìm kiếm -->
+			<div class="search-controls">
+				<div class="d-flex justify-content-start align-items-center gap-2 flex-wrap">
+					<input type="text" class="form-control" id="searchInput" placeholder="Tìm kiếm" style="width: 250px;">
+					<button type="button" class="btn btn-primary btn-sm" onclick="selectAll()">
+						<i class="fas fa-check-square"></i> Chọn tất cả
+					</button>
+					<button type="button" class="btn btn-secondary btn-sm" onclick="unselectAllSelected()">
+						<i class="fas fa-times"></i> Bỏ chọn tất cả
+					</button>
+				</div>
+			</div>
+			
+			<div class="row">
+				<!-- Cột trái - Danh sách -->
+				<div class="col-md-6 border-end border-1 border-light">
+					<div class="checkbox-list" id="groupCheckBoxList">
+					</div>
+					<div class="mt-4">
+						<p>Số người đã chọn: <span id="groupAssignTotal">0</span> người</p>
+					</div>
+				</div>
+				
+				<!-- Cột phải - Danh sách đã chọn -->
+				<div class="col-md-6">
+					<div class="checkbox-list" id="groupAssignList">
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<div class="card-footer">
+			<div class="row justify-content-center">
+				<button type="button" class="btn btn-primary" onclick="submitGroupAssign()" style="width: 200px">Phân nhóm</button>
+			</div>
+		</div>
+
+	</div>
+</div>
+
+@section Scripts {
+	<script src="~/js/group/group-assign.js"></script>
+}

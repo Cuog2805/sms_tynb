@@ -1,4 +1,4 @@
-﻿@model SMS_TYNB.ViewModel.BaseFormViewModel<WpNhom>
+﻿@model SMS_TYNB.ViewModel.BaseFormViewModel<SMS_TYNB.Models.Master.WpNhom>
 
 <div class="card-body">
 	<!-- Form thêm/sửa -->
@@ -26,12 +26,12 @@
 			</div>
 			<div class="col-md-6">
 				<div class="form-group mb-3">
-					<label for="IdNhomCha" class="form-label">Nhóm cha <span class="text-danger">*</span></label>
+					<label for="IdNhomCha" class="form-label">Nhóm cha</label>
 					@Html.DropDownListFor(
 						model => model.Data.IdNhomCha,
 						Model.SelectLists["wpNhomSelectList"],
 						"--Chọn nhóm cha--",
-						htmlAttributes: new { @class = "form-select", @name = "Data.IdNhomCha", @id = "IdNhomCha", @disabled = "disabled" }
+						htmlAttributes: new { @class = "form-select", @name = "Data.IdNhomCha", @id = "IdNhomCha", @disabled = "disabled", data_val = "false" }
 					)
 				</div>
 			</div>

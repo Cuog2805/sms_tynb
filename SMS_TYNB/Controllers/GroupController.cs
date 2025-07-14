@@ -1,8 +1,9 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using SMS_TYNB.Common;
-using SMS_TYNB.Models;
+using SMS_TYNB.Models.Master;
 using SMS_TYNB.Service;
 using SMS_TYNB.Service.Implement;
 using SMS_TYNB.ViewModel;
@@ -10,6 +11,7 @@ using System.Threading.Tasks;
 
 namespace SMS_TYNB.Controllers
 {
+	[Authorize]
 	public class GroupController : Controller
 	{
 		private readonly IWpNhomService _wpNhomService;
@@ -56,7 +58,7 @@ namespace SMS_TYNB.Controllers
 			var data = await _wpNhomService.GetById(id);
 			BaseFormViewModel<WpNhom> formViewModel = new BaseFormViewModel<WpNhom>()
 			{
-				Data = new WpNhom(),
+				Data = data ?? new WpNhom(),
 				SelectLists = await CreateSelectList()
 			};
 			return PartialView("_Form", formViewModel);

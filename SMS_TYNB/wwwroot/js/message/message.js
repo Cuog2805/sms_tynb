@@ -337,7 +337,7 @@ function searchInTree(searchText) {
 
 //form action
 function initFormValidate() {
-    $('#groupForm').validate({
+    $('#messageForm').validate({
         rules: {
             'Data.Noidung': {
                 required: true

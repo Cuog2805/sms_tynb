@@ -1,7 +1,10 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using SMS_TYNB.Common;
-using SMS_TYNB.Models;
+using SMS_TYNB.Models.Master;
+using SMS_TYNB.Models.Identity;
+using Microsoft.AspNetCore.Identity;
+using SMS_TYNB.Data;
 
 namespace SMS_TYNB
 {
@@ -25,6 +28,16 @@ namespace SMS_TYNB
 				options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString));
 			});
 
+			builder.Services.AddDefaultIdentity<WpUsers>(options => options.SignIn.RequireConfirmedAccount = true)
+				.AddDefaultUI()
+				.AddEntityFrameworkStores<SmsTynIdentityContext>();
+
+			builder.Services.AddDbContext<SmsTynIdentityContext>(options =>
+			{
+				var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+				options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString));
+			});
+
 			builder.Services.AddApplicationServices();
 
 			var app = builder.Build();
@@ -40,13 +53,15 @@ namespace SMS_TYNB
 			app.UseHttpsRedirection();
 			app.UseRouting();
 
+			app.UseAuthentication();
 			app.UseAuthorization();
 
-			app.MapStaticAssets();
+			app.UseStaticFiles();
 			app.MapControllerRoute(
 				name: "default",
-				pattern: "{controller=Contact}/{action=Index}/{id?}")
-				.WithStaticAssets();
+				pattern: "{controller=Contact}/{action=Index}/{id?}");
+
+			app.MapRazorPages();
 
 			app.Run();
 		}

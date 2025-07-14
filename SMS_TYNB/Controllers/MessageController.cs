@@ -1,13 +1,15 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using SMS_TYNB.Helper;
-using SMS_TYNB.Models;
+using SMS_TYNB.Models.Master;
 using SMS_TYNB.Service;
 using SMS_TYNB.ViewModel;
 using System.Threading.Tasks;
 
 namespace SMS_TYNB.Controllers
 {
+	[Authorize]
 	public class MessageController : Controller
 	{
 		private readonly IWpSmsService _wpSmsService;

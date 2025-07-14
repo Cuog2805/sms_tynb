@@ -1,13 +1,15 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using SMS_TYNB.Common;
-using SMS_TYNB.Models;
+using SMS_TYNB.Models.Master;
 using SMS_TYNB.Service;
 using SMS_TYNB.Service.Implement;
 using SMS_TYNB.ViewModel;
 
 namespace SMS_TYNB.Controllers
 {
+	[Authorize]
 	public class ContactController : Controller
 	{
 		private readonly IWpCanboService _wpCanboService;

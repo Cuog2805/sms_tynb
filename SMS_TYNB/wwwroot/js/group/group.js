@@ -1,12 +1,10 @@
 ﻿$(document).ready(function () {
     loadData();
     $("#searchInput").on("input", function () {
-        console.log("searchInput change:", $(this).val());
         currentPagination.pageNumber = 1;
         loadData();
     })
     $("#pageSize").on("change", function () {
-        console.log("pageSize change:", $(this).val());
         currentPagination.pageNumber = 1;
         currentPagination.pageSize = parseInt($(this).val());
         loadData();
@@ -201,9 +199,6 @@ function initFormValidate() {
             'Data.TenNhom': {
                 required: true
             },
-            'Data.IdNhomCha': {
-                required: true
-            },
             'Data.TrangThai': {
                 required: true
             }
@@ -211,9 +206,6 @@ function initFormValidate() {
         messages: {
             'Data.TenNhom': {
                 required: "Vui lòng nhập tên nhóm"
-            },
-            'Data.IdNhomCha': {
-                required: "Vui lòng chọn nhóm cha"
             },
             'Data.TrangThai': {
                 required: "Vui lòng chọn trạng thái"
@@ -315,12 +307,13 @@ function submitForm() {
         initFormValidate();
     }
 
+
     if ($('#groupForm').valid()) {
         const formData = {
             IdNhom: $('#IdNhom').val() || '',
-            IdNhomCha: $('#IdNhomCha').val() || '',
+            IdNhomCha: $('#IdNhomCha').val() || null,
             TenNhom: $('#TenNhom').val() || '',
-            TrangThai: $('#TrangThai').val() || ''
+            TrangThai: $('#TrangThai').val() || 1,
         };
 
         if (formData.IdNhom) {

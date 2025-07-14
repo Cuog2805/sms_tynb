@@ -1,5 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using SMS_TYNB.Models;
+using SMS_TYNB.Models.Master;
 using TodoApi.Repository;
 
 namespace SMS_TYNB.Repository

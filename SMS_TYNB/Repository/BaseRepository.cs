@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using SMS_TYNB.Common;
-using SMS_TYNB.Models;
+using SMS_TYNB.Models.Master;
 using System.Linq.Dynamic.Core;
 
 namespace TodoApi.Repository

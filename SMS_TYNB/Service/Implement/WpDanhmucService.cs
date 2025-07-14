@@ -1,4 +1,4 @@
-﻿using SMS_TYNB.Models;
+﻿using SMS_TYNB.Models.Master;
 using SMS_TYNB.Repository;
 
 namespace SMS_TYNB.Service.Implement

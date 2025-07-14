@@ -1,5 +1,5 @@
 ﻿using SMS_TYNB.Common;
-using SMS_TYNB.Models;
+using SMS_TYNB.Models.Master;
 using SMS_TYNB.ViewModel;
 
 namespace SMS_TYNB.Service

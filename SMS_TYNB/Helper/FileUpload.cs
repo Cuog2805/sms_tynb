@@ -1,4 +1,4 @@
-﻿using SMS_TYNB.Models;
+﻿using SMS_TYNB.Models.Master;
 
 namespace SMS_TYNB.Helper
 {

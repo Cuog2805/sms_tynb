@@ -1,0 +1,44 @@
+﻿@model SMS_TYNB.ViewModel.BaseFormViewModel<SMS_TYNB.Models.Master.WpCanbo>
+@{
+	ViewBag.Title = "Thống kế tin nhắn";
+	Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container-fluid">
+	<div class="row">
+		<div class="card p-0">
+			@* form *@
+			
+		</div>
+	</div>
+
+	<div class="row">
+		<div class="d-flex justify-content-end m-2">
+			<label for="searchInput" class="form-label me-2 mb-0">Tìm kiếm:</label>
+			<input type="text" class="form-control form-control-sm" id="searchInput" style="width: 200px;">
+		</div>
+		@* danh sách *@
+		<table class="table table-bordered" id="messaegStatisticalTable">
+			<thead class="table-primary text-white">
+				<tr>
+					<th class="text-center">STT</th>
+					<th>Nội dung</th>
+					<th>File đính kèm</th>
+					<th>Người gửi</th>
+					<th>Ngày gửi</th>
+					<th>Số tin nhắn đã gửi</th>
+					<th>Số tin nhắn gửi lỗi</th>
+				</tr>
+			</thead>
+			<tbody id="messaegStatisticalTableBody">
+			</tbody>
+		</table>
+	</div>
+	@{
+		await Html.RenderPartialAsync("_Pagination");
+	}
+</div>
+
+@section Scripts {
+	<script src="~/js/message/message-statistical.js"></script>
+}

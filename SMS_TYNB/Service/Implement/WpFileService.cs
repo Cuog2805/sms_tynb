@@ -11,6 +11,18 @@ namespace SMS_TYNB.Service.Implement
 		{
 			_wpFileRepository = wpFileRepository;
 		}
+
+		public virtual async Task<IEnumerable<WpFile>> GetByBangLuuFile(string tableName)
+		{
+			IEnumerable<WpFile> wpFiles = await _wpFileRepository.GetByBangLuuFile(tableName);
+			return wpFiles;
+		}
+
+		public async Task<IEnumerable<WpFile>> GetAll()
+		{
+			IEnumerable<WpFile> wpFiles = await _wpFileRepository.GetAll();
+			return wpFiles;
+		}
 		public async Task<WpFile> Create(WpFile model)
 		{
 			WpFile wpFile = await _wpFileRepository.Create(model);

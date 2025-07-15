@@ -2,13 +2,12 @@
 @model LoginModel
 
 @{
-    ViewData["Title"] = "Log in";
+    ViewData["Title"] = "Đăng nhập";
 }
 
 <div class="card border border-secondary rounded p-4" style="width: 400px">
-    <h1 class="text-center mb-4">@ViewData["Title"]</h1>
+    <h1 class="text-center mb-4"><img src="~/images/logo_large_vnpt.png" style="height: 150px; width:auto;"/></h1>
     <form id="account" method="post">
-        <h4 class="text-center mb-3">Sử dụng tài khoản để đăng nhập</h4>
         <hr />
         <div asp-validation-summary="ModelOnly" class="text-danger" role="alert"></div>
 
@@ -27,7 +26,7 @@
         <div class="form-check mb-3">
             <input class="form-check-input" asp-for="Input.RememberMe" />
             <label asp-for="Input.RememberMe" class="form-check-label">
-                Ghi nhớ tôi
+                Nhớ tài khoản
             </label>
         </div>
 
@@ -39,12 +38,12 @@
             <p class="mb-2">
                 <a id="forgot-password" asp-page="./ForgotPassword">Quên mật khẩu?</a>
             </p>
-            <p class="mb-2">
+            @* <p class="mb-2">
                 <a asp-page="./Register" asp-route-returnUrl="@Model.ReturnUrl">Đăng ký tài khoản mới</a>
             </p>
             <p class="mb-0">
                 <a id="resend-confirmation" asp-page="./ResendEmailConfirmation">Gửi lại email xác nhận</a>
-            </p>
+            </p> *@
         </div>
     </form>
 </div>

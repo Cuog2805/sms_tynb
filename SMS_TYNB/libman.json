@@ -9,6 +9,10 @@
     {
       "library": "jstree@3.3.17",
       "destination": "wwwroot/lib/jstree/"
+    },
+    {
+      "library": "bootstrap-icons@1.13.1",
+      "destination": "wwwroot/lib/bootstrap-icons/"
     }
   ]
 }

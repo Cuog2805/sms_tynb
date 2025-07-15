@@ -1,9 +1,14 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using Azure;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using SMS_TYNB.Common;
 using SMS_TYNB.Helper;
+using SMS_TYNB.Models.Identity;
 using SMS_TYNB.Models.Master;
 using SMS_TYNB.Service;
+using SMS_TYNB.Service.Implement;
 using SMS_TYNB.ViewModel;
 using System.Threading.Tasks;
 
@@ -13,11 +18,13 @@ namespace SMS_TYNB.Controllers
 	public class MessageController : Controller
 	{
 		private readonly IWpSmsService _wpSmsService;
-		public MessageController(IWpSmsService wpSmsService) 
+		private readonly UserManager<WpUsers> _userManager;
+		public MessageController(IWpSmsService wpSmsService, UserManager<WpUsers> userManager) 
 		{
 			_wpSmsService = wpSmsService;
+			_userManager = userManager;
 		}
-		public async Task<IActionResult> Index()
+		public IActionResult SendMessage()
 		{
 			BaseFormViewModel<WpSms> formViewModel = new BaseFormViewModel<WpSms>();
 			return View(formViewModel);
@@ -25,7 +32,9 @@ namespace SMS_TYNB.Controllers
 		[HttpPost]
 		public async Task<JsonResult> SendMessage([FromForm] WpSmsViewModel model, List<IFormFile> fileDinhKem)
 		{
-			await _wpSmsService.SendMessage(model, fileDinhKem);
+			// gán người gửi
+			WpUsers? user = await _userManager.GetUserAsync(HttpContext.User);
+			if(user != null) await _wpSmsService.SendMessage(model, fileDinhKem, user);
 			return Json(new
 			{
 				state = "success",
@@ -33,30 +42,25 @@ namespace SMS_TYNB.Controllers
 				data = new { },
 			});
 		}
-		//[HttpPost]
-		//public async Task<IActionResult> UploadFile(IFormFile file)
-		//{
-		//	if (file == null || file.Length == 0)
-		//		return BadRequest("File không hợp lệ.");
-
-		//	var rootPath = Directory.GetCurrentDirectory();
-		//	var fileUrl = await FileUpload.UploadFileAsync(file, rootPath);
-
-		//	if (fileUrl != null)
-		//	{
-		//		var sms = new WpSms
-		//		{
-		//			FileDinhKem = fileUrl
-		//		};
-
-		//		_context.WpSms.Add(sms);
-		//		await _context.SaveChangesAsync();
-
-		//		return Json(new { success = true, fileUrl });
-		//	}
-
-		//	return BadRequest("Upload thất bại.");
-		//}
+		public async Task<IActionResult> MessageStatistical()
+		{
+			//BaseFormViewModel<WpSms> formViewModel = new BaseFormViewModel<WpSms>();
+			WpSmsSearchViewModel model  = new WpSmsSearchViewModel();
+			Pageable pageable = new Pageable() { PageNumber = 1, PageSize = 10};
+			var datas = await _wpSmsService.SearchMessage(model, pageable);
+			return View();
+		}
+		[HttpGet]
+		public async Task<IActionResult> LoadData(WpSmsSearchViewModel model, Pageable pageable)
+		{
+			var datas = await _wpSmsService.SearchMessage(model, pageable);
+			return Json(new
+			{
+				state = "success",
+				msg = "LoadData thành công!",
+				content = datas,
+			});
+		}
 
 	}
 }

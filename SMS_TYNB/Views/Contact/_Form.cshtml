@@ -17,7 +17,8 @@
                                 @class = "form-control",
                                 @name = "Data.TenCanbo",
                                 @id = "TenCanbo",
-                                @placeholder = "Nhập tên cán bộ"
+                                @placeholder = "Nhập tên cán bộ",
+                                @disabled = "disabled"
                             } 
                         }
                     )
@@ -30,7 +31,7 @@
                     @Html.DropDownListFor(
                         model => model.Data.Gioitinh,
                         Model.SelectLists["wpGioiTinhSelectList"],
-                        htmlAttributes: new { @class = "form-select", @name = "Data.Gioitinh", @id = "Gioitinh" }
+                        htmlAttributes: new { @class = "form-select", @name = "Data.Gioitinh", @id = "Gioitinh", @disabled = "disabled" }
                     )
                 </div>
             </div>
@@ -46,7 +47,8 @@
                                 @class = "form-control",
                                 @name = "Data.SoDt",
                                 @id = "SoDt",
-                                @placeholder = "Nhập số điện thoại"
+                                @placeholder = "Nhập số điện thoại",
+                                @disabled = "disabled"
                             } 
                         }
                     )
@@ -62,7 +64,8 @@
                                 @class = "form-control",
                                 @name = "Data.Mota",
                                 @id = "Mota",
-                                @placeholder = "Nhập mô tả"
+                                @placeholder = "Nhập mô tả",
+                                @disabled = "disabled"
                             }
                         }
                     )
@@ -78,7 +81,7 @@
                     @Html.DropDownListFor(
 						model => model.Data.Trangthai,
 						Model.SelectLists["wpTrangThaiSelectList"],
-						htmlAttributes: new { @class = "form-select", @name = "Data.Trangthai", @id = "Trangthai" }
+						htmlAttributes: new { @class = "form-select", @name = "Data.Trangthai", @id = "Trangthai", @disabled = "disabled" }
 					)
                 </div>
             </div>

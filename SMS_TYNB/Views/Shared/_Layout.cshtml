@@ -13,72 +13,86 @@
 	<link href="~/lib/alertifyjs/css/alertify.rtl.css" rel="stylesheet" />
 	<link href="~/lib/alertifyjs/css/alertify.rtl.min.css" rel="stylesheet" />
 	<link href="~/lib/jstree/themes/default/style.min.css" rel="stylesheet" />
+	<link href="~/lib/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet" />
+	<link href="~/lib/bootstrap-icons/font/bootstrap-icons.min.css" rel="stylesheet" />
     <style>
-        .navbar-nav .nav-link.active {
+        /* .navbar-nav .nav-link.active {
             border-bottom: 1px solid #007bff;
             font-weight: 500;
-        }
+        } */
     </style>
 </head>
 <body>
     <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom mb-3">
+        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom p-2">
             <div class="container-fluid justify-content-center">
-                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">Hệ thống tin nhắn</a>
+                <img class="me-2" src="~/images/logo_vnpt.png" style="height: 50px; width:auto;">
+                <a class="navbar-brand font-weight-bold text-uppercase" asp-area="" asp-controller="Home" asp-action="Index">Hệ thống tin nhắn</a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
                         aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
             </div>
         </nav>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom mb-3">
+        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light border-bottom p-0" id="navbar-menu-list">
             <div class="container-fluid">
                 <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
                     <ul class="navbar-nav flex-grow-1">
                         <li class="nav-item">
-                            <a class="nav-link text-dark @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Home" ? "active" : "")"
-                               asp-area="" asp-controller="Home" asp-action="Index">Menu</a>
+                            <a class="nav-link text-light @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Home" ? "active" : "")"
+                               asp-area="" asp-controller="Home" asp-action="Index">Trang chủ</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link text-dark @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Message" ? "active" : "")"
-                               asp-area="" asp-controller="Message" asp-action="Index">Gửi tin nhắn</a>
+                            <a class="nav-link text-light @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Message" && ViewContext.RouteData.Values["Action"]?.ToString() == "SendMessage" ? "active" : "")"
+                               asp-area="" asp-controller="Message" asp-action="SendMessage">Gửi tin nhắn</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link text-dark @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Contact" ? "active" : "")"
+                            <a class="nav-link text-light @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Message" && ViewContext.RouteData.Values["Action"]?.ToString() == "MessageStatistical" ? "active" : "")"
+                               asp-area="" asp-controller="Message" asp-action="MessageStatistical">Thống kê tin nhắn</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-light @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Contact" ? "active" : "")"
                                asp-area="" asp-controller="Contact" asp-action="Index">Quản lý danh bạ</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link text-dark @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Group" && ViewContext.RouteData.Values["Action"]?.ToString() == "Index" ? "active" : "")"
+                            <a class="nav-link text-light @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Group" && ViewContext.RouteData.Values["Action"]?.ToString() == "Index" ? "active" : "")"
                                asp-area="" asp-controller="Group" asp-action="Index">Quản lý nhóm</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link text-dark @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Group" && ViewContext.RouteData.Values["Action"]?.ToString() == "Assign" ? "active" : "")"
+                            <a class="nav-link text-light @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Group" && ViewContext.RouteData.Values["Action"]?.ToString() == "Assign" ? "active" : "")"
                                asp-area="" asp-controller="Group" asp-action="Assign">Phân nhóm</a>
                         </li>
                     </ul>
-                    <div class="d-flex">
+                    <div class="d-flex align-items-center">
                         @if (User.Identity?.IsAuthenticated ?? false)
                         {
-                            <form class="form-inline" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Page("/", new { area = "" })" method="post">
-                                <button type="submit" class="nav-link btn btn-link text-dark">Đăng xuất</button>
-                            </form>
+                            <div class="dropdown">
+                                <a class="nav-link dropdown-toggle text-light" href="#" role="button" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                                    @User.Identity.Name
+                                </a>
+                                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+                                    <li class="nav-item">
+                                        <a class="dropdown-item" id="change-password" asp-area="Identity" asp-page="/Account/Manage/ChangePassword">Đổi mật khẩu</a>
+                                    </li>
+                                    <li>
+                                        <form asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Page("/", new { area = "" })" method="post" class="dropdown-item m-0 p-0">
+                                            <button type="submit" class="dropdown-item">Đăng xuất</button>
+                                        </form>
+                                    </li>
+                                </ul>
+                            </div>
                         }
                     </div>
                 </div>
             </div>
         </nav>
     </header>
-    <div class="container">
+    <div class="container mt-5">
         <main role="main" class="pb-3">
             @RenderBody()
         </main>
     </div>
 
-    <footer class="border-top footer text-muted">
-        <div class="container">
-            &copy; 2025 - SMS_TYNB - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
-        </div>
-    </footer>
 	<script src="~/lib/jquery/dist/jquery.min.js"></script>
 	<script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
 	<script src="~/lib/jquery-validation/dist/jquery.validate.js"></script>

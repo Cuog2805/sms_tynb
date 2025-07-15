@@ -1,4 +1,5 @@
-﻿using SMS_TYNB.Models;
+﻿using Microsoft.EntityFrameworkCore;
+using SMS_TYNB.Models;
 using SMS_TYNB.Models.Master;
 using TodoApi.Repository;
 
@@ -10,5 +11,16 @@ namespace SMS_TYNB.Repository
 		{
 		}
 
+		public virtual async Task<IEnumerable<WpFile>> GetByBangLuuFile(string tableName)
+		{
+			var query = context.Set<WpFile>().AsQueryable();
+
+			if (!string.IsNullOrWhiteSpace(tableName))
+			{
+				query = query.Where(item => item.BangLuuFile == tableName);
+			}
+
+			return await query.ToListAsync();
+		}
 	}
 }

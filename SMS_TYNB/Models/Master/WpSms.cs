@@ -11,7 +11,7 @@ public partial class WpSms
 
     public string? FileDinhKem { get; set; }
 
-    public int? IdNguoigui { get; set; }
+    public string? IdNguoigui { get; set; }
 
     public DateTime? Ngaygui { get; set; }
 

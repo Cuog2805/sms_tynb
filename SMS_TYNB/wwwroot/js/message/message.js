@@ -153,69 +153,95 @@ function buildTreeDataFromGroups(items) {
 function handleTreeNodeChange(node, isChecked) {
     const treeRef = $.jstree.reference('#messageCheckBoxTree');
 
-    // Xử lý node nhóm
     if (node.id.startsWith("nhom_")) {
-        // Lấy tất cả các node con (cán bộ) của nhóm này
-        const children = treeRef.get_children_dom(node.id);
-
-        children.each(function () {
-            const childNode = treeRef.get_node(this);
-            if (childNode.id.startsWith("canbo_")) {
-                const canbo = childNode.data;
-
-                if (isChecked) {
-                    // Check node cán bộ hiện tại
-                    treeRef.check_node(childNode.id);
-
-                    // Thêm vào danh sách đã chọn (theo IdCanbo + IdNhom)
-                    if (!selectedItems.some(selected =>
-                        selected.IdCanbo === canbo.IdCanbo && selected.IdNhom === canbo.IdNhom
-                    )) {
-                        selectedItems.push(canbo);
-                    }
-                } else {
-                    // Uncheck node cán bộ hiện tại
-                    treeRef.uncheck_node(childNode.id);
-
-                    // Bỏ khỏi danh sách đã chọn
-                    selectedItems = selectedItems.filter(selected =>
-                        !(selected.IdCanbo === canbo.IdCanbo && selected.IdNhom === canbo.IdNhom)
-                    );
-                }
-            }
+        openAllChildren(node.id, treeRef, () => {
+            processGroupChildren(node.id, isChecked, treeRef);
+            syncSelectedItems();
         });
-
-        // Xử lý đệ quy cho các nhóm con
-        const subGroups = children.filter(function () {
-            const childNode = treeRef.get_node(this);
-            return childNode.id.startsWith("nhom_");
-        });
-
-        subGroups.each(function () {
-            const subGroupNode = treeRef.get_node(this);
-            handleTreeNodeChange(subGroupNode, isChecked);
-        });
-
-        displaySelectedItems();
+    } else {
+        syncSelectedItems();
     }
-    // Xử lý node cán bộ
-    else if (node.id.startsWith("canbo_")) {
-        const canbo = node.data;
+}
 
-        if (isChecked) {
-            if (!selectedItems.some(selected =>
-                selected.IdCanbo === canbo.IdCanbo && selected.IdNhom === canbo.IdNhom
-            )) {
-                selectedItems.push(canbo);
+
+function processGroupChildren(nodeId, isChecked, treeRef) {
+    // Lấy tất cả node con trực tiếp
+    const directChildren = treeRef.get_children_dom(nodeId);
+
+    directChildren.each(function () {
+        const childNode = treeRef.get_node(this);
+
+        if (childNode.id.startsWith("canbo_")) {
+            // Xử lý node cán bộ
+            if (isChecked) {
+                treeRef.check_node(childNode.id);
+            } else {
+                treeRef.uncheck_node(childNode.id);
             }
-        } else {
-            selectedItems = selectedItems.filter(selected =>
-                !(selected.IdCanbo === canbo.IdCanbo && selected.IdNhom === canbo.IdNhom)
-            );
+        } else if (childNode.id.startsWith("nhom_")) {
+            // Xử lý đệ quy node nhóm con
+            processGroupChildren(childNode.id, isChecked, treeRef);
+        }
+    });
+}
+
+function openAllChildren(nodeId, treeRef, callback) {
+    treeRef.open_node(nodeId, function () {
+        const children = treeRef.get_node(nodeId).children || [];
+        let remaining = children.length;
+
+        if (remaining === 0) {
+            callback(); // Không có children => gọi luôn
+            return;
         }
 
-        displaySelectedItems();
+        // Đệ quy mở từng child và chỉ gọi callback khi tất cả đã mở
+        children.forEach(childId => {
+            const childNode = treeRef.get_node(childId);
+            if (childNode.id.startsWith("nhom_")) {
+                openAllChildren(childId, treeRef, () => {
+                    remaining--;
+                    if (remaining === 0) callback();
+                });
+            } else {
+                remaining--;
+                if (remaining === 0) callback();
+            }
+        });
+    });
+}
+
+
+function syncSelectedItems() {
+    const treeRef = $.jstree.reference('#messageCheckBoxTree');
+    const checkedNodes = treeRef.get_checked(true); // true = trả về node objects
+
+    selectedItems = [];
+
+    checkedNodes.forEach(node => {
+        if (node.id.startsWith("canbo_") && node.data) {
+            selectedItems.push(node.data);
+        }
+    });
+
+    displaySelectedItems();
+}
+
+// Cải thiện hàm removeSelectedItem để sync đúng với ID unique
+function removeSelectedItem(item) {
+    // Bỏ khỏi danh sách đã chọn
+    selectedItems = selectedItems.filter(selected =>
+        !(selected.IdCanbo === item.IdCanbo && selected.IdNhom === item.IdNhom)
+    );
+
+    // Cập nhật tree bên trái với ID unique
+    const treeRef = $.jstree.reference('#messageCheckBoxTree');
+    if (treeRef) {
+        const uniqueId = `canbo_${item.IdCanbo}_nhom_${item.IdNhom}`;
+        treeRef.uncheck_node(uniqueId);
     }
+
+    displaySelectedItems();
 }
 
 function initJsTree(treeData) {
@@ -243,6 +269,9 @@ function initJsTree(treeData) {
     }).on('ready.jstree', function () {
         const searchInput = $('#searchInput').val();
         // Mở cây
+        //if () {
+
+        //}
         if (searchInput && searchInput.trim() !== '') {
             $('#messageCheckBoxTree').jstree('open_all');
         }
@@ -287,18 +316,18 @@ function handleSelectedItemRemove(checkbox) {
     }
 }
 
-function removeSelectedItem(item) {
-    // Bỏ khỏi danh sách đã chọn
-    selectedItems = selectedItems.filter(selected => selected.IdCanbo !== item.IdCanbo);
+//function removeSelectedItem(item) {
+//    // Bỏ khỏi danh sách đã chọn
+//    selectedItems = selectedItems.filter(selected => selected.IdCanbo !== item.IdCanbo);
 
-    // Cập nhật tree bên trái
-    const treeRef = $.jstree.reference('#messageCheckBoxTree');
-    if (treeRef) {
-        treeRef.uncheck_node(`canbo_${item.IdCanbo}`);
-    }
+//    // Cập nhật tree bên trái
+//    const treeRef = $.jstree.reference('#messageCheckBoxTree');
+//    if (treeRef) {
+//        treeRef.uncheck_node(`canbo_${item.IdCanbo}`);
+//    }
 
-    displaySelectedItems();
-}
+//    displaySelectedItems();
+//}
 
 function selectAll() {
     const treeRef = $.jstree.reference('#messageCheckBoxTree');
@@ -317,6 +346,7 @@ function unselectAll() {
     if (treeRef) {
         treeRef.uncheck_all();
     }
+    displaySelectedItems();
 }
 
 function unselectAllSelected() {

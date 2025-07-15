@@ -3,47 +3,53 @@
 	Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<div class="d-block">
-	<div class="row">
-		<div class="col-md-4 d-flex justify-content-center p-4">
-			<a class="nav-link text-dark border border-3 border-light d-flex align-items-center justify-content-center"
-			   style="min-height: 100px; padding: 20px; text-align: center; width: 100%; font-weight: bold;"
-			   asp-area="" asp-controller="Message" asp-action="Index">
-				Gửi tin nhắn
-			</a>
-		</div>
-		<div class="col-md-4 d-flex justify-content-center p-4">
-			<a class="nav-link text-dark border border-3 border-light d-flex align-items-center justify-content-center"
-			   style="min-height: 100px; padding: 20px; text-align: center; width: 100%; font-weight: bold;"
-			   asp-area="" asp-controller="Contact" asp-action="Index">
-				Quản lý danh bạ
-			</a>
-		</div>
-		<div class="col-md-4 d-flex justify-content-center p-4">
-			<a class="nav-link text-dark border border-3 border-light d-flex align-items-center justify-content-center"
-			   style="min-height: 100px; padding: 20px; text-align: center; width: 100%; font-weight: bold;"
-			   asp-area="" asp-controller="Group" asp-action="Index">
-				Quản lý nhóm
-			</a>
-		</div>
-	</div>
+<div class="home-container">
+    <div class="row g-4">
+        <div class="col-md-4">
+            <a class="nav-card d-flex flex-column align-items-center justify-content-center" asp-area="" asp-controller="Message" asp-action="SendMessage">
+                <i class="bi bi-envelope"></i>
+                <span class="nav-card-text">Gửi tin nhắn</span>
+            </a>
+        </div>
+        <div class="col-md-4">
+            <a class="nav-card d-flex flex-column align-items-center justify-content-center" asp-area="" asp-controller="Contact" asp-action="Index">
+                <i class="bi bi-person-lines-fill"></i>
+                <span class="nav-card-text">Quản lý danh bạ</span>
+            </a>
+        </div>
+        <div class="col-md-4">
+            <a class="nav-card d-flex flex-column align-items-center justify-content-center" asp-area="" asp-controller="Group" asp-action="Index">
+                <i class="bi bi-people"></i>
+                <span class="nav-card-text">Quản lý nhóm</span>
+            </a>
+        </div>
+    </div>
 
-	<div class="row">
-		<div class="col-md-4 d-flex justify-content-center p-4">
-			<a class="nav-link text-dark border border-3 border-light d-flex align-items-center justify-content-center"
-			   style="min-height: 100px; padding: 20px; text-align: center; width: 100%; font-weight: bold;"
-			   asp-area="" asp-controller="Group" asp-action="Assign">Phân nhóm</a>
-		</div>
-		<div class="col-md-4 d-flex justify-content-center p-4">
-			@* <a class="nav-link text-dark border border-3 border-light d-flex align-items-center justify-content-center"
-			   style="min-height: 100px; padding: 20px; text-align: center;"
-			   asp-area="" asp-controller="Group" asp-action="Assign">Phân nhóm</a> *@
-		</div>
-		<div class="col-md-4 d-flex justify-content-center p-4">
-			@* <a class="nav-link text-dark border border-3 border-light d-flex align-items-center justify-content-center"
-			   style="min-height: 100px; padding: 20px; text-align: center;"
-			   asp-area="" asp-controller="Group" asp-action="Assign">Phân nhóm</a> *@
-		</div>
-	</div>
+    <div class="row g-4 mt-2">
+        <div class="col-md-4">
+            <a class="nav-card d-flex flex-column align-items-center justify-content-center" asp-area="" asp-controller="Group" asp-action="Assign">
+                <i class="bi bi-diagram-3"></i>
+                <span class="nav-card-text">Phân nhóm</span>
+            </a>
+        </div>
+        <div class="col-md-4">
+            <a class="nav-card d-flex flex-column align-items-center justify-content-center" asp-area="Identity" asp-page="/Account/Manage/ChangePassword">
+                <i class="bi bi-lock"></i>
+                <span class="nav-card-text">Đổi mật khẩu</span>
+            </a>
+        </div>
+        <div class="col-md-4">
+            <form class="form-inline" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Page("/", new { area = "" })" method="post">
+                <button type="submit" class="nav-card d-flex flex-column align-items-center justify-content-center">
+                    <i class="bi bi-box-arrow-right"></i>
+                    <span class="nav-card-text">Đăng xuất</span>
+                </button>
+            </form>
+        </div>
+    </div>
 </div>
+
+@section Scripts{
+	<link href="~/css/home.css" rel="stylesheet" />
+}
 

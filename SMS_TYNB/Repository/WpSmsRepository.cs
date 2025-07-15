@@ -9,5 +9,17 @@ namespace SMS_TYNB.Repository
 		public WpSmsRepository(SmsTynContext _context) : base(_context)
 		{
 		}
+
+		public Task<IQueryable<WpSms>> Search(string? searchInput)
+		{
+			var query = context.Set<WpSms>().AsQueryable();
+
+			if (!string.IsNullOrWhiteSpace(searchInput))
+			{
+				query = query.Where(item => item.Noidung.ToLower().Contains(searchInput.Trim().ToLower()));
+			}
+
+			return Task.FromResult(query);
+		}
 	}
 }

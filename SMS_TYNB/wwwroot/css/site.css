@@ -18,8 +18,14 @@ html {
 }
 
 body {
-  margin-bottom: 60px;
+/*  margin-bottom: 60px;*/
 }
+
+.selected {
+    background-color: #808080;
+}
+
+/*form*/
 
 .form-floating > .form-control-plaintext::placeholder, .form-floating > .form-control::placeholder {
   color: var(--bs-secondary-color);
@@ -30,6 +36,41 @@ body {
   text-align: start;
 }
 
-.selected {
-    background-color: #808080;
+.form-label{
+    font-weight: bold;
+}
+
+/*navbar*/
+#navbar-menu-list {
+    background-color: #007bff !important;
+}
+
+.navbar-brand {
+    color: #0067b4;
+    text-decoration: none;
+    line-height: 50px;
+    font-weight: 700 !important;
+    font-size: x-large;
+}
+    .navbar-brand:hover {
+        color: #026fc1;
+        text-decoration: none;
+        line-height: 50px;
+        font-weight: 700 !important;
+        font-size: x-large;
+    }
+
+.navbar-nav .nav-link {
+    color: white;
+}
+
+    .navbar-nav .nav-link.active {
+        border-bottom: 3px solid #ffc107;
+        font-weight: 500;
+    }
+
+/*container-identity*/
+#container-identity {
+    background-image: url('../images/background_vnpt.jpg') !important;
+    background-size: cover !important;
 }

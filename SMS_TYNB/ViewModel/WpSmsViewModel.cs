@@ -1,4 +1,5 @@
 ﻿using SMS_TYNB.Models;
+using SMS_TYNB.Models.Master;
 
 namespace SMS_TYNB.ViewModel
 {
@@ -8,14 +9,22 @@ namespace SMS_TYNB.ViewModel
 
 		public string? Noidung { get; set; }
 
-		public string? FileDinhKem { get; set; }
+		public List<WpFile>? FileDinhKem { get; set; }
 
-		public int? IdNguoigui { get; set; }
+		public string? IdNguoigui { get; set; }
+		public string? TenNguoigui { get; set; }
 
 		public DateTime? Ngaygui { get; set; }
 
 		public int? SoTn { get; set; }
 
 		public virtual ICollection<WpCanboViewModel> WpCanbos { get; set; } = new List<WpCanboViewModel>();
+	}
+
+	public class WpSmsSearchViewModel
+	{
+		public string? searchInput { get; set; }
+		public DateTime? dateFrom { get; set; }
+		public DateTime? dateTo { get; set; }
 	}
 }

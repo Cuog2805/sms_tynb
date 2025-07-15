@@ -129,7 +129,7 @@ namespace SMS_TYNB.Areas.Identity.Pages.Account
                 }
                 else
                 {
-                    ModelState.AddModelError(string.Empty, "Invalid login attempt.");
+                    ModelState.AddModelError(string.Empty, "Đăng nhập không thành công. Sai tài khoản hoặc mật khẩu.");
                     return Page();
                 }
             }

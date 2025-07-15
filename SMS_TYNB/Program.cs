@@ -30,7 +30,8 @@ namespace SMS_TYNB
 
 			builder.Services.AddIdentity<WpUsers, IdentityRole>(options => options.SignIn.RequireConfirmedAccount = true)
 				.AddDefaultUI()
-				.AddEntityFrameworkStores<SmsTynIdentityContext>();
+				.AddEntityFrameworkStores<SmsTynIdentityContext>()
+				.AddDefaultTokenProviders();
 
 			builder.Services.AddDbContext<SmsTynIdentityContext>(options =>
 			{

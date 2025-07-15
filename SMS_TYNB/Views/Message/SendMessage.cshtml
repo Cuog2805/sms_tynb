@@ -1,0 +1,89 @@
+﻿@model SMS_TYNB.ViewModel.BaseFormViewModel<SMS_TYNB.Models.Master.WpSms>
+
+@{
+	ViewBag.Title = "Gửi tin nhắn";
+	Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container-fluid">
+	<div class="card p-0">
+		@* form *@
+		<div class="card-body">
+			@using (Html.BeginForm("", "", FormMethod.Post, new { id = "messageForm", enctype = "multipart/form-data" }))
+			{
+				<div class="row justify-content-center">
+						<div class="col-md-6">
+							<div class="form-group mb-3">
+								<label for="Noidung" class="form-label">Nội dung tin nhắn <span class="text-danger">*</span></label>
+								@Html.TextAreaFor(
+									model => model.Data.Noidung,
+									htmlAttributes: new {
+										@class = "form-control",
+										@name = "Data.Noidung", 
+										@id = "Noidung",
+										rows = "5"
+									}
+								 )
+								@Html.ValidationMessageFor(model => model.Data.Noidung, "", new { @class = "text-danger" })
+							</div>
+						</div>
+						<div class="col-md-6">
+							<div class="form-group mb-3">
+								<label for="FileDinhKem" class="form-label">File đính kèm </label>
+								<input class="form-control" type="file" name="FileDinhKem" id="FileDinhKem" multiple />
+								@* @Html.TextAreaFor(
+									model => model.Data.FileDinhKem,
+									htmlAttributes: new {
+										@class = "form-text",
+										@name = "Data.FileDinhKem", 
+										@id = "FileDinhKem",
+									}
+								 )*@
+							</div>
+						</div>
+				</div>
+			}
+			
+			<!-- Tìm kiếm -->
+			<div class="search-controls">
+				<div class="d-flex justify-content-start align-items-center gap-2 flex-wrap">
+					<input type="text" class="form-control" id="searchInput" placeholder="Tìm kiếm" style="width: 250px;">
+					<button type="button" class="btn btn-primary btn-sm" onclick="selectAll()">
+						<i class="fas fa-check-square"></i> Chọn tất cả
+					</button>
+					<button type="button" class="btn btn-secondary btn-sm" onclick="unselectAllSelected()">
+						<i class="fas fa-times"></i> Bỏ chọn tất cả
+					</button>
+				</div>
+			</div>
+			
+			<div class="row mt-4">
+				<!-- Cột trái - Danh sách -->
+				<div class="col-md-6 border-end border-1 border-light">
+					<div class="checkbox-list" id="messageCheckBoxTree">
+					</div>
+					<div class="mt-4">
+						<p>Số cán bộ đã chọn: <span id="messageAssignTotal">0</span> cán bộ</p>
+					</div>
+				</div>
+				
+				<!-- Cột phải - Danh sách đã chọn -->
+				<div class="col-md-6">
+					<div class="checkbox-list" id="messageAssignList">
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<div class="card-footer">
+			<div class="row justify-content-center">
+				<button type="button" class="btn btn-primary" id="btnSendMessage" style="width: 200px">Gửi tin nhắn</button>
+			</div>
+		</div>
+
+	</div>
+</div>
+
+@section Scripts {
+	<script src="~/js/message/message.js"></script>
+}

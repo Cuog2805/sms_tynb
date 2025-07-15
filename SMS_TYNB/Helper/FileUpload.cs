@@ -1,23 +1,25 @@
-﻿using SMS_TYNB.Models.Master;
+﻿using SMS_TYNB.Models.Identity;
+using SMS_TYNB.Models.Master;
 
 namespace SMS_TYNB.Helper
 {
 	public class FileUpload
 	{
-		public static async Task<WpFile> SaveFile(IFormFile file, string tableName, int tableId, string subFolder = "upload")
+		public static async Task<WpFile> SaveFile(IFormFile file, WpUsers creator, string tableName, int tableId, string subFolder = "upload")
 		{
 			if (file == null || file.Length == 0)
 				throw new ArgumentException("File không hợp lệ");
 
 			// Tạo thư mục upload nếu chưa tồn tại
-			var uploadPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", subFolder);
+			var subFolderUser = Path.Combine(subFolder, creator.UserName, DateTime.Now.ToString("ddMMyyyy"));
+			var uploadPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", subFolderUser);
 			if (!Directory.Exists(uploadPath))
 			{
 				Directory.CreateDirectory(uploadPath);
 			}
 
 			// Validate file
-			var allowedExtensions = new[] { ".jpg", ".png", ".pdf", ".doc", ".docx", ".xls", ".xlsx", ".txt" };
+			var allowedExtensions = new[] { ".jpg", ".png", ".pdf", ".doc", ".docx" };
 			var fileExtension = Path.GetExtension(file.FileName).ToLower();
 
 			if (!allowedExtensions.Contains(fileExtension))
@@ -26,7 +28,7 @@ namespace SMS_TYNB.Helper
 			}
 
 			// Tạo tên file
-			var fileName = GenerateFileName(file.FileName);
+			var fileName = file.FileName.Replace(" ", "_");
 			var filePath = Path.Combine(uploadPath, fileName);
 
 			// Lưu file
@@ -37,8 +39,8 @@ namespace SMS_TYNB.Helper
 
 			return new WpFile
 			{
-				TenFile = file.FileName,
-				FileUrl = $"/{subFolder}/{fileName}",
+				TenFile = fileName,
+				FileUrl = "/" + Path.Combine(subFolderUser, fileName).Replace("\\", "/"),
 				Type = file.ContentType,
 				BangLuuFile = tableName,
 				BangLuuFileId = tableId,

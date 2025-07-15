@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace SMS_TYNB.Controllers
 {
-	[Authorize]
+	[Authorize(Roles = "Admin")]
 	public class GroupController : Controller
 	{
 		private readonly IWpNhomService _wpNhomService;

@@ -1,9 +1,49 @@
 ﻿@{
-    ViewData["Title"] = "Home Page";
-    Layout = "~/Views/Shared/_Layout.cshtml";
+	ViewData["Title"] = "Trang chủ";
+	Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<div class="d-block">
+	<div class="row">
+		<div class="col-md-4 d-flex justify-content-center p-4">
+			<a class="nav-link text-dark border border-3 border-light d-flex align-items-center justify-content-center"
+			   style="min-height: 100px; padding: 20px; text-align: center; width: 100%; font-weight: bold;"
+			   asp-area="" asp-controller="Message" asp-action="Index">
+				Gửi tin nhắn
+			</a>
+		</div>
+		<div class="col-md-4 d-flex justify-content-center p-4">
+			<a class="nav-link text-dark border border-3 border-light d-flex align-items-center justify-content-center"
+			   style="min-height: 100px; padding: 20px; text-align: center; width: 100%; font-weight: bold;"
+			   asp-area="" asp-controller="Contact" asp-action="Index">
+				Quản lý danh bạ
+			</a>
+		</div>
+		<div class="col-md-4 d-flex justify-content-center p-4">
+			<a class="nav-link text-dark border border-3 border-light d-flex align-items-center justify-content-center"
+			   style="min-height: 100px; padding: 20px; text-align: center; width: 100%; font-weight: bold;"
+			   asp-area="" asp-controller="Group" asp-action="Index">
+				Quản lý nhóm
+			</a>
+		</div>
+	</div>
+
+	<div class="row">
+		<div class="col-md-4 d-flex justify-content-center p-4">
+			<a class="nav-link text-dark border border-3 border-light d-flex align-items-center justify-content-center"
+			   style="min-height: 100px; padding: 20px; text-align: center; width: 100%; font-weight: bold;"
+			   asp-area="" asp-controller="Group" asp-action="Assign">Phân nhóm</a>
+		</div>
+		<div class="col-md-4 d-flex justify-content-center p-4">
+			@* <a class="nav-link text-dark border border-3 border-light d-flex align-items-center justify-content-center"
+			   style="min-height: 100px; padding: 20px; text-align: center;"
+			   asp-area="" asp-controller="Group" asp-action="Assign">Phân nhóm</a> *@
+		</div>
+		<div class="col-md-4 d-flex justify-content-center p-4">
+			@* <a class="nav-link text-dark border border-3 border-light d-flex align-items-center justify-content-center"
+			   style="min-height: 100px; padding: 20px; text-align: center;"
+			   asp-area="" asp-controller="Group" asp-action="Assign">Phân nhóm</a> *@
+		</div>
+	</div>
 </div>
+

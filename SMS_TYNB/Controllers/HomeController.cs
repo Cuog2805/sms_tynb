@@ -1,8 +1,10 @@
-using System.Diagnostics;
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using SMS_TYNB.Models;
+using SMS_TYNB.Models.Identity;
 using SMS_TYNB.ViewModel;
+using System.Diagnostics;
 
 namespace SMS_TYNB.Controllers
 {
@@ -10,15 +12,19 @@ namespace SMS_TYNB.Controllers
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
+        UserManager<WpUsers> _userManager;
 
-        public HomeController(ILogger<HomeController> logger)
+
+		public HomeController(ILogger<HomeController> logger, UserManager<WpUsers> userManager)
         {
             _logger = logger;
-        }
+            _userManager = userManager;
+
+		}
 
         public IActionResult Index()
         {
-            return View();
+			return View();
         }
     }
 }

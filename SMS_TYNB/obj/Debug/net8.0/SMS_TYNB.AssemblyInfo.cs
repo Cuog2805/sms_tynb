@@ -15,7 +15,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("SMS_TYNB")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+883076d7d5bb84ea6446ada263bdb6cb4eac4106")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+662183809e75313d1b664f5c8df5260f7fda6ad0")]
 [assembly: System.Reflection.AssemblyProductAttribute("SMS_TYNB")]
 [assembly: System.Reflection.AssemblyTitleAttribute("SMS_TYNB")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

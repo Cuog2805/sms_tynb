@@ -9,7 +9,7 @@ using SMS_TYNB.ViewModel;
 
 namespace SMS_TYNB.Controllers
 {
-	[Authorize]
+	[Authorize(Roles = "Admin")]
 	public class ContactController : Controller
 	{
 		private readonly IWpCanboService _wpCanboService;

@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace SMS_TYNB.Controllers
 {
-	[Authorize]
+	[Authorize(Roles = "Admin, User")]
 	public class MessageController : Controller
 	{
 		private readonly IWpSmsService _wpSmsService;

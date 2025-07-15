@@ -28,7 +28,7 @@ namespace SMS_TYNB
 				options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString));
 			});
 
-			builder.Services.AddDefaultIdentity<WpUsers>(options => options.SignIn.RequireConfirmedAccount = true)
+			builder.Services.AddIdentity<WpUsers, IdentityRole>(options => options.SignIn.RequireConfirmedAccount = true)
 				.AddDefaultUI()
 				.AddEntityFrameworkStores<SmsTynIdentityContext>();
 
@@ -59,7 +59,7 @@ namespace SMS_TYNB
 			app.UseStaticFiles();
 			app.MapControllerRoute(
 				name: "default",
-				pattern: "{controller=Contact}/{action=Index}/{id?}");
+				pattern: "{controller=Home}/{action=Index}/{id?}");
 
 			app.MapRazorPages();
 

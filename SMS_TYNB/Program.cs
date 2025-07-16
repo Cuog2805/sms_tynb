@@ -1,10 +1,12 @@
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using SMS_TYNB.Common;
-using SMS_TYNB.Models.Master;
-using SMS_TYNB.Models.Identity;
-using Microsoft.AspNetCore.Identity;
 using SMS_TYNB.Data;
+using SMS_TYNB.Helper;
+using SMS_TYNB.Models.Identity;
+using SMS_TYNB.Models.Master;
 
 namespace SMS_TYNB
 {
@@ -40,6 +42,7 @@ namespace SMS_TYNB
 			});
 
 			builder.Services.AddApplicationServices();
+			builder.Services.AddScoped<IEmailSender, EmailSender>();
 
 			var app = builder.Build();
 

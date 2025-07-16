@@ -30,6 +30,8 @@ namespace SMS_TYNB
 				options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString));
 			});
 
+			builder.Services.AddRazorPages();
+
 			builder.Services.AddIdentity<WpUsers, IdentityRole>(options => options.SignIn.RequireConfirmedAccount = true)
 				.AddDefaultUI()
 				.AddEntityFrameworkStores<SmsTynIdentityContext>()
@@ -59,6 +61,24 @@ namespace SMS_TYNB
 
 			app.UseAuthentication();
 			app.UseAuthorization();
+
+			app.Use(async (context, next) =>
+			{
+				if (
+					context.Request.Path.Equals("/Identity/Account/Register", StringComparison.OrdinalIgnoreCase)
+					|| context.Request.Path.Equals("/Identity/Account/ForgotPassword", StringComparison.OrdinalIgnoreCase)
+					|| context.Request.Path.Equals("/Identity/Account/ForgotPasswordConfirmation", StringComparison.OrdinalIgnoreCase)
+					|| context.Request.Path.Equals("/Identity/Account/ResetPassword", StringComparison.OrdinalIgnoreCase)
+					|| context.Request.Path.Equals("/Identity/Account/ResetPasswordConfirmation", StringComparison.OrdinalIgnoreCase)
+				)
+				{
+					context.Response.StatusCode = 404;
+					await context.Response.WriteAsync("Not Found");
+					return;
+				}
+
+				await next();
+			});
 
 			app.UseStaticFiles();
 			app.MapControllerRoute(

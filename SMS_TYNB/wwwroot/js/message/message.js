@@ -96,154 +96,6 @@ function sendMessage() {
 
 }
 
-function buildTreeDataFromGroups(items) {
-    const idToNodeMap = {};
-    const roots = [];
-
-    // Tạo node nhóm
-    items.forEach(item => {
-        idToNodeMap[item.IdNhom] = {
-            id: "nhom_" + item.IdNhom,
-            text: item.TenNhom,
-            children: [],
-        };
-    });
-
-    // Gắn vào cha hoặc root
-    items.forEach(item => {
-        const node = idToNodeMap[item.IdNhom];
-        if (item.IdNhomCha && idToNodeMap[item.IdNhomCha]) {
-            idToNodeMap[item.IdNhomCha].children.push(node);
-        } else {
-            roots.push(node);
-        }
-
-        // Thêm danh sách cán bộ
-        if (Array.isArray(item.WpCanbos) && item.WpCanbos.length > 0) {
-            item.WpCanbos.forEach(cb => {
-                // Kiểm tra cán bộ này từ nhóm này đã được chọn chưa
-                const isSelected = selectedItems.some(selected =>
-                    selected.IdCanbo === cb.IdCanbo && selected.IdNhom === item.IdNhom
-                );
-
-                const uniqueId = `canbo_${cb.IdCanbo}_nhom_${item.IdNhom}`;
-
-                // Thêm IdNhom vào data của cán bộ
-                const canboWithGroup = {
-                    ...cb,
-                    IdNhom: item.IdNhom,
-                    TenNhom: item.TenNhom
-                };
-
-                node.children.push({
-                    id: uniqueId,
-                    text: `${cb.TenCanbo} - ${cb.SoDt || ''}`,
-                    data: canboWithGroup,
-                    state: {
-                        selected: isSelected
-                    }
-                });
-            });
-        }
-    });
-
-    return roots;
-}
-
-function handleTreeNodeChange(node, isChecked) {
-    const treeRef = $.jstree.reference('#messageCheckBoxTree');
-
-    if (node.id.startsWith("nhom_")) {
-        openAllChildren(node.id, treeRef, () => {
-            processGroupChildren(node.id, isChecked, treeRef);
-            syncSelectedItems();
-        });
-    } else {
-        syncSelectedItems();
-    }
-}
-
-
-function processGroupChildren(nodeId, isChecked, treeRef) {
-    // Lấy tất cả node con trực tiếp
-    const directChildren = treeRef.get_children_dom(nodeId);
-
-    directChildren.each(function () {
-        const childNode = treeRef.get_node(this);
-
-        if (childNode.id.startsWith("canbo_")) {
-            // Xử lý node cán bộ
-            if (isChecked) {
-                treeRef.check_node(childNode.id);
-            } else {
-                treeRef.uncheck_node(childNode.id);
-            }
-        } else if (childNode.id.startsWith("nhom_")) {
-            // Xử lý đệ quy node nhóm con
-            processGroupChildren(childNode.id, isChecked, treeRef);
-        }
-    });
-}
-
-function openAllChildren(nodeId, treeRef, callback) {
-    treeRef.open_node(nodeId, function () {
-        const children = treeRef.get_node(nodeId).children || [];
-        let remaining = children.length;
-
-        if (remaining === 0) {
-            callback(); // Không có children => gọi luôn
-            return;
-        }
-
-        // Đệ quy mở từng child và chỉ gọi callback khi tất cả đã mở
-        children.forEach(childId => {
-            const childNode = treeRef.get_node(childId);
-            if (childNode.id.startsWith("nhom_")) {
-                openAllChildren(childId, treeRef, () => {
-                    remaining--;
-                    if (remaining === 0) callback();
-                });
-            } else {
-                remaining--;
-                if (remaining === 0) callback();
-            }
-        });
-    });
-}
-
-
-function syncSelectedItems() {
-    const treeRef = $.jstree.reference('#messageCheckBoxTree');
-    const checkedNodes = treeRef.get_checked(true); // true = trả về node objects
-
-    selectedItems = [];
-
-    checkedNodes.forEach(node => {
-        if (node.id.startsWith("canbo_") && node.data) {
-            selectedItems.push(node.data);
-        }
-    });
-
-    displaySelectedItems();
-}
-
-// Cải thiện hàm removeSelectedItem để sync đúng với ID unique
-function removeSelectedItem(item) {
-    // Bỏ khỏi danh sách đã chọn
-    selectedItems = selectedItems.filter(selected =>
-        !(selected.IdCanbo === item.IdCanbo && selected.IdNhom === item.IdNhom)
-    );
-
-    // Cập nhật tree bên trái với ID unique
-    const treeRef = $.jstree.reference('#messageCheckBoxTree');
-    if (treeRef) {
-        const uniqueId = `canbo_${item.IdCanbo}_nhom_${item.IdNhom}`;
-        treeRef.uncheck_node(uniqueId);
-    }
-
-    displaySelectedItems();
-}
-
 function initJsTree(treeData) {
     if ($.jstree.reference('#messageCheckBoxTree')) {
         $('#messageCheckBoxTree').jstree("destroy");
@@ -304,41 +156,127 @@ function displaySelectedItems() {
         $("#messageAssignTotal").text(`${selectedItems.length}`);
     } else {
         $("#messageAssignList").append($("<div>").addClass("text-muted").text("Chưa có ai được chọn"));
+        // Thêm thông tin số người chọn
+        $("#messageAssignTotal").text(`${selectedItems.length}`);
     }
 }
 
-function handleSelectedItemRemove(checkbox) {
-    const item = checkbox.data("item");
-    const isChecked = checkbox.prop("checked");
+function buildTreeDataFromGroups(items) {
+    const idToNodeMap = {};
+    const roots = [];
 
-    if (!isChecked) {
-        removeSelectedItem(item);
+    // Tạo node nhóm
+    items.forEach(item => {
+        idToNodeMap[item.IdNhom] = {
+            id: "nhom_" + item.IdNhom,
+            text: item.TenNhom,
+            children: [],
+        };
+    });
+
+    // Gắn vào cha hoặc root
+    items.forEach(item => {
+        const node = idToNodeMap[item.IdNhom];
+        if (item.IdNhomCha && idToNodeMap[item.IdNhomCha]) {
+            idToNodeMap[item.IdNhomCha].children.push(node);
+        } else {
+            roots.push(node);
+        }
+
+        // Thêm danh sách cán bộ
+        if (Array.isArray(item.WpCanbos) && item.WpCanbos.length > 0) {
+            item.WpCanbos.forEach(cb => {
+                // Kiểm tra cán bộ này từ nhóm này đã được chọn chưa
+                const isSelected = selectedItems.some(selected =>
+                    selected.IdCanbo === cb.IdCanbo && selected.IdNhom === item.IdNhom
+                );
+
+                const uniqueId = `canbo_${cb.IdCanbo}_nhom_${item.IdNhom}`;
+
+                // Thêm IdNhom vào data của cán bộ
+                const canboWithGroup = {
+                    ...cb,
+                    IdNhom: item.IdNhom,
+                    TenNhom: item.TenNhom
+                };
+
+                node.children.push({
+                    id: uniqueId,
+                    text: `${cb.TenCanbo} - ${cb.SoDt || ''}`,
+                    data: canboWithGroup,
+                    state: {
+                        selected: isSelected
+                    }
+                });
+            });
+        }
+    });
+
+    return roots;
+}
+
+function handleTreeNodeChange(node, isChecked) {
+    const treeRef = $.jstree.reference('#messageCheckBoxTree');
+
+    // Xử lý node nhóm
+    if (node.id.startsWith("nhom_")) {
+        // Mở cây
+        treeRef.open_all();
+        
+        // Đợi cây mở xong rồi mới xử lý
+        setTimeout(() => {
+            processGroupChildren(node.id, isChecked, treeRef);
+            syncSelectedItems();
+        }, 300);
+    } else {
+        syncSelectedItems();
     }
 }
 
-//function removeSelectedItem(item) {
-//    // Bỏ khỏi danh sách đã chọn
-//    selectedItems = selectedItems.filter(selected => selected.IdCanbo !== item.IdCanbo);
+function processGroupChildren(nodeId, isChecked, treeRef) {
+    // Lấy tất cả node con
+    const allChildren = treeRef.get_children_dom(nodeId, true);
+    
+    allChildren.each(function () {
+        const childNode = treeRef.get_node(this);
+        
+        if (childNode.id.startsWith("canbo_")) {
+            if (isChecked) {
+                treeRef.check_node(childNode.id);
+            } else {
+                treeRef.uncheck_node(childNode.id);
+            }
+        }
+    });
+}
 
-//    // Cập nhật tree bên trái
-//    const treeRef = $.jstree.reference('#messageCheckBoxTree');
-//    if (treeRef) {
-//        treeRef.uncheck_node(`canbo_${item.IdCanbo}`);
-//    }
+function syncSelectedItems() {
+    const treeRef = $.jstree.reference('#messageCheckBoxTree');
+    const checkedNodes = treeRef.get_checked(true);
 
-//    displaySelectedItems();
-//}
+    selectedItems = [];
 
-function selectAll() {
+    checkedNodes.forEach(node => {
+        if (node.id.startsWith("canbo_") && node.data) {
+            selectedItems.push(node.data);
+        }
+    });
+
+    displaySelectedItems();
+}
+
+function removeSelectedItem(item) {
+    selectedItems = selectedItems.filter(selected => 
+        !(selected.IdCanbo === item.IdCanbo && selected.IdNhom === item.IdNhom)
+    );
+
     const treeRef = $.jstree.reference('#messageCheckBoxTree');
     if (treeRef) {
-        const allNodes = treeRef.get_json('#', { flat: true });
-        allNodes.forEach(node => {
-            if (node.id.startsWith("canbo_")) {
-                treeRef.check_node(node.id);
-            }
-        });
+        const uniqueId = `canbo_${item.IdCanbo}_nhom_${item.IdNhom}`;
+        treeRef.uncheck_node(uniqueId);
     }
+
+    displaySelectedItems();
 }
 
 function unselectAll() {
@@ -346,16 +284,26 @@ function unselectAll() {
     if (treeRef) {
         treeRef.uncheck_all();
     }
+    selectedItems = [];
     displaySelectedItems();
 }
 
-function unselectAllSelected() {
-    selectedItems = [];
+function selectAll() {
     const treeRef = $.jstree.reference('#messageCheckBoxTree');
     if (treeRef) {
-        treeRef.uncheck_all();
+        // Mở toàn bộ cây trước
+        treeRef.open_all();
+        
+        setTimeout(() => {
+            const allNodes = treeRef.get_json('#', { flat: true });
+            allNodes.forEach(node => {
+                if (node.id.startsWith("canbo_")) {
+                    treeRef.check_node(node.id);
+                }
+            });
+            syncSelectedItems();
+        }, 300);
     }
-    displaySelectedItems();
 }
 
 function searchInTree(searchText) {

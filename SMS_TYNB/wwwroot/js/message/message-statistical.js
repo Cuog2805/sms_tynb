@@ -1,12 +1,22 @@
 ﻿$(document).ready(function () {
     loadData();
     $("#searchInput").on("input", function () {
-        console.log("searchInput change:", $(this).val());
         currentPagination.pageNumber = 1;
         loadData();
     })
+
+    $("#btnSearchByDate").on("click", function () {
+        if (!$('#searchByDateForm').data('validator')) {
+            initFormValidate();
+        }
+
+        if ($('#searchByDateForm').valid()) {
+            currentPagination.pageNumber = 1;
+            loadData();
+        }
+    })
+
     $("#pageSize").on("change", function () {
-        console.log("pageSize change:", $(this).val());
         currentPagination.pageNumber = 1;
         currentPagination.pageSize = parseInt($(this).val());
         loadData();
@@ -24,6 +34,15 @@ let paginationData = {
 };
 
 function loadData() {
+    // xử lý input date
+    const dateFromStr = $("#dateFrom").val();
+    const dateToStr = $("#dateTo").val();
+    const dateFrom = formatDateTime(new Date(dateFromStr + 'T00:00:00'));
+    const dateTo = formatDateTime(new Date(dateToStr + 'T23:59:59'));
+
+    //const dateFrom = $("#dateFrom").val();
+    //const dateTo = $("#dateTo").val();
+
     let searchInput = $('#searchInput').val();
     let pageable = {
         pageNumber: currentPagination.pageNumber,
@@ -36,6 +55,8 @@ function loadData() {
         type: 'GET',
         data: $.param({
             'model.searchInput': searchInput,
+            'model.dateFrom': dateFrom,
+            'model.dateTo': dateTo,
             'pageable.PageNumber': pageable.pageNumber,
             'pageable.PageSize': pageable.pageSize,
             'pageable.Sort': pageable.sort
@@ -87,7 +108,7 @@ function displayItems(items, pageNumber, pageSize) {
     } else {
         tableHtml = `
             <tr>
-                <td colspan="5" class="text-center text-muted">
+                <td colspan="7" class="text-center text-muted">
                     <i class="fas fa-info-circle"></i>
                     Không có dữ liệu
                 </td>
@@ -95,4 +116,28 @@ function displayItems(items, pageNumber, pageSize) {
         `;
     }
     $('#messaegStatisticalTableBody').html(tableHtml);
+}
+
+//form action
+function initFormValidate() {
+    $('#searchByDateForm').validate({
+        rules: {
+            'dateFrom': {
+                required: true
+            },
+            'dateTo': {
+                required: true
+            },
+        },
+        messages: {
+            'dateFrom': {
+                required: "Vui lòng nhập từ ngày"
+            },
+            'dateTo': {
+                required: "Vui lòng nhập đến ngày"
+            },
+        },
+        errorClass: "text-danger",
+        errorElement: "div",
+    });
 }

@@ -8,7 +8,7 @@ namespace SMS_TYNB.Helper
 		public static async Task<WpFile> SaveFile(IFormFile file, WpUsers creator, string tableName, int tableId, string subFolder = "upload")
 		{
 			if (file == null || file.Length == 0)
-				throw new ArgumentException("File không hợp lệ");
+				throw new Exception("File không hợp lệ");
 
 			// Tạo thư mục upload nếu chưa tồn tại
 			var subFolderUser = Path.Combine(subFolder, creator.UserName, DateTime.Now.ToString("ddMMyyyy"));

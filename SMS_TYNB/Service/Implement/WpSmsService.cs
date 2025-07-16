@@ -78,6 +78,7 @@ namespace SMS_TYNB.Service.Implement
 			var wpSmsViewModel = from wps in wpSmsPage
 								 join wpf in wpFileList on wps.IdSms equals wpf.BangLuuFileId
 								 join wpu in wpUserList on wps.IdNguoigui equals wpu.Id
+								 where (wps.Ngaygui >= model.dateFrom && wps.Ngaygui <= model.dateTo)
 								 group new { wps, wpf , wpu } by new { wps, wpu } into wpsGroup
 								 select new WpSmsViewModel
 								 {

@@ -1,15 +1,40 @@
-﻿@model SMS_TYNB.ViewModel.BaseFormViewModel<SMS_TYNB.Models.Master.WpCanbo>
+﻿@model SMS_TYNB.ViewModel.WpSmsSearchViewModel
 @{
-	ViewBag.Title = "Thống kế tin nhắn";
+	ViewBag.Title = "Thống kê tin nhắn";
 	Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
 <div class="container-fluid">
-	<div class="row">
-		<div class="card p-0">
-			@* form *@
-			
-		</div>
+	<div class="container-fluid">
+		<form id="searchByDateForm">
+			<div class="row justify-content-center">
+				<div class="col-md-4">
+					<div class="form-group mb-3">
+						<label for="dateFrom" class="form-label">Từ ngày <span class="text-danger">*</span></label>
+						<input type="date"
+							   class="form-control form-control-sm"
+							   name="dateFrom"
+							   id="dateFrom"
+							   value="@DateTime.Now.ToString("yyyy-MM-dd")" />
+					</div>
+				</div>
+				<div class="col-md-4">
+					<div class="form-group mb-3">
+						<label for="dateTo" class="form-label">Đến ngày <span class="text-danger">*</span></label>
+						<input type="date"
+							   class="form-control form-control-sm"
+							   name="dateTo"
+							   id="dateTo"
+							   value="@DateTime.Now.ToString("yyyy-MM-dd")" />
+					</div>
+				</div>
+			</div>
+			<div class="row justify-content-center">
+				<div class="col-md-4 d-grid justify-content-center">
+					<button type="button" class="btn btn-primary" id="btnSearchByDate" style="width: 200px">Tìm kiếm</button>
+				</div>
+			</div>
+		</form>
 	</div>
 
 	<div class="row">

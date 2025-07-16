@@ -44,10 +44,6 @@ namespace SMS_TYNB.Controllers
 		}
 		public async Task<IActionResult> MessageStatistical()
 		{
-			//BaseFormViewModel<WpSms> formViewModel = new BaseFormViewModel<WpSms>();
-			WpSmsSearchViewModel model  = new WpSmsSearchViewModel();
-			Pageable pageable = new Pageable() { PageNumber = 1, PageSize = 10};
-			var datas = await _wpSmsService.SearchMessage(model, pageable);
 			return View();
 		}
 		[HttpGet]

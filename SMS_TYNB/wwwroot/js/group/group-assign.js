@@ -147,6 +147,9 @@ function displaySelectedItems() {
         $("#groupAssignTotal").text(`${selectedItems.length}`);
     } else {
         $("#groupAssignList").append($("<div>").addClass("text-muted").text("Chưa có ai được chọn"));
+
+        // Thêm thông tin số người chọn
+        $("#groupAssignTotal").text(`${selectedItems.length}`);
     }
 }
 

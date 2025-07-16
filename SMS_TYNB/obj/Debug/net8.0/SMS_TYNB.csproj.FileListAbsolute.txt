@@ -275,4 +275,5 @@ C:\Users\cuog2\source\repos\SMS_TYNB\SMS_TYNB\obj\Debug\net8.0\refint\SMS_TYNB.d
 C:\Users\cuog2\source\repos\SMS_TYNB\SMS_TYNB\obj\Debug\net8.0\SMS_TYNB.pdb
 C:\Users\cuog2\source\repos\SMS_TYNB\SMS_TYNB\obj\Debug\net8.0\SMS_TYNB.genruntimeconfig.cache
 C:\Users\cuog2\source\repos\SMS_TYNB\SMS_TYNB\obj\Debug\net8.0\ref\SMS_TYNB.dll
-C:\Users\cuog2\source\repos\SMS_TYNB\SMS_TYNB\bin\Debug\net8.0\Mailjet.Client.dll
+C:\Users\cuog2\source\repos\SMS_TYNB\SMS_TYNB\bin\Debug\net8.0\DotNetEnv.dll
+C:\Users\cuog2\source\repos\SMS_TYNB\SMS_TYNB\bin\Debug\net8.0\Sprache.dll

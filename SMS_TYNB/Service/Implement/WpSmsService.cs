@@ -76,15 +76,16 @@ namespace SMS_TYNB.Service.Implement
 			var wpUserList = await _wpUsersRepository.GetAll();
 
 			var wpSmsViewModel = from wps in wpSmsPage
-								 join wpf in wpFileList on wps.IdSms equals wpf.BangLuuFileId
+								 join wpf in wpFileList on wps.IdSms equals wpf.BangLuuFileId into wpsWithFileGroup
+								 from gwpf in wpsWithFileGroup.DefaultIfEmpty()
 								 join wpu in wpUserList on wps.IdNguoigui equals wpu.Id
 								 where (wps.Ngaygui >= model.dateFrom && wps.Ngaygui <= model.dateTo)
-								 group new { wps, wpf , wpu } by new { wps, wpu } into wpsGroup
+								 group new { wps, gwpf, wpu } by new { wps, wpu } into wpsGroup
 								 select new WpSmsViewModel
 								 {
 									 IdSms = wpsGroup.Key.wps.IdSms,
 									 Noidung = wpsGroup.Key.wps.Noidung,
-									 FileDinhKem = wpsGroup.Select(x => x.wpf).ToList(),
+									 FileDinhKem = wpsGroup.Select(x => x.gwpf).ToList(),
 									 IdNguoigui = wpsGroup.Key.wps.IdNguoigui,
 									 TenNguoigui = wpsGroup.Key.wpu.UserName,
 									 Ngaygui = wpsGroup.Key.wps.Ngaygui,

@@ -89,7 +89,8 @@ function sendMessage() {
                 }
             },
             error: function (xhr) {
-                alertify.error(xhr.responseJSON?.msg || "Lỗi không xác định");
+                console.log("xhr", xhr);
+                alertify.error("Lỗi khi gửi tin nhắn");
             }
         });
     }
@@ -320,11 +321,19 @@ function initFormValidate() {
             'Data.Noidung': {
                 required: true
             },
+            'FileDinhKem': {
+                //required: true,
+                extension: "doc|docx|pdf|jpg|png"
+            }
         },
         messages: {
             'Data.Noidung': {
                 required: "Vui lòng nhập nội dung tin nhắn"
             },
+            'FileDinhKem': {
+                //required: "Vui lòng chọn tệp đính kèm",
+                extension: "Định dạng file không hợp lệ. Chỉ nhận tệp có định dạng .doc, .docx, .pdf, .jpg, .png!"
+            }
         },
         errorClass: "text-danger",
         errorElement: "div",

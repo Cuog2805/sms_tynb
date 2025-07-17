@@ -86,10 +86,12 @@ function displayItems(items, pageNumber, pageSize) {
     if (items && items.length > 0) {
         items.forEach((item, index) => {
             let fileHtml = '';
-            if (Array.isArray(item.FileDinhKem)) {
-                fileHtml = item.FileDinhKem.map(file =>
-                    `<a href="${file.FileUrl}" target="_blank">${file.TenFile}</a>`
-                ).join('<br/>');
+            if (item.FileDinhKem && Array.isArray(item.FileDinhKem)) {
+                fileHtml = item.FileDinhKem.map(file => {
+                    if (file) {
+                        return `<a href="${file.FileUrl}" target="_blank">${file.TenFile}</a>`;
+                    }
+                }).join('<br/>');
             } else {
                 fileHtml = 'Không có file';
             }
@@ -101,7 +103,7 @@ function displayItems(items, pageNumber, pageSize) {
                     <td>${item.TenNguoigui}</td>
                     <td>${item.Ngaygui.replace("T", " ")}</td>
                     <td>${item.SoTn}</td>
-                    <td>${item.SoTn}</td>
+                    <td>${0}</td>
                 </tr>
             `;
         });

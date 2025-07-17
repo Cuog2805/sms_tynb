@@ -26,7 +26,6 @@ wwwroot\js\common.js
 wwwroot\js\contract\contract.js
 wwwroot\js\group\group-assign.js
 wwwroot\js\group\group.js
-wwwroot\js\message\message-statistical.js
 wwwroot\js\message\message.js
 wwwroot\js\site.js
 wwwroot\lib\AlertifyJS\alertify.js
@@ -2212,3 +2211,5 @@ wwwroot\upload\cuog2805@gmail.com\15072025\Professional_Minimalist_CV_Resume.pdf
 wwwroot\upload\cuog2805@gmail.com\15072025\quiet-cloister_levitan.jpg
 wwwroot\upload\cuog2805@gmail.com\15072025\toeic.pdf
 wwwroot\upload\cuog2805@gmail.com\15072025\waves-arkhyp_kiundzhi.jpg
+wwwroot\upload\cuog2805@gmail.com\17072025\Building_Microservices_(Sam_Newman)_(z-lib.org).pdf
+wwwroot\js\message\message-statistical.js

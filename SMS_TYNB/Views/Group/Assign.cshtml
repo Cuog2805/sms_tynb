@@ -30,7 +30,7 @@
 			<!-- Tìm kiếm -->
 			<div class="search-controls">
 				<div class="d-flex justify-content-start align-items-center gap-2 flex-wrap">
-					<input type="text" class="form-control" id="searchInput" placeholder="Tìm kiếm" style="width: 250px;">
+					<input type="text" class="form-control" id="searchInput" placeholder="TTìm kiếm theo tên cán bộ" style="width: 250px;">
 					<button type="button" class="btn btn-primary btn-sm" onclick="selectAll()">
 						<i class="fas fa-check-square"></i> Chọn tất cả
 					</button>
@@ -44,6 +44,11 @@
 				<!-- Cột trái - Danh sách -->
 				<div class="col-md-6 border-end border-1 border-light">
 					<div class="checkbox-list" id="groupCheckBoxList">
+					</div>
+					<div class="a">
+						@{
+							await Html.RenderPartialAsync("_PaginationMinimal");
+						}
 					</div>
 					<div class="mt-4">
 						<p>Số người đã chọn: <span id="groupAssignTotal">0</span> người</p>
@@ -68,5 +73,5 @@
 </div>
 
 @section Scripts {
-	<script src="~/js/group/group-assign.js"></script>
+	<script src="~/js/group/group-assign.js?v=@DateTime.Now.Ticks"></script>
 }

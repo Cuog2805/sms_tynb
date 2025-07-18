@@ -1,6 +1,13 @@
 ﻿$(document).ready(function () {
     loadData();
+
     $("#searchInput").on("input", function () {
+        currentPagination.pageNumber = 1;
+        loadData();
+    })
+    $("#pageSize").on("change", function () {
+        currentPagination.pageNumber = 1;
+        currentPagination.pageSize = parseInt($(this).val());
         loadData();
     })
 
@@ -9,15 +16,25 @@
     })
 });
 
+let currentPagination = {
+    pageNumber: 1,
+    pageSize: 10
+};
+
+let paginationData = {
+    total: 0,
+    data: []
+};
+
 let allItems = [];
 let selectedItems = [];
 
 function loadData() {
     let searchInput = $('#searchInput').val();
     let pageable = {
-        pageNumber: 1,
-        pageSize: 999999,
-        sort: ''
+        pageNumber: currentPagination.pageNumber,
+        pageSize: currentPagination.pageSize,
+        sort: 'TenCanbo'
     };
 
     $.ajax({
@@ -31,13 +48,26 @@ function loadData() {
         }),
         success: function (response) {
             if (response.state === "success") {
-                displayItems(response.content.Data);
+                paginationData.total = response.content.Total;
+                paginationData.data = response.content.Data;
+
+                currentPagination.pageNumber = pageable.pageNumber;
+                currentPagination.pageSize = pageable.pageSize;
+
+                displayItems(paginationData.data, currentPagination.pageNumber, currentPagination.pageSize);
+                CreatePaginationMinimal(paginationData.total, currentPagination.pageNumber, currentPagination.pageSize, $("#pagination"));
             }
         },
-        error: function (xhr, status, error) {
+        error: function () {
+            alert("Lỗi khi load dữ liệu");
             console.log("XHR:", xhr);
         }
     });
+}
+
+function loadPage(pageNumber) {
+    currentPagination.pageNumber = pageNumber;
+    loadData();
 }
 
 function loadDetail(id) {

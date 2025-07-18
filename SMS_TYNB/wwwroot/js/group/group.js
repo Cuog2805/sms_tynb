@@ -58,6 +58,7 @@ function loadData() {
             }
         },
         error: function (xhr, status, error) {
+            alert("Lỗi khi load dữ liệu");
             console.log("XHR:", xhr);
         }
     });

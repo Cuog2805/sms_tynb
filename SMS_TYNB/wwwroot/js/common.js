@@ -104,10 +104,55 @@
 	}
 }
 
+function CreatePaginationMinimal(totalItems, currentPage, itemsPerPage, paginationId) {
+	const $pagination = paginationId;
+	$pagination.empty();
+
+	if (totalItems === 0) {
+		return;
+	}
+
+	const totalPages = Math.ceil(totalItems / itemsPerPage);
+
+	// Nút Previous
+	const $prevLi = $("<li>").addClass("page-item " + (currentPage === 1 ? "disabled" : ""));
+	const $prevLink = $("<a>")
+		.addClass("page-link")
+		.attr("href", "#")
+		.attr("aria-label", "Previous")
+		.append("<").on("click", () => loadPage(currentPage - 1));;
+	$prevLi.append($prevLink);
+	$pagination.append($prevLi);
+
+	// Hiển thị trang hiện tại và tổng số trang
+	const $pageInfo = $("<li>")
+		.addClass("page-item")
+		.append(
+			$("<span>").addClass("page-link small text-muted").text(`${currentPage} / ${totalPages}`)
+		);
+	$pagination.append($pageInfo);
+
+	const $nextLi = $("<li>").addClass("page-item " + (currentPage === totalPages ? "disabled" : ""));
+	const $nextLink = $("<a>")
+		.addClass("page-link")
+		.attr("href", "#")
+		.attr("aria-label", "Next")
+		.append(">").on("click", () => loadPage(currentPage + 1));
+	$nextLi.append($nextLink);
+	$pagination.append($nextLi);
+
+	// Thông tin số lượng bản ghi
+	if ($("#pagination-info").length > 0) {
+		const startItem = (currentPage - 1) * itemsPerPage + 1;
+		const endItem = Math.min(currentPage * itemsPerPage, totalItems);
+		$("#pagination-info").text(`Hiển thị: ${startItem}-${endItem} / ${totalItems} bản ghi`);
+	}
+}
+
 
 function formatDateTime(date) {
 	const year = date.getFullYear();
-	const month = String(date.getMonth() + 1).padStart(2, '0'); // Months are 0-indexed
+	const month = String(date.getMonth() + 1).padStart(2, '0');
 	const day = String(date.getDate()).padStart(2, '0');
 	const hours = String(date.getHours()).padStart(2, '0');
 	const minutes = String(date.getMinutes()).padStart(2, '0');

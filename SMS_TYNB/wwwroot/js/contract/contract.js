@@ -1,12 +1,10 @@
 ﻿$(document).ready(function () {
 	loadData();
 	$("#searchInput").on("input", function () {
-		console.log("searchInput change:", $(this).val());
 		currentPagination.pageNumber = 1;
 		loadData();
 	})
 	$("#pageSize").on("change", function () {
-		console.log("pageSize change:", $(this).val());
 		currentPagination.pageNumber = 1;
 		currentPagination.pageSize = parseInt($(this).val());
 		loadData();
@@ -55,14 +53,20 @@ function loadData() {
 				currentPagination.pageNumber = pageable.pageNumber;
 				currentPagination.pageSize = pageable.pageSize;
 
-				displayItems(paginationData.data, currentPagination.pageNumber, currentPagination.pageSize);
+				displayItemsdisplayItems(paginationData.data, currentPagination.pageNumber, currentPagination.pageSize);
 				CreatePagination(paginationData.total, currentPagination.pageNumber, currentPagination.pageSize, $("#pagination"));
 			}
 		},
 		error: function () {
 			alert("Lỗi khi load dữ liệu");
+			console.log("XHR:", xhr);
 		}
 	});
+}
+
+function loadPage(pageNumber) {
+	currentPagination.pageNumber = pageNumber;
+	loadData();
 }
 
 function displayItems(items, pageNumber, pageSize) {
@@ -111,11 +115,6 @@ function selectRow(rowId) {
 
 	loadDetail(rowId);
 	updateButtonStates();
-}
-
-function loadPage(pageNumber) {
-	currentPagination.pageNumber = pageNumber;
-	loadData();
 }
 
 function loadDetail(id) {

@@ -15,7 +15,10 @@ namespace SMS_TYNB.Repository
 
 			if (!string.IsNullOrWhiteSpace(searchInput))
 			{
-				query = query.Where(item => item.TenCanbo.ToLower().Contains(searchInput.Trim().ToLower()));
+				query = query.Where(
+					item => item.TenCanbo.ToLower().Contains(searchInput.Trim().ToLower()) 
+					|| item.SoDt.ToLower().Contains(searchInput.Trim().ToLower())
+				);
 			}
 
 			return Task.FromResult(query);

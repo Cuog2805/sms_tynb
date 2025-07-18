@@ -17,9 +17,16 @@
 	</div>
 
 	<div class="row">
-		<div class="d-flex justify-content-end m-2">
-			<label for="searchInput" class="form-label me-2 mb-0">Tìm kiếm:</label>
-			<input type="text" class="form-control form-control-sm" id="searchInput" style="width: 200px;">
+		<div class="row d-flex justify-content-between my-2 ms-0 p-0">
+			<div class="col-md-6 btn-list">
+				<button type="button" id="btnAdd" class="btn btn-primary" onclick="beforeAdd()">Thêm</button>
+				<button type="button" id="btnEdit" class="btn btn-primary" onclick="startEdit()" disabled>Sửa</button>
+				<a class="btn btn-primary" type="button" asp-area="" asp-controller="Contact" asp-action="Index">Thêm liên hệ</a>
+			</div>
+			<div class="col-md-6 d-flex justify-content-end align-items-center">
+				<label for="searchInput" class="form-label me-2 mb-0">Tìm kiếm:</label>
+				<input type="text" class="form-control form-control-sm" id="searchInput" placeholder="Tìm kiếm theo tên nhóm" style="width: 200px;">
+			</div>
 		</div>
 		@* danh sách *@
 		<table class="table table-bordered" id="groupTable">

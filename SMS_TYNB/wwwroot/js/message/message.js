@@ -8,6 +8,19 @@
     $("#btnSendMessage").on("click", function () {
         sendMessage();
     })
+
+    // Custom validator
+    $.validator.addMethod("filesize", function (value, element, param) {
+        if (element.files.length === 0) return true;
+        for (let i = 0; i < element.files.length; i++) {
+            if (element.files[i].size > param) {
+                return false;
+            }
+        }
+        return true;
+    }, function (param, element) {
+        return `Kích thước mỗi tệp không được vượt quá ${Math.round(param / 1024 / 1024)}MB`;
+    });
 });
 
 
@@ -322,8 +335,8 @@ function initFormValidate() {
                 required: true
             },
             'FileDinhKem': {
-                //required: true,
-                extension: "doc|docx|pdf|jpg|png"
+                extension: "doc|docx|pdf|png|jpg",
+                filesize: 5 * 1024 * 1024
             }
         },
         messages: {
@@ -331,8 +344,8 @@ function initFormValidate() {
                 required: "Vui lòng nhập nội dung tin nhắn"
             },
             'FileDinhKem': {
-                //required: "Vui lòng chọn tệp đính kèm",
-                extension: "Định dạng file không hợp lệ. Chỉ nhận tệp có định dạng .doc, .docx, .pdf, .jpg, .png!"
+                extension: "Chỉ chấp nhận .doc, .docx, .pdf",
+                filesize: "Kích thước mỗi tệp không được vượt quá 5MB"
             }
         },
         errorClass: "text-danger",

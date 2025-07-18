@@ -12,13 +12,13 @@
         <div asp-validation-summary="ModelOnly" class="text-danger" role="alert"></div>
 
         <div class="form-floating mb-3">
-            <input asp-for="Input.Username" class="form-control" autocomplete="username" aria-required="true" placeholder="Tên đăng nhập" />
+            <input asp-for="Input.Username" class="form-control" autocomplete="username" aria-required="true" placeholder="Tên đăng nhập" maxlength="50" />
             <label asp-for="Input.Username" class="form-label">Tên đăng nhập</label>
             <span asp-validation-for="Input.Username" class="text-danger"></span>
         </div>
 
         <div class="form-floating mb-3">
-            <input asp-for="Input.Password" class="form-control" autocomplete="current-password" aria-required="true" placeholder="Mật khẩu" />
+            <input asp-for="Input.Password" class="form-control" autocomplete="current-password" aria-required="true" placeholder="Mật khẩu" maxlength="50" />
             <label asp-for="Input.Password" class="form-label">Mật khẩu</label>
             <span asp-validation-for="Input.Password" class="text-danger"></span>
         </div>
@@ -28,7 +28,10 @@
                 <div class="form-floating mb-3">
                     <input id="captchaInput"
                            name="CaptchaCode"
-                           type="text"
+                           type="tel"
+                           inputmode="numeric"
+                           pattern="[0-9\s]{4}"
+                           maxlength="4"
                            class="form-control me-2"
                            placeholder="Captcha"
                            style="width: 180px;" />
@@ -116,6 +119,10 @@
                 }
             }
         }
+
+        document.getElementById("captchaInput").addEventListener("input", function(e) {
+            this.value = this.value.replace(/\D/g, '');
+        });
 
         document.getElementById("login-submit")
             .addEventListener("click", function (e) {

@@ -1,5 +1,6 @@
 ﻿using SMS_TYNB.Models.Identity;
 using SMS_TYNB.Models.Master;
+using System.Text;
 
 namespace SMS_TYNB.Helper
 {
@@ -29,6 +30,8 @@ namespace SMS_TYNB.Helper
 
 			// Tạo tên file
 			var fileName = file.FileName.Replace(" ", "_");
+			fileName = CommonHelper.RemoveUnicodeMark(fileName);
+			fileName = CommonHelper.RemoveSign4VietnameseString(fileName);
 			var filePath = Path.Combine(uploadPath, fileName);
 
 			// Lưu file

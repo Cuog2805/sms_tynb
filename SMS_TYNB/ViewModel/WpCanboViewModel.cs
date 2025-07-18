@@ -19,4 +19,9 @@
 		public int? IdNhom { get; set; }
 		public string? TenNhom { get; set; }
 	}
+	public class WpCanboSearchViewModel
+	{
+		public string? searchInput { get; set; }
+		public int? Trangthai { get; set; }
+	}
 }

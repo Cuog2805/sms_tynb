@@ -9,6 +9,23 @@
         currentPagination.pageSize = parseInt($(this).val());
         loadData();
     })
+
+    // Modal
+	$('#data-form').on('show.bs.modal', function (e) {
+		initFormValidate();
+	});
+
+	$('#data-form').on('hidden.bs.modal', function (e) {
+		// Reset form khi modal đóng
+		clearForm();
+		formState.isEditing = false;
+		formState.currentEditId = null;
+	});
+
+	// Form submit
+	$(document).on("click", "#btnSave", function () {
+		submitForm();
+	});
 });
 
 let currentPagination = {
@@ -24,12 +41,13 @@ let paginationData = {
 // trạng thái form
 let formState = {
     isEditing: false,
-    selectedRowId: null,
-    originalData: null
+    currentEditId: null
 };
 
 function loadData() {
-    let searchInput = $('#searchInput').val();
+    let model = {
+        searchInput: $('#searchInput').val(),
+    };
     let pageable = {
         pageNumber: currentPagination.pageNumber,
         pageSize: currentPagination.pageSize,
@@ -40,7 +58,7 @@ function loadData() {
         url: '/Group/LoadData',
         type: 'GET',
         data: $.param({
-            searchInput: searchInput,
+            'model.searchInput': model.searchInput,
             'pageable.PageNumber': pageable.pageNumber,
             'pageable.PageSize': pageable.pageSize,
             'pageable.Sort': pageable.sort
@@ -64,6 +82,11 @@ function loadData() {
     });
 }
 
+function loadPage(pageNumber) {
+    currentPagination.pageNumber = pageNumber;
+    loadData();
+}
+
 function displayItems(items, pageNumber, pageSize) {
     let tableHtml = '';
     const startIndex = (pageNumber - 1) * pageSize;
@@ -71,11 +94,22 @@ function displayItems(items, pageNumber, pageSize) {
     if (items && items.length > 0) {
         items.forEach((item, index) => {
             tableHtml += `
-                <tr id="row-${item.IdNhom}" onclick="selectRow(${item.IdNhom})" style="cursor: pointer;">
+                <tr>
                     <td class="text-center">${startIndex + index + 1}</td>
                     <td>${item.TenNhom}</td>
                     <td>${item.TenNhomCha || ''}</td>
                     <td>${item.TrangThai}</td>
+                    <td class="text-center">
+                        <button
+                            class="btn btn-sm btn-primary"
+                            type="button"
+                            data-bs-toggle="modal"
+                            data-bs-target="#data-form"
+                            onclick="startEdit(${item.IdNhom})"
+                            title="Sửa">
+                            <i class="bi bi-pencil-square"></i>
+                        </button>
+                    </td>
                 </tr>
             `;
         });
@@ -92,29 +126,24 @@ function displayItems(items, pageNumber, pageSize) {
     $('#groupTableBody').html(tableHtml);
 }
 
-function selectRow(rowId) {
-    if (formState.isEditing && formState.selectedRowId !== rowId) {
-        // Reset form state
-        formState.isEditing = false;
-        formState.originalData = null;
-        disableFormInputs();
-    }
+//function selectRow(rowId) {
+//    if (formState.isEditing && formState.selectedRowId !== rowId) {
+//        // Reset form state
+//        formState.isEditing = false;
+//        formState.originalData = null;
+//        disableFormInputs();
+//    }
 
-    let rows = document.querySelectorAll("#groupTableBody tr");
-    rows.forEach(r => r.classList.remove("table-primary"));
+//    let rows = document.querySelectorAll("#groupTableBody tr");
+//    rows.forEach(r => r.classList.remove("table-primary"));
 
-    $(`#row-${rowId}`).addClass('table-primary');
+//    $(`#row-${rowId}`).addClass('table-primary');
 
-    formState.selectedRowId = rowId;
+//    formState.selectedRowId = rowId;
 
-    loadDetail(rowId);
-    updateButtonStates();
-}
-
-function loadPage(pageNumber) {
-    currentPagination.pageNumber = pageNumber;
-    loadData();
-}
+//    loadDetail(rowId);
+//    updateButtonStates();
+//}
 
 function loadDetail(id) {
     if (id) {
@@ -124,9 +153,9 @@ function loadDetail(id) {
             data: { id: id },
             success: function (response) {
                 $('#data-form').html(response);
-
-                disableFormInputs();
-                updateButtonStates();
+                formState.isEditing = true;
+                formState.currentEditId = id;
+                $("#data-form-header").html("Cập nhật nhóm");
             },
             error: function (xhr) {
                 console.log("XHR:", xhr);
@@ -148,13 +177,10 @@ function addWpNhom(formData) {
 
                 // Reset form state
                 formState.isEditing = false;
-                formState.selectedRowId = null;
-                formState.originalData = null;
+                formState.currentEditId = null;
 
                 loadData();
-                clearForm();
-                disableFormInputs();
-                updateButtonStates();
+                $('#data-form').modal('hide');
             } else {
                 alertify.error(response.msg || 'Đã có lỗi xảy ra');
             }
@@ -178,11 +204,10 @@ function editWpNhom(formData) {
 
                 // Reset form state
                 formState.isEditing = false;
-                formState.originalData = null;
+                formState.currentEditId = null;
 
                 loadData();
-                disableFormInputs();
-                updateButtonStates();
+                $('#data-form').modal('hide');
             } else {
                 alertify.error(response.msg || 'Đã có lỗi xảy ra');
             }
@@ -217,81 +242,17 @@ function initFormValidate() {
     });
 }
 
-function disableFormInputs() {
-    $('#groupForm input, #groupForm select').prop('disabled', true);
-}
-
-function enableFormInputs() {
-    $('#groupForm input, #groupForm select').prop('disabled', false);
-}
-
-function updateButtonStates() {
-    const hasSelectedRow = formState.selectedRowId !== null;
-    const isEditing = formState.isEditing;
-
-    $('#btnAdd').prop('disabled', false);
-
-    $('#btnEdit').prop('disabled', !hasSelectedRow || isEditing);
-
-    $('#btnAddGroup, #btnAssignGroup').prop('disabled', isEditing);
-
-    if (isEditing) {
-        $('#btnSave, #btnCancel').show();
-    } else {
-        $('#btnSave, #btnCancel').hide();
-    }
-}
-
-function startEdit() {
-    if (!formState.selectedRowId) {
-        return;
-    }
-
-    formState.originalData = {
-        IdNhom: $('#IdNhom').val(),
-        TenNhom: $('#TenNhom').val(),
-        IdNhomCha: $('#IdNhomCha').val(),
-        TrangThai: $('#TrangThai').val()
-    };
-
+function startEdit(id) {
     formState.isEditing = true;
-    enableFormInputs();
-    updateButtonStates();
-
-    $('#TenNhom').focus();
-}
-
-function cancelEdit() {
-    if (formState.originalData) {
-        $('#IdNhom').val(formState.originalData.IdNhom);
-        $('#TenNhom').val(formState.originalData.TenNhom);
-        $('#IdNhomCha').val(formState.originalData.IdNhomCha);
-        $('#TrangThai').val(formState.originalData.TrangThai);
-    }
-
-    formState.isEditing = false;
-    formState.originalData = null;
-    disableFormInputs();
-    updateButtonStates();
-
-    if ($('#groupForm').data('validator')) {
-        $('#groupForm').data('validator').resetForm();
-    }
-    $('#groupForm').find('.is-invalid').removeClass('is-invalid');
+    formState.currentEditId = id;
+    loadDetail(id);
 }
 
 function beforeAdd() {
-    let rows = document.querySelectorAll("#groupTableBody tr");
-    rows.forEach(r => r.classList.remove("table-primary"));
-
-    formState.selectedRowId = null;
-    formState.isEditing = true;
-    formState.originalData = null;
-
+    formState.isEditing = false;
+    formState.currentEditId = null;
     clearForm();
-    $('#IdNhom').val('');
-    enableFormInputs();
-    updateButtonStates();
+    $("#data-form-header").html("Thêm nhóm");
 
     $('#TenNhom').focus();
 }
@@ -300,7 +261,13 @@ function clearForm() {
     $('#IdNhom').val('');
     $('#TenNhom').val('');
     $('#IdNhomCha').val('');
-    //$('#TrangThai').val('');
+
+    // Reset validation
+    if ($('#groupForm').data('validator')) {
+        $('#groupForm').data('validator').resetForm();
+    }
+    $('#groupForm').find('.text-danger').remove();
+    $('#groupForm').find('.is-invalid').removeClass('is-invalid');
 }
 
 function submitForm() {
@@ -308,16 +275,15 @@ function submitForm() {
         initFormValidate();
     }
 
-
     if ($('#groupForm').valid()) {
         const formData = {
-            IdNhom: $('#IdNhom').val() || '',
-            IdNhomCha: $('#IdNhomCha').val() || null,
-            TenNhom: $('#TenNhom').val() || '',
-            TrangThai: $('#TrangThai').val() || 1,
+            IdNhom: $('#IdNhom').val(),
+            TenNhom: $('#TenNhom').val(),
+            IdNhomCha: $('#IdNhomCha').val(),
+            TrangThai: $('#TrangThai').val(),
         };
 
-        if (formData.IdNhom) {
+        if (formState.isEditing && formState.currentEditId) {
             editWpNhom(formData);
         } else {
             addWpNhom(formData);

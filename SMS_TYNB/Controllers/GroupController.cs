@@ -42,9 +42,9 @@ namespace SMS_TYNB.Controllers
 			return View(formViewModel);
 		}
 		[HttpGet]
-		public async Task<IActionResult> LoadData(string searchInput, Pageable pageable)
+		public async Task<IActionResult> LoadData(WpNhomSearchViewModel model, Pageable pageable)
 		{
-			var datas = await _wpNhomService.SearchWpNhom(searchInput, pageable);
+			var datas = await _wpNhomService.SearchWpNhom(model, pageable);
 			return Json(new
 			{
 				state = "success",
@@ -95,9 +95,9 @@ namespace SMS_TYNB.Controllers
 			return View(formViewModel);
 		}
 		[HttpGet]
-		public async Task<JsonResult> LoadDataWpNhomCanbos(string searchInput)
+		public async Task<JsonResult> LoadDataWpNhomCanbos(WpNhomSearchViewModel model)
 		{
-			List<WpNhomViewModel> result = await _wpNhomService.GetAllWpNhomCanbos(searchInput);
+			List<WpNhomViewModel> result = await _wpNhomService.GetAllWpNhomCanbos(model);
 			return Json(new
 			{
 				state = "success",

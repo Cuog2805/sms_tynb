@@ -19,14 +19,15 @@ namespace SMS_TYNB.Service.Implement
 			IEnumerable<WpCanbo> wpCanbos = await _wpCanboRepository.GetAll();
 			return wpCanbos;
 		}
-		public async Task<PageResult<WpCanboViewModel>> SearchWpCanbo(string searchInput, Pageable pageable)
+		public async Task<PageResult<WpCanboViewModel>> SearchWpCanbo(WpCanboSearchViewModel model, Pageable pageable)
 		{
-			IQueryable<WpCanbo> wpCanbos = await _wpCanboRepository.Search(searchInput);
+			IQueryable<WpCanbo> wpCanbos = await _wpCanboRepository.Search(model.searchInput);
 			var wpCanbosPage = await _wpCanboRepository.GetPagination(wpCanbos, pageable);
 
 			var wpNhomsViewModel = from wpcb in wpCanbosPage
 								   join wpdmtt in await _wpDanhmucRepository.GetByType("TRANGTHAI") on wpcb.Trangthai equals wpdmtt.MaDanhmuc
 								   join wpdmgt in await _wpDanhmucRepository.GetByType("GIOITINH") on wpcb.Gioitinh equals wpdmgt.MaDanhmuc
+								   where (wpcb.Trangthai == model.Trangthai || model.Trangthai == null)
 								   select new WpCanboViewModel
 								   {
 									   IdCanbo = wpcb.IdCanbo,

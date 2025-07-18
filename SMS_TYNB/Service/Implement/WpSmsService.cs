@@ -70,6 +70,13 @@ namespace SMS_TYNB.Service.Implement
 		{
 			IQueryable<WpSms> wpSms = await _wpSmsRepository.Search(model.searchInput);
 
+			if (model.dateFrom.HasValue && model.dateTo.HasValue)
+			{
+				wpSms = wpSms.Where(wps => wps.Ngaygui >= model.dateFrom && wps.Ngaygui <= model.dateTo);
+			}
+
+			int total = await wpSms.CountAsync();
+
 			IEnumerable<WpSms> wpSmsPage = await _wpSmsRepository.GetPagination(wpSms, pageable);
 
 			var wpFileList = await _wpFileService.GetByBangLuuFile("wp_sms");
@@ -79,21 +86,17 @@ namespace SMS_TYNB.Service.Implement
 								 join wpf in wpFileList on wps.IdSms equals wpf.BangLuuFileId into wpsWithFileGroup
 								 from gwpf in wpsWithFileGroup.DefaultIfEmpty()
 								 join wpu in wpUserList on wps.IdNguoigui equals wpu.Id
-								 where (wps.Ngaygui >= model.dateFrom && wps.Ngaygui <= model.dateTo)
 								 group new { wps, gwpf, wpu } by new { wps, wpu } into wpsGroup
 								 select new WpSmsViewModel
 								 {
 									 IdSms = wpsGroup.Key.wps.IdSms,
 									 Noidung = wpsGroup.Key.wps.Noidung,
-									 FileDinhKem = wpsGroup.Select(x => x.gwpf).ToList(),
+									 FileDinhKem = wpsGroup.Where(x => x.gwpf != null).Select(x => x.gwpf).ToList(),
 									 IdNguoigui = wpsGroup.Key.wps.IdNguoigui,
 									 TenNguoigui = wpsGroup.Key.wpu.UserName,
 									 Ngaygui = wpsGroup.Key.wps.Ngaygui,
 									 SoTn = wpsGroup.Key.wps.SoTn
 								 };
-
-
-			int total = await wpSms.CountAsync();
 
 			return new PageResult<WpSmsViewModel>
 			{

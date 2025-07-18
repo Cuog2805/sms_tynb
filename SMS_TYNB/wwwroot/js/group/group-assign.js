@@ -30,7 +30,10 @@ let allItems = [];
 let selectedItems = [];
 
 function loadData() {
-    let searchInput = $('#searchInput').val();
+    let model = {
+        searchInput: $('#searchInput').val(),
+        Trangthai: 1
+    };
     let pageable = {
         pageNumber: currentPagination.pageNumber,
         pageSize: currentPagination.pageSize,
@@ -41,7 +44,8 @@ function loadData() {
         url: '/Contact/LoadData',
         type: 'GET',
         data: $.param({
-            searchInput: searchInput,
+            'model.searchInput': model.searchInput,
+            'model.Trangthai': model.Trangthai,
             'pageable.PageNumber': pageable.pageNumber,
             'pageable.PageSize': pageable.pageSize,
             'pageable.Sort': pageable.sort

@@ -1,100 +1,100 @@
 ﻿@model SMS_TYNB.ViewModel.BaseFormViewModel<SMS_TYNB.Models.Master.WpCanbo>
-<div class="card-body">
-    <!-- Form thêm/sửa -->
-    @using (Html.BeginForm("", "", FormMethod.Post, new { id = "contactForm" }))
-    {
-        @Html.AntiForgeryToken()
-        @Html.HiddenFor(model => model.Data.IdCanbo, new { id = "IdCanbo" })
-        @Html.HiddenFor(model => model.Data.MaCanbo, new { id = "MaCanbo" })
+
+<div class="modal-dialog modal-dialog-centered modal-lg">
+	<div class="modal-content">
+		<div class="modal-header">
+			<h1 class="modal-title fs-5" id="data-form-header"></h1>
+			<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+		</div>
+		<div class="modal-body">
+			<!-- Form thêm/sửa -->
+			@using (Html.BeginForm("", "", FormMethod.Post, new { id = "contactForm" }))
+            {
+                @Html.AntiForgeryToken()
+                @Html.HiddenFor(model => model.Data.IdCanbo, new { id = "IdCanbo" })
+                @Html.HiddenFor(model => model.Data.MaCanbo, new { id = "MaCanbo" })
         
-        <div class="row">
-            <div class="col-md-6">
-                <div class="form-group mb-3">
-                    <label for="TenCanbo" class="form-label">Tên cán bộ <span class="text-danger">*</span></label>
-                    @Html.EditorFor(model => model.Data.TenCanbo, 
-                        new { 
-                            htmlAttributes = new { 
-                                @class = "form-control",
-                                @name = "Data.TenCanbo",
-                                @id = "TenCanbo",
-                                @placeholder = "Nhập tên cán bộ",
-                                @disabled = "disabled"
-                            } 
-                        }
-                    )
-                    @Html.ValidationMessageFor(model => model.Data.TenCanbo, "", new { @class = "text-danger" })
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group mb-3">
+                            <label for="TenCanbo" class="form-label">Tên cán bộ <span class="text-danger">*</span></label>
+                            @Html.EditorFor(model => model.Data.TenCanbo, 
+                                new { 
+                                    htmlAttributes = new { 
+                                        @class = "form-control",
+                                        @name = "Data.TenCanbo",
+                                        @id = "TenCanbo",
+                                        @placeholder = "Nhập tên cán bộ",
+                                    } 
+                                }
+                            )
+                            @Html.ValidationMessageFor(model => model.Data.TenCanbo, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group mb-3">
+                            <label for="Gioitinh" class="form-label">Giới tính <span class="text-danger">*</span></label>
+                            @Html.DropDownListFor(
+                                model => model.Data.Gioitinh,
+                                Model.SelectLists["wpGioiTinhSelectList"],
+                                htmlAttributes: new { @class = "form-select", @name = "Data.Gioitinh", @id = "Gioitinh" }
+                            )
+                        </div>
+                    </div>
                 </div>
-            </div>
-            <div class="col-md-6">
-                <div class="form-group mb-3">
-                    <label for="Gioitinh" class="form-label">Giới tính <span class="text-danger">*</span></label>
-                    @Html.DropDownListFor(
-                        model => model.Data.Gioitinh,
-                        Model.SelectLists["wpGioiTinhSelectList"],
-                        htmlAttributes: new { @class = "form-select", @name = "Data.Gioitinh", @id = "Gioitinh", @disabled = "disabled" }
-                    )
-                </div>
-            </div>
-        </div>
         
-        <div class="row">
-            <div class="col-md-6">
-                <div class="form-group mb-3">
-                    <label for="SoDt" class="form-label">Số điện thoại <span class="text-danger">*</span></label>
-                    @Html.EditorFor(model => model.Data.SoDt, 
-                        new { 
-                            htmlAttributes = new { 
-                                @class = "form-control",
-                                @name = "Data.SoDt",
-                                @id = "SoDt",
-                                @placeholder = "Nhập số điện thoại",
-                                @disabled = "disabled"
-                            } 
-                        }
-                    )
-                    @Html.ValidationMessageFor(model => model.Data.SoDt, "", new { @class = "text-danger" })
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group mb-3">
+                            <label for="SoDt" class="form-label">Số điện thoại <span class="text-danger">*</span></label>
+                            @Html.EditorFor(model => model.Data.SoDt, 
+                                new { 
+                                    htmlAttributes = new { 
+                                        @class = "form-control",
+                                        @name = "Data.SoDt",
+                                        @id = "SoDt",
+                                        @placeholder = "Nhập số điện thoại"
+                                    } 
+                                }
+                            )
+                            @Html.ValidationMessageFor(model => model.Data.SoDt, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group mb-3">
+                            <label for="Mota" class="form-label">Mô tả</label>
+                            @Html.EditorFor(model => model.Data.Mota, 
+                                new { 
+                                    htmlAttributes = new { 
+                                        @class = "form-control",
+                                        @name = "Data.Mota",
+                                        @id = "Mota",
+                                        @placeholder = "Nhập mô tả"
+                                    }
+                                }
+                            )
+                            @Html.ValidationMessageFor(model => model.Data.Mota, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
                 </div>
-            </div>
-            <div class="col-md-6">
-                <div class="form-group mb-3">
-                    <label for="Mota" class="form-label">Mô tả</label>
-                    @Html.EditorFor(model => model.Data.Mota, 
-                        new { 
-                            htmlAttributes = new { 
-                                @class = "form-control",
-                                @name = "Data.Mota",
-                                @id = "Mota",
-                                @placeholder = "Nhập mô tả",
-                                @disabled = "disabled"
-                            }
-                        }
-                    )
-                    @Html.ValidationMessageFor(model => model.Data.Mota, "", new { @class = "text-danger" })
-                </div>
-            </div>
-        </div>
         
-        <div class="row">
-            <div class="col-md-6">
-                <div class="form-group mb-3">
-                    <label for="Trangthai" class="form-label">Trạng thái <span class="text-danger">*</span></label>
-                    @Html.DropDownListFor(
-						model => model.Data.Trangthai,
-						Model.SelectLists["wpTrangThaiSelectList"],
-						htmlAttributes: new { @class = "form-select", @name = "Data.Trangthai", @id = "Trangthai", @disabled = "disabled" }
-					)
-                </div>
-            </div>
-        </div>
-        
-        <!-- Buttons -->
-		<div class="row mt-3">
-			<div class="col-12">
-				<div class="btn-group me-3" role="group">
-					<button type="button" id="btnSave" class="btn btn-primary" onclick="submitForm()" style="display: none;">Lưu</button>
-					<button type="button" id="btnCancel" class="btn btn-secondary" onclick="cancelEdit()" style="display: none;">Hủy</button>
-				</div>
-			</div>
-		</div>				
-    }
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group mb-3">
+                            <label for="Trangthai" class="form-label">Trạng thái <span class="text-danger">*</span></label>
+                            @Html.DropDownListFor(
+						        model => model.Data.Trangthai,
+						        Model.SelectLists["wpTrangThaiSelectList"],
+						        htmlAttributes: new { @class = "form-select", @name = "Data.Trangthai", @id = "Trangthai" }
+					        )
+                        </div>
+                    </div>
+                </div>		
+            }
+		</div>
+		<div class="modal-footer">
+		    <button type="button" class="btn btn-primary" id="btnSave">Lưu</button>
+			<button type="button" class="btn btn-secondary" id="btnClose" data-bs-dismiss="modal">Đóng</button>
+		</div>
+	</div>
 </div>

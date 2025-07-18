@@ -49,14 +49,15 @@ namespace SMS_TYNB.Service.Implement
 			return wpNhom;
 		}
 
-		public async Task<List<WpNhomViewModel>> GetAllWpNhomCanbos(string searchInput)
+		public async Task<List<WpNhomViewModel>> GetAllWpNhomCanbos(WpNhomSearchViewModel model)
 		{
-			var wpCanboSearch = _wpCanboRepository.Search(searchInput);
+			var wpCanboSearch = _wpCanboRepository.Search(model.searchInput);
 			var wpNhomCanbos = (from wpn in await _wpNhomRepository.GetAll()
 								join wpcbn in await _wpNhomCanboRepository.GetAll() on wpn.IdNhom equals wpcbn.IdNhom into wpnGroup
 								from wpcbn in wpnGroup.DefaultIfEmpty()
 								join wpcb in await wpCanboSearch on wpcbn?.IdCanbo equals wpcb.IdCanbo into wpcbGroup
 								from wpcb in wpcbGroup.DefaultIfEmpty()
+								where (wpn.TrangThai == model.TrangThai || model.TrangThai == null)
 								group new { wpcb, wpn } by new { wpn.IdNhom, wpn.IdNhomCha, wpn.TenNhom } into wpNhomCanboGroup
 								select new WpNhomViewModel
 								{
@@ -101,15 +102,16 @@ namespace SMS_TYNB.Service.Implement
 			return wpNhomViewModel;
 		}
 
-		public async Task<PageResult<WpNhomViewModel>> SearchWpNhom(string searchInput, Pageable pageable)
+		public async Task<PageResult<WpNhomViewModel>> SearchWpNhom(WpNhomSearchViewModel model, Pageable pageable)
 		{
-			IQueryable<WpNhom> wpNhoms = await _wpNhomRepository.Search(searchInput);
+			IQueryable<WpNhom> wpNhoms = await _wpNhomRepository.Search(model.searchInput);
 			IEnumerable<WpNhom> wpNhomsPage = await _wpNhomRepository.GetPagination(wpNhoms, pageable);
 
 			var wpNhomsViewModel = from wpn in wpNhomsPage
 								   join wpdm in await _wpDanhmucRepository.GetByType("TRANGTHAI") on wpn.TrangThai equals wpdm.MaDanhmuc
 								   join wpnCha in wpNhoms on wpn.IdNhomCha equals wpnCha.IdNhom into groupWpn
 								   from wpnCha in groupWpn.DefaultIfEmpty()
+								   where (wpn.TrangThai == model.TrangThai || model.TrangThai == null)
 								   select new WpNhomViewModel
 								   {
 									   IdNhom = wpn.IdNhom,

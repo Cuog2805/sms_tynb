@@ -9,7 +9,7 @@ namespace SMS_TYNB.Repository
 		{
 		}
 
-		public Task<IQueryable<WpCanbo>> Search(string searchInput)
+		public Task<IQueryable<WpCanbo>> Search(string? searchInput)
 		{
 			var query = context.Set<WpCanbo>().AsQueryable();
 

@@ -79,6 +79,11 @@ function loadData() {
     });
 }
 
+function loadPage(pageNumber) {
+    currentPagination.pageNumber = pageNumber;
+    loadData();
+}
+
 function displayItems(items, pageNumber, pageSize) {
     let tableHtml = '';
     const startIndex = (pageNumber - 1) * pageSize;

@@ -41,9 +41,9 @@ namespace SMS_TYNB.Controllers
 			return View(formViewModel);
 		}
 		[HttpGet]
-		public async Task<IActionResult> LoadData(string searchInput, Pageable pageable)
+		public async Task<IActionResult> LoadData(WpCanboSearchViewModel model, Pageable pageable)
 		{
-			var datas = await _wpCanboService.SearchWpCanbo(searchInput, pageable);
+			var datas = await _wpCanboService.SearchWpCanbo(model, pageable);
 			return Json(new
 			{
 				state = "success",

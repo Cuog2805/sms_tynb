@@ -15,4 +15,9 @@ namespace SMS_TYNB.ViewModel
 
 		public List<WpCanboViewModel> WpCanbos { get; set;}
 	}
+	public class WpNhomSearchViewModel
+	{
+		public string? searchInput { get; set; }
+		public int? TrangThai { get; set; }
+	}
 }

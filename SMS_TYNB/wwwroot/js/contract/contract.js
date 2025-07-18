@@ -3,12 +3,29 @@
 	$("#searchInput").on("input", function () {
 		currentPagination.pageNumber = 1;
 		loadData();
-	})
+	});
 	$("#pageSize").on("change", function () {
 		currentPagination.pageNumber = 1;
 		currentPagination.pageSize = parseInt($(this).val());
 		loadData();
-	})
+	});
+
+	// Modal
+	$('#data-form').on('show.bs.modal', function (e) {
+		initFormValidate();
+	});
+
+	$('#data-form').on('hidden.bs.modal', function (e) {
+		// Reset form khi modal đóng
+		clearForm();
+		formState.isEditing = false;
+		formState.currentEditId = null;
+	});
+
+	// Form submit
+	$(document).on("click", "#btnSave", function () {
+		submitForm();
+	});
 });
 
 let currentPagination = {
@@ -24,12 +41,13 @@ let paginationData = {
 // trạng thái form
 let formState = {
 	isEditing: false,
-	selectedRowId: null,
-	originalData: null
+	currentEditId: null
 };
 
 function loadData() {
-	let searchInput = $('#searchInput').val();
+	let model = {
+		searchInput: $('#searchInput').val(),
+	};
 	let pageable = {
 		pageNumber: currentPagination.pageNumber,
 		pageSize: currentPagination.pageSize,
@@ -40,7 +58,7 @@ function loadData() {
 		url: '/Contact/LoadData',
 		type: 'GET',
 		data: $.param({
-			searchInput: searchInput,
+			'model.searchInput': model.searchInput,
 			'pageable.PageNumber': pageable.pageNumber,
 			'pageable.PageSize': pageable.pageSize,
 			'pageable.Sort': pageable.sort
@@ -53,13 +71,12 @@ function loadData() {
 				currentPagination.pageNumber = pageable.pageNumber;
 				currentPagination.pageSize = pageable.pageSize;
 
-				displayItemsdisplayItems(paginationData.data, currentPagination.pageNumber, currentPagination.pageSize);
+				displayItems(paginationData.data, currentPagination.pageNumber, currentPagination.pageSize);
 				CreatePagination(paginationData.total, currentPagination.pageNumber, currentPagination.pageSize, $("#pagination"));
 			}
 		},
 		error: function () {
 			alert("Lỗi khi load dữ liệu");
-			console.log("XHR:", xhr);
 		}
 	});
 }
@@ -76,45 +93,37 @@ function displayItems(items, pageNumber, pageSize) {
 	if (items && items.length > 0) {
 		items.forEach((item, index) => {
 			tableHtml += `
-                <tr id="row-${item.IdCanbo}" onclick="selectRow(${item.IdCanbo})" style="cursor: pointer;">
+                <tr>
                     <td class="text-center">${startIndex + index + 1}</td>
                     <td>${item.TenCanbo}</td>
                     <td>${item.SoDt}</td>
                     <td>${item.Gioitinh}</td>
-                    <td>${item.Mota}</td>
+                    <td>${item.Mota || ''}</td>
+					<td>${item.Trangthai}</td>
+                    <td class="text-center">
+                        <button 
+                            class="btn btn-sm btn-primary" 
+                            type="button"  
+                            data-bs-toggle="modal" 
+                            data-bs-target="#data-form" 
+                            onclick="startEdit(${item.IdCanbo})"
+                            title="Sửa">
+                            <i class="bi bi-pencil-square"></i>
+                        </button>
+                    </td>
                 </tr>
             `;
 		});
 	} else {
 		tableHtml = `
             <tr>
-                <td colspan="5" class="text-center text-muted">
-                    <i class="fas fa-info-circle"></i>
+                <td colspan="6" class="text-center text-muted">
                     Không có dữ liệu
                 </td>
             </tr>
         `;
 	}
 	$('#contactTableBody').html(tableHtml);
-}
-
-function selectRow(rowId) {
-	if (formState.isEditing && formState.selectedRowId !== rowId) {
-		// Reset form state
-		formState.isEditing = false;
-		formState.originalData = null;
-		disableFormInputs();
-	}
-
-	let rows = document.querySelectorAll("#contactTableBody tr");
-	rows.forEach(r => r.classList.remove("table-primary"));
-
-	$(`#row-${rowId}`).addClass('table-primary');
-
-	formState.selectedRowId = rowId;
-
-	loadDetail(rowId);
-	updateButtonStates();
 }
 
 function loadDetail(id) {
@@ -125,12 +134,12 @@ function loadDetail(id) {
 			data: { id: id },
 			success: function (response) {
 				$('#data-form').html(response);
-
-				disableFormInputs();
-				updateButtonStates();
+				formState.isEditing = true;
+				formState.currentEditId = id;
+				$("#data-form-header").html("Cập nhật cán bộ");
 			},
 			error: function () {
-				alert("Lỗi khi load form");
+				alert("Lỗi khi load thông tin chi tiết");
 			}
 		});
 	}
@@ -149,22 +158,20 @@ function addWpCanbo(formData) {
 
 				// Reset form state
 				formState.isEditing = false;
-				formState.selectedRowId = null;
-				formState.originalData = null;
+				formState.currentEditId = null;
 
 				loadData();
-				clearForm();
-				disableFormInputs();
-				updateButtonStates();
+				$('#data-form').modal('hide');
 			} else {
 				alertify.error(response.msg || 'Đã có lỗi xảy ra');
 			}
 		},
 		error: function () {
-
+			alertify.error('Có lỗi xảy ra khi thêm dữ liệu');
 		}
 	});
 }
+
 function editWpCanbo(formData) {
 	$.ajax({
 		url: '/Contact/Update',
@@ -178,21 +185,19 @@ function editWpCanbo(formData) {
 
 				// Reset form state
 				formState.isEditing = false;
-				formState.originalData = null;
+				formState.currentEditId = null;
 
 				loadData();
-				disableFormInputs();
-				updateButtonStates();
+				$('#data-form').modal('hide');
 			} else {
 				alertify.error(response.msg || 'Đã có lỗi xảy ra');
 			}
 		},
 		error: function () {
-
+			alertify.error('Có lỗi xảy ra khi cập nhật dữ liệu');
 		}
 	});
 }
-
 
 // form action
 function initFormValidate() {
@@ -230,88 +235,17 @@ function initFormValidate() {
 	});
 }
 
-function disableFormInputs() {
-	$('#contactForm input, #contactForm select').prop('disabled', true);
-}
-
-function enableFormInputs() {
-	$('#contactForm input, #contactForm select').prop('disabled', false);
-}
-
-function updateButtonStates() {
-	const hasSelectedRow = formState.selectedRowId !== null;
-	const isEditing = formState.isEditing;
-
-	$('#btnAdd').prop('disabled', false);
-
-	$('#btnEdit').prop('disabled', !hasSelectedRow || isEditing);
-
-	$('#btnAddGroup, #btnAssignGroup').prop('disabled', isEditing);
-
-	if (isEditing) {
-		$('#btnSave, #btnCancel').show();
-	} else {
-		$('#btnSave, #btnCancel').hide();
-	}
-}
-
-function startEdit() {
-	if (!formState.selectedRowId) {
-		return;
-	}
-
-	formState.originalData = {
-		IdCanbo: $('#IdCanbo').val(),
-		IdCanbo: $('#MaCanbo').val(),
-		TenCanbo: $('#TenCanbo').val(),
-		Gioitinh: $('#Gioitinh').val(),
-		SoDt: $('#SoDt').val(),
-		Mota: $('#Mota').val(),
-		Trangthai: $('#Trangthai').val(),
-	};
-
+function startEdit(id) {
 	formState.isEditing = true;
-	enableFormInputs();
-	updateButtonStates();
-
-	$('#TenCanbo').focus();
-}
-
-function cancelEdit() {
-	if (formState.originalData) {
-		$('#IdCanbo').val(formState.originalData.IdCanbo);
-		$('#MaCanbo').val(formState.originalData.MaCanbo);
-		$('#TenCanbo').val(formState.originalData.TenCanbo);
-		$('#Gioitinh').val(formState.originalData.Gioitinh);
-		$('#SoDt').val(formState.originalData.SoDt);
-		$('#Mota').val(formState.originalData.Mota);
-		$('#Trangthai').val(formState.originalData.Trangthai);
-	}
-
-	formState.isEditing = false;
-	formState.originalData = null;
-	disableFormInputs();
-	updateButtonStates();
-
-	if ($('#contactForm').data('validator')) {
-		$('#contactForm').data('validator').resetForm();
-	}
-	$('#contactForm').find('.is-invalid').removeClass('is-invalid');
+	formState.currentEditId = id;
+	loadDetail(id);
 }
 
 function beforeAdd() {
-	let rows = document.querySelectorAll("#contactTableBody tr");
-	rows.forEach(r => r.classList.remove("table-primary"));
-
-	formState.selectedRowId = null;
-	formState.isEditing = true;
-	formState.originalData = null;
-
+	formState.isEditing = false;
+	formState.currentEditId = null;
 	clearForm();
-	$('#IdCanbo').val('');
-	$('#MaCanbo>').val('');
-	enableFormInputs();
-	updateButtonStates();
+	$("#data-form-header").html("Thêm cán bộ");
 
 	$('#TenCanbo').focus();
 }
@@ -322,15 +256,19 @@ function clearForm() {
 	$('#TenCanbo').val('');
 	$('#SoDt').val('');
 	$('#Mota').val('');
+
+	// Reset validation
+	if ($('#contactForm').data('validator')) {
+		$('#contactForm').data('validator').resetForm();
+	}
+	$('#contactForm').find('.text-danger').remove();
+	$('#contactForm').find('.is-invalid').removeClass('is-invalid');
 }
 
 function submitForm() {
 	if (!$('#contactForm').data('validator')) {
 		initFormValidate();
 	}
-
-	var a = $('#IdCanbo').val();
-	var b = $('#MaCanbo').val();
 
 	if ($('#contactForm').valid()) {
 		const formData = {
@@ -343,7 +281,7 @@ function submitForm() {
 			Trangthai: $('#Trangthai').val(),
 		};
 
-		if (formData.IdCanbo && formData.MaCanbo) {
+		if (formState.isEditing && formState.currentEditId) {
 			editWpCanbo(formData);
 		} else {
 			addWpCanbo(formData);

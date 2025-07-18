@@ -28,21 +28,17 @@ let allItems = [];
 let selectedItems = [];
 
 function loadData() {
-    let searchInput = $('#searchInput').val();
-    let pageable = {
-        pageNumber: 1,
-        pageSize: 999999,
-        sort: ''
+    let model = {
+        searchInput: $('#searchInput').val(),
+        TrangThai: 1
     };
 
     $.ajax({
         url: '/Group/LoadDataWpNhomCanbos',
         type: 'GET',
         data: $.param({
-            searchInput: searchInput,
-            'pageable.PageNumber': pageable.pageNumber,
-            'pageable.PageSize': pageable.pageSize,
-            'pageable.Sort': pageable.sort
+            'model.searchInput': model.searchInput,
+            'model.TrangThai': model.TrangThai
         }),
         success: function (response) {
             if (response.state === "success") {

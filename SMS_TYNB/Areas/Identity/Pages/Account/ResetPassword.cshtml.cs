@@ -15,6 +15,7 @@ using SMS_TYNB.Models.Identity;
 
 namespace SMS_TYNB.Areas.Identity.Pages.Account
 {
+    [Authorize]
     public class ResetPasswordModel : PageModel
     {
         private readonly UserManager<WpUsers> _userManager;

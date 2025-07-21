@@ -17,6 +17,7 @@ using SMS_TYNB.Models.Identity;
 
 namespace SMS_TYNB.Areas.Identity.Pages.Account
 {
+    [Authorize]
     public class ForgotPasswordModel : PageModel
     {
         private readonly UserManager<WpUsers> _userManager;

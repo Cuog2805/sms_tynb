@@ -29,10 +29,10 @@ public partial class SmsTynContext : DbContext
     public virtual DbSet<WpSms> WpSms { get; set; }
 
     public virtual DbSet<WpSmsCanbo> WpSmsCanbo { get; set; }
+    public virtual DbSet<SmsConfig> SmsConfig { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see https://go.microsoft.com/fwlink/?LinkId=723263.
-        => optionsBuilder.UseMySql("server=localhost;port=3306;database=sms_tyn;uid=root;pwd=280503;charset=utf8mb4", Microsoft.EntityFrameworkCore.ServerVersion.Parse("9.3.0-mysql"));
+        => optionsBuilder.UseMySql("server=10.30.29.14;port=3306;database=vnpt_sms_tunb;user=sms_tunb_usr;password=#$546Awrc!re56;Persist Security Info=False;Connect Timeout=300", ServerVersion.Parse("9.3.0-mysql"));
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

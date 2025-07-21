@@ -22,6 +22,7 @@ using SMS_TYNB.Models.Identity;
 
 namespace SMS_TYNB.Areas.Identity.Pages.Account
 {
+    [Authorize]
     public class RegisterModel : PageModel
     {
         private readonly SignInManager<WpUsers> _signInManager;
@@ -71,14 +72,21 @@ namespace SMS_TYNB.Areas.Identity.Pages.Account
         /// </summary>
         public class InputModel
         {
+            [Required]
+            [Display(Name = "FullName")]
+            public string FullName { get; set; }
+            
+            [Display(Name = "Email")]
+            public string Email { get; set; }
+            [Display(Name = "PhoneNumber")]
+            public string PhoneNumber { get; set; }
             /// <summary>
             ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
             ///     directly from your code. This API may change or be removed in future releases.
             /// </summary>
             [Required]
-            [EmailAddress]
-            [Display(Name = "Email")]
-            public string Email { get; set; }
+            [Display(Name = "UserName")]
+            public string UserName { get; set; }
 
             /// <summary>
             ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
@@ -113,10 +121,11 @@ namespace SMS_TYNB.Areas.Identity.Pages.Account
             ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
             if (ModelState.IsValid)
             {
-                var user = CreateUser();
-
-                await _userStore.SetUserNameAsync(user, Input.Email, CancellationToken.None);
-                await _emailStore.SetEmailAsync(user, Input.Email, CancellationToken.None);
+                // var user = CreateUser();
+                //
+                // await _userStore.SetUserNameAsync(user, Input.UserName, CancellationToken.None);
+                // await _emailStore.SetEmailAsync(user, Input.UserName, CancellationToken.None);
+                var user = new WpUsers { UserName = Input.UserName, FullName = Input.FullName, Email = Input.Email, PhoneNumber = Input.PhoneNumber, UserRole ="4fe2fb87-b228-4131-97b6-aad71d0ae3e9",  OrgId = 1, UserId = 1, State = 1 };
                 var result = await _userManager.CreateAsync(user, Input.Password);
 
                 if (result.Succeeded)
@@ -132,12 +141,12 @@ namespace SMS_TYNB.Areas.Identity.Pages.Account
                         values: new { area = "Identity", userId = userId, code = code, returnUrl = returnUrl },
                         protocol: Request.Scheme);
 
-                    await _emailSender.SendEmailAsync(Input.Email, "Confirm your email",
+                    await _emailSender.SendEmailAsync(Input.UserName, "Confirm your email",
                         $"Please confirm your account by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here</a>.");
 
                     if (_userManager.Options.SignIn.RequireConfirmedAccount)
                     {
-                        return RedirectToPage("RegisterConfirmation", new { email = Input.Email, returnUrl = returnUrl });
+                        return RedirectToPage("RegisterConfirmation", new { email = Input.UserName, returnUrl = returnUrl });
                     }
                     else
                     {

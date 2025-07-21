@@ -16,6 +16,7 @@ namespace SMS_TYNB.Common
 			services.AddScoped<WpSmsCanboRepository>();
 			services.AddScoped<WpFileRepository>();
 			services.AddScoped<WpUsersRepository>();
+			services.AddScoped<SmsConfigRepository>();
 			return services;
 		}
 
@@ -26,6 +27,7 @@ namespace SMS_TYNB.Common
 			services.AddScoped<IWpDanhmucService, WpDanhmucService>();
 			services.AddScoped<IWpSmsService, WpSmsService>();
 			services.AddScoped<IWpFileService, WpFileService>();
+			services.AddScoped<ISmsConfigService, SmsConfigService>();
 			return services;
 		}
 		public static IServiceCollection AddApplicationServices(this IServiceCollection services) 

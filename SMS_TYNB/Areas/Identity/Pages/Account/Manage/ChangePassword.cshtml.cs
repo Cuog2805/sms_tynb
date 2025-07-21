@@ -3,9 +3,11 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using SMS_TYNB.Models.Identity;
 using System.ComponentModel.DataAnnotations;
+using Microsoft.AspNetCore.Authorization;
 
 namespace SMS_TYNB.Areas.Identity.Pages.Account.Manage
 {
+	[Authorize]
 	public class ChangePasswordModel<TUser> : PageModel where TUser : class
 	{
 		private readonly UserManager<TUser> _userManager;

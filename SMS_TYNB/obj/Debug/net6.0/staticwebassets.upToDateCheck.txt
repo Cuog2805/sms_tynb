@@ -27,6 +27,7 @@ wwwroot\js\contract\contract.js
 wwwroot\js\group\group-assign.js
 wwwroot\js\group\group.js
 wwwroot\js\message\message-statistical.js
+wwwroot\js\message\message.js
 wwwroot\js\site.js
 wwwroot\lib\AlertifyJS\alertify.js
 wwwroot\lib\AlertifyJS\alertify.min.js
@@ -2205,16 +2206,6 @@ wwwroot\lib\jstree\themes\default\32px.png
 wwwroot\lib\jstree\themes\default\40px.png
 wwwroot\lib\jstree\themes\default\style.min.css
 wwwroot\lib\jstree\themes\default\throbber.gif
-wwwroot\upload\cuog2805@gmail.com\15072025\golden-autumn_levitan.jpg
-wwwroot\upload\cuog2805@gmail.com\15072025\ketquahoctap.pdf
-wwwroot\upload\cuog2805@gmail.com\15072025\Professional_Minimalist_CV_Resume.pdf
-wwwroot\upload\cuog2805@gmail.com\15072025\quiet-cloister_levitan.jpg
-wwwroot\upload\cuog2805@gmail.com\15072025\toeic.pdf
-wwwroot\upload\cuog2805@gmail.com\15072025\waves-arkhyp_kiundzhi.jpg
-wwwroot\upload\cuog2805@gmail.com\17072025\Building_Microservices_(Sam_Newman)_(z-lib.org).pdf
-wwwroot\upload\cuog2805@gmail.com\18072025\background_vnpt.jpg
-wwwroot\upload\cuog2805@gmail.com\18072025\Building_Microservices_(Sam_Newman)_(z-lib.org).pdf
-wwwroot\upload\cuog2805@gmail.com\18072025\logo_large_vnpt.png
-wwwroot\upload\cuog2805@gmail.com\18072025\Nguyen_Duc_Cuong_cccd.pdf
-wwwroot\upload\cuog2805@gmail.com\18072025\The_DevOps_Handbook-[Gene_Kim].pdf
-wwwroot\js\message\message.js
+wwwroot\upload\9fbff69f-dd37-49cf-8935-b81cadff297a\21072025\nangmai_danghiep.png
+wwwroot\upload\9fbff69f-dd37-49cf-8935-b81cadff297a\21072025\pexels-ahmetyuksek-29697166.jpg
+wwwroot\js\file\file.js

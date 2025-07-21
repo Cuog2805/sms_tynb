@@ -1,4 +1,19 @@
-﻿function CreatePagination(totalItems, currentPage, itemsPerPage, paginationId) {
+﻿$(document).ready(function () {
+	// Custom validator
+	$.validator.addMethod("filesize", function (value, element, param) {
+		if (element.files.length === 0) return true;
+		for (let i = 0; i < element.files.length; i++) {
+			if (element.files[i].size > param) {
+				return false;
+			}
+		}
+		return true;
+	}, function (param, element) {
+		return `Kích thước mỗi tệp không được vượt quá ${Math.round(param / 1024 / 1024)}MB`;
+	});
+});
+
+function CreatePagination(totalItems, currentPage, itemsPerPage, paginationId) {
 	const $pagination = paginationId;
 	$pagination.empty();
 

@@ -8,19 +8,6 @@
     $("#btnSendMessage").on("click", function () {
         sendMessage();
     })
-
-    // Custom validator
-    $.validator.addMethod("filesize", function (value, element, param) {
-        if (element.files.length === 0) return true;
-        for (let i = 0; i < element.files.length; i++) {
-            if (element.files[i].size > param) {
-                return false;
-            }
-        }
-        return true;
-    }, function (param, element) {
-        return `Kích thước mỗi tệp không được vượt quá ${Math.round(param / 1024 / 1024)}MB`;
-    });
 });
 
 
@@ -80,6 +67,13 @@ function sendMessage() {
             for (let i = 0; i < files.length; i++) {
                 formData.append("fileDinhKem", files[i]);
             }
+        }
+
+        // selectedFiles từ modal
+        if (selectedFiles && selectedFiles.length > 0) {
+            selectedFiles.forEach((file, index) => {
+                formData.append(`selectedFileIds[${index}]`, file.IdFile);
+            });
         }
 
         $.ajax({
@@ -340,7 +334,7 @@ function initFormValidate() {
                 required: "Vui lòng nhập nội dung tin nhắn"
             },
             'FileDinhKem': {
-                extension: "Chỉ chấp nhận .doc, .docx, .pdf",
+                extension: "Chỉ chấp nhận .doc, .docx, .pdf, .png, .jpg",
                 filesize: "Kích thước mỗi tệp không được vượt quá 5MB"
             }
         },

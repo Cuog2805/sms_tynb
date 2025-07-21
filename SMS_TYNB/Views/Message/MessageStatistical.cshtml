@@ -53,7 +53,7 @@
 			<thead class="table-primary text-white">
 				<tr>
 					<th class="text-center">STT</th>
-					<th>Nội dung</th>
+					<th width="30%">Nội dung</th>
 					<th>File đính kèm</th>
 					<th>Người gửi</th>
 					<th>Ngày gửi</th>
@@ -68,6 +68,36 @@
 	@{
 		await Html.RenderPartialAsync("_Pagination");
 	}
+</div>
+@* file upload modal *@
+<div class="modal fade" id="editFileModal" tabindex="-1" aria-labelledby="editFileModalLabel" aria-hidden="true">
+	<div class="modal-dialog modal-lg">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title" id="editFileModalLabel">
+					Tải lại file đính kèm
+				</h5>
+				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+			</div>
+			<div class="modal-body">
+				@using (Html.BeginForm("", "", FormMethod.Post, new { id = "uploadFileModalForm" }))
+				{
+					<div class="mb-3">
+						<label for="newFileInput" class="form-label">Chọn file mới</label>
+						<input type="file" class="form-control" name="newFileInput" id="newFileInput">
+					</div>
+				}
+            </div>
+            <div class="modal-footer">
+                <button type="button" id="uploadNewFileBtn" class="btn btn-primary">
+                    Upload
+                </button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                    Hủy
+                </button>
+            </div>
+        </div>
+    </div>
 </div>
 
 @section Scripts {

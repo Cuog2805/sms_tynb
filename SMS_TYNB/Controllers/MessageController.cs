@@ -29,11 +29,11 @@ namespace SMS_TYNB.Controllers
 			return View(formViewModel);
 		}
 		[HttpPost]
-		public async Task<JsonResult> SendMessage([FromForm] WpSmsViewModel model, List<IFormFile> fileDinhKem)
+		public async Task<JsonResult> SendMessage([FromForm] WpSmsViewModel model, List<IFormFile> fileDinhKem, List<long> selectedFileIds)
 		{
 			// gán người gửi
 			WpUsers? user = await _userManager.GetUserAsync(HttpContext.User);
-			if(user != null) await _wpSmsService.SendMessage(model, fileDinhKem, user);
+			if (user != null) await _wpSmsService.SendMessage(model, fileDinhKem, selectedFileIds, user);
 			return Json(new
 			{
 				state = "success",
@@ -54,6 +54,18 @@ namespace SMS_TYNB.Controllers
 				state = "success",
 				msg = "LoadData thành công!",
 				content = datas,
+			});
+		}
+
+		[HttpPost]
+		public async Task<IActionResult> MessageUpdateFile([FromForm]WpFile oldFile, IFormFile fileDinhKem)
+		{
+			await _wpSmsService.UpdateFile(oldFile, fileDinhKem);
+			return Json(new
+			{
+				state = "success",
+				msg = "Cập nhật file thành công!",
+				content = new {},
 			});
 		}
 

@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using SMS_TYNB.Common;
 using SMS_TYNB.Helper;
 using SMS_TYNB.Models.Identity;
@@ -12,8 +13,8 @@ namespace SMS_TYNB.Service.Implement
 	{
 		private readonly WpSmsRepository _wpSmsRepository;
 		private readonly WpSmsCanboRepository _wpSmsCanboRepository;
-		private readonly IWpFileService _wpFileService;
 		private readonly WpUsersRepository _wpUsersRepository;
+		private readonly IWpFileService _wpFileService;
 		public WpSmsService
 		(
 			WpSmsRepository wpSmsRepository,
@@ -27,7 +28,7 @@ namespace SMS_TYNB.Service.Implement
 			_wpFileService = wpFileService;
 			_wpUsersRepository = wpUsersRepository;
 		}
-		public async Task SendMessage(WpSmsViewModel model, List<IFormFile> fileDinhKem, WpUsers user)
+		public async Task SendMessage(WpSmsViewModel model, List<IFormFile> fileDinhKem, List<long> selectedFileIds, WpUsers user)
 		{
 			WpSms wpSms = new WpSms()
 			{
@@ -45,11 +46,13 @@ namespace SMS_TYNB.Service.Implement
 				{
 					if (file.Length > 0)
 					{
-						var wpFile = await FileUpload.SaveFile(file, user, "wp_sms", (int)wpSms.IdSms);
-						await _wpFileService.Create(wpFile);
+						await _wpFileService.SaveFile(file, user, "wp_sms", wpSms.IdSms);
 					}
 				}
 			}
+
+			//Xử lý files đã chọn từ selectedFileIds
+			await _wpFileService.CreateFromFileExisted(selectedFileIds, user, "wp_sms", wpSms.IdSms);
 
 			// Xử lý gửi tin nhắn cho cán bộ
 			foreach (var item in model.WpCanbos)
@@ -103,6 +106,11 @@ namespace SMS_TYNB.Service.Implement
 				Data = wpSmsViewModel,
 				Total = total,
 			};
+		}
+
+		public async Task UpdateFile(WpFile oldFile, IFormFile fileDinhKem)
+		{
+			await _wpFileService.UpdateContentFile(fileDinhKem, oldFile, new WpUsers());
 		}
 
 	}

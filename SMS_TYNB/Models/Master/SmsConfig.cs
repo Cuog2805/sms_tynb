@@ -1,7 +1,12 @@
-﻿namespace SMS_TYNB.Models.Master
+﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+
+namespace SMS_TYNB.Models.Master
 {
     public class SmsConfig
     {
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        [Key]
         public long Id { get; set; }
         public string LabelId { get; set; }
         public string ContractId { get; set; }

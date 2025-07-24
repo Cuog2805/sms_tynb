@@ -239,10 +239,12 @@ function uploadNewFile() {
             contentType: false,
             success: function (res) {
                 if (res.state === 'success') {
+                    alertify.set('notifier', 'position', 'top-center');
                     alertify.success(res.msg);
                     $('#newFileInput').val('');
                     $('#editFileModal').modal('hide');
                 } else {
+                    alertify.set('notifier', 'position', 'top-center');
                     alertify.error(res.msg);
                 }
             },

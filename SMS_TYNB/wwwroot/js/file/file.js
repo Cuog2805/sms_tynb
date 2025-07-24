@@ -22,7 +22,7 @@
 
 let currentFilePagination = {
 	pageNumber: 1,
-	pageSize: 12
+	pageSize: 10
 };
 
 let paginationFileData = {
@@ -63,7 +63,8 @@ function LoadFileInput() {
 		},
 		error: function (xhr) {
 			console.log("xhr", xhr);
-			alert("Lỗi khi load dữ liệu");
+			alertify.set('notifier', 'position', 'top-center');
+			alertify.error('Đã có lỗi xảy ra');
 		}
 	});
 }
@@ -138,6 +139,12 @@ function displaySelectedFiles() {
         });
     }
     filesList.html(html);
+}
+
+function clearSelectedFiles() {
+	$('#selectedFilesList').empty();
+	$("#FileDinhKem").val('');
+	selectedFiles = [];
 }
 
 function handleItemSelect(checkbox) {

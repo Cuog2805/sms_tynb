@@ -69,7 +69,6 @@ function LoadFileInput() {
 		},
 		error: function (xhr) {
 			console.log("xhr", xhr);
-			alertify.set('notifier', 'position', 'top-center');
 			alertify.error('Đã có lỗi xảy ra');
 		}
 	});

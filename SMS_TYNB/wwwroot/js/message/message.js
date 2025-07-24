@@ -89,19 +89,16 @@ function sendMessage() {
             contentType: false,
             success: function (res) {
                 if (res.state === 'success') {
-                    alertify.set('notifier', 'position', 'top-center');
                     alertify.success(res.msg);
                     $("#messageForm")[0].reset();
                     selectedItems = [];
                 } else {
-                    alertify.set('notifier', 'position', 'top-center');
                     alertify.error(res.msg);
                 }
             },
             error: function (xhr, error) {
                 console.log("xhr", xhr);
                 console.log("error", error);
-                alertify.set('notifier', 'position', 'top-center');
                 alertify.error("Lỗi khi gửi tin nhắn");
             }
         });

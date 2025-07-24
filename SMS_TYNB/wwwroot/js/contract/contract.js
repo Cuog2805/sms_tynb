@@ -82,7 +82,7 @@ function loadData() {
 			}
 		},
 		error: function () {
-			alert("Lỗi khi load dữ liệu");
+			alertify.error('Có lỗi xảy ra khi load dữ liệu');
 		}
 	});
 }
@@ -161,7 +161,6 @@ function addWpCanbo(formData) {
 		dataType: "json",
 		success: function (response) {
 			if (response.state === 'success') {
-				alertify.set('notifier', 'position', 'top-right');
 				alertify.success(response.msg || 'Thêm thành công');
 
 				// Reset form state
@@ -171,12 +170,10 @@ function addWpCanbo(formData) {
 				loadData();
 				$('#data-form').modal('hide');
 			} else {
-				alertify.set('notifier', 'position', 'top-center');
 				alertify.error(response.msg || 'Đã có lỗi xảy ra');
 			}
 		},
 		error: function () {
-			alertify.set('notifier', 'position', 'top-center');
 			alertify.error('Có lỗi xảy ra khi thêm dữ liệu');
 		}
 	});
@@ -190,7 +187,6 @@ function editWpCanbo(formData) {
 		dataType: "json",
 		success: function (response) {
 			if (response.state === 'success') {
-				alertify.set('notifier', 'position', 'top-center');
 				alertify.success(response.msg || 'Cập nhật thành công');
 
 				// Reset form state
@@ -200,12 +196,10 @@ function editWpCanbo(formData) {
 				loadData();
 				$('#data-form').modal('hide');
 			} else {
-				alertify.set('notifier', 'position', 'top-center');
 				alertify.error(response.msg || 'Đã có lỗi xảy ra');
 			}
 		},
 		error: function () {
-			alertify.set('notifier', 'position', 'top-center');
 			alertify.error('Có lỗi xảy ra khi cập nhật dữ liệu');
 		}
 	});

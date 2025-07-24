@@ -1,10 +1,15 @@
 ﻿$(document).ready(function () {
     loadData();
-
+    let debounceTimer;
     $("#searchInput").on("input", function () {
-        currentPagination.pageNumber = 1;
-        loadData();
-    })
+        clearTimeout(debounceTimer);
+
+        debounceTimer = setTimeout(function () {
+            currentPagination.pageNumber = 1;
+            loadData();
+        }, 300);
+    });
+
     $("#pageSize").on("change", function () {
         currentPagination.pageNumber = 1;
         currentPagination.pageSize = parseInt($(this).val());
@@ -62,8 +67,8 @@ function loadData() {
                 CreatePaginationMinimal(paginationData.total, currentPagination.pageNumber, currentPagination.pageSize, $("#pagination"));
             }
         },
-        error: function () {
-            alert("Lỗi khi load dữ liệu");
+        error: function (xhr) {
+            alertify.error('Đã có lỗi xảy ra');
             console.log("XHR:", xhr);
         }
     });
@@ -86,7 +91,6 @@ function loadDetail(id) {
             displaySelectedItems();
         },
         error: function (xhr, status, error) {
-            alertify.set('notifier', 'position', 'top-center');
             alertify.error('Đã có lỗi xảy ra');
             console.log("XHR:", xhr);
         }
@@ -116,15 +120,12 @@ function submitGroupAssign() {
         dataType: "json",
         success: function (response) {
             if (response.state === 'success') {
-                alertify.set('notifier', 'position', 'top-center');
                 alertify.success(response.msg || 'Phân nhóm thành công');
             } else {
-                alertify.set('notifier', 'position', 'top-center');
                 alertify.error(response.msg || 'Đã có lỗi xảy ra');
             }
         },
         error: function (xhr, status, error) {
-            alertify.set('notifier', 'position', 'top-center');
             alertify.error('Đã có lỗi xảy ra');
             console.log("XHR:", xhr);
         },

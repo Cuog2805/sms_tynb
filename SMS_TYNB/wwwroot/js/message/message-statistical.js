@@ -157,7 +157,7 @@ function displayItems(items, pageNumber, pageSize) {
     } else {
         tableHtml = `
             <tr>
-                <td colspan="7" class="text-center text-muted">
+                <td colspan="100%" class="text-center text-muted">
                     <i class="fas fa-info-circle"></i>
                     Không có dữ liệu
                 </td>
@@ -208,13 +208,11 @@ function editFile(IdFile, TenFile, DuoiFile, FileUrl, SmsId) {
 }
 
 function uploadNewFile() {
-    if (!$('#uploadFileModalForm').data('validator')) {
-        initFormValidate();
+    if (!$('#updateFileModalForm').data('validator')) {
+        initUpdateFileModalFormValidate();
     }
 
-    if ($('#uploadFileModalForm').valid()) {
-
-
+    if ($('#updateFileModalForm').valid()) {
         const formData = new FormData();
         //model WpFile - thông tin file ban đầu
         const oldFile = {
@@ -276,12 +274,15 @@ function initFormValidate() {
         errorClass: "text-danger",
         errorElement: "div",
     });
+}
 
-    $('#uploadFileModalForm').validate({
+function initUpdateFileModalFormValidate() {
+    $('#updateFileModalForm').validate({
         rules: {
             'newFileInput': {
                 required: true,
                 extension: currentEditingFile.DuoiFile.slice(1),
+                //extension: "doc|docx|pdf|png|jpg",
                 filesize: 5 * 1024 * 1024
             },
         },

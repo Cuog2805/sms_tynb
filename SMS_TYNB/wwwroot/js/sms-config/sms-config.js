@@ -84,7 +84,7 @@ function loadData() {
 		},
 		error: function (xhr) {
 			console.log(xhr);
-			alert("Lỗi khi load dữ liệu");
+			alertify.error('Đã có lỗi xảy ra');
 		}
 	});
 }
@@ -155,7 +155,7 @@ function loadDetail(id) {
 				$("#data-form-header").html("Cập nhật sms config");
 			},
 			error: function () {
-				alert("Lỗi khi load thông tin chi tiết");
+				alertify.error('Đã có lỗi xảy ra');
 			}
 		});
 	}
@@ -169,7 +169,6 @@ function addSmsConfig(formData) {
 		dataType: "json",
 		success: function (response) {
 			if (response.state === 'success') {
-				alertify.set('notifier', 'position', 'top-right');
 				alertify.success(response.msg || 'Thêm thành công');
 
 				// Reset form state
@@ -183,7 +182,7 @@ function addSmsConfig(formData) {
 			}
 		},
 		error: function () {
-			alertify.error('Có lỗi xảy ra khi thêm dữ liệu');
+			alertify.error('Đã có lỗi xảy ra');
 		}
 	});
 }
@@ -196,7 +195,6 @@ function editSmsConfig(formData) {
 		dataType: "json",
 		success: function (response) {
 			if (response.state === 'success') {
-				alertify.set('notifier', 'position', 'top-right');
 				alertify.success(response.msg || 'Cập nhật thành công');
 
 				// Reset form state

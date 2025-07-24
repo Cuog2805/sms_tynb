@@ -11,10 +11,16 @@
 	}, function (param, element) {
 		return `Kích thước mỗi tệp không được vượt quá ${Math.round(param / 1024 / 1024)}MB`;
 	});
+
+	// set alertify
+	alertify.set('notifier', 'position', 'bottom-right');
+	alertify.set('notifier', 'delay', 3);
+	alertify.set('notifier', 'closeButton', true);
+	alertify.set('notifier', 'transition', 'slide');
 });
 
-function CreatePagination(totalItems, currentPage, itemsPerPage, paginationId) {
-	const $pagination = paginationId;
+function CreatePagination(totalItems, currentPage, itemsPerPage, pagination) {
+	const $pagination = pagination;
 	$pagination.empty();
 
 	if (totalItems === 0) {
@@ -119,8 +125,9 @@ function CreatePagination(totalItems, currentPage, itemsPerPage, paginationId) {
 	}
 }
 
-function CreatePaginationMinimal(totalItems, currentPage, itemsPerPage, paginationId) {
-	const $pagination = paginationId;
+function CreatePaginationMinimal(totalItems, currentPage, itemsPerPage, pagination, onPageChange) {
+	const $pagination = pagination;
+	const paginationId = $pagination.attr("id");
 	$pagination.empty();
 
 	if (totalItems === 0) {
@@ -131,12 +138,18 @@ function CreatePaginationMinimal(totalItems, currentPage, itemsPerPage, paginati
 
 	// Nút Previous
 	const $prevLi = $("<li>").addClass("page-item " + (currentPage === 1 ? "disabled" : ""));
-	const $prevLink = $("<a>")
+	const $prevButton = $("<button>")
 		.addClass("page-link")
-		.attr("href", "#")
+		.attr("type", "button")
 		.attr("aria-label", "Previous")
-		.append("<").on("click", () => loadPage(currentPage - 1));;
-	$prevLi.append($prevLink);
+		.prop("disabled", currentPage === 1)
+		.append("<")
+		.on("click", function () {
+			if (currentPage > 1) {
+				onPageChange(currentPage - 1);
+			}
+		});
+	$prevLi.append($prevButton);
 	$pagination.append($prevLi);
 
 	// Hiển thị trang hiện tại và tổng số trang
@@ -148,19 +161,25 @@ function CreatePaginationMinimal(totalItems, currentPage, itemsPerPage, paginati
 	$pagination.append($pageInfo);
 
 	const $nextLi = $("<li>").addClass("page-item " + (currentPage === totalPages ? "disabled" : ""));
-	const $nextLink = $("<a>")
+	const $nextButton = $("<button>")
 		.addClass("page-link")
-		.attr("href", "#")
+		.attr("type", "button")
 		.attr("aria-label", "Next")
-		.append(">").on("click", () => loadPage(currentPage + 1));
-	$nextLi.append($nextLink);
+		.prop("disabled", currentPage === totalPages)
+		.append(">")
+		.on("click", function () {
+			if (currentPage < totalPages) {
+				onPageChange(currentPage + 1);
+			}
+		});
+	$nextLi.append($nextButton);
 	$pagination.append($nextLi);
 
 	// Thông tin số lượng bản ghi
-	if ($("#pagination-info").length > 0) {
+	if ($("#pagination-info-" + paginationId).length > 0) {
 		const startItem = (currentPage - 1) * itemsPerPage + 1;
 		const endItem = Math.min(currentPage * itemsPerPage, totalItems);
-		$("#pagination-info").text(`Hiển thị: ${startItem}-${endItem} / ${totalItems} bản ghi`);
+		$("#pagination-info-" + paginationId).text(`Hiển thị: ${startItem}-${endItem} / ${totalItems} bản ghi`);
 	}
 }
 

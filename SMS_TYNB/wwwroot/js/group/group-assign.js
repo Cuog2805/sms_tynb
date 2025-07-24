@@ -1,14 +1,29 @@
 ﻿$(document).ready(function () {
     loadData();
-
+    let debounceTimer;
     $("#searchInput").on("input", function () {
-        currentPagination.pageNumber = 1;
-        loadData();
-    })
-    $("#pageSize").on("change", function () {
+        clearTimeout(debounceTimer);
+
+        debounceTimer = setTimeout(function () {
+            currentPagination.pageNumber = 1;
+            loadData();
+        }, 300);
+    });
+
+    //phân trang bảng dữ liệu
+    const groupCheckBoxTablePageSizeId = $("#groupCheckBoxTablePagination").attr("id");
+    $("#pageSize-" + groupCheckBoxTablePageSizeId).on("change", function () {
         currentPagination.pageNumber = 1;
         currentPagination.pageSize = parseInt($(this).val());
         loadData();
+    })
+
+    //phân trang bảng selected
+    const groupAssignTablePaginationId = $("#groupAssignTablePagination").attr("id");
+    $("#pageSize-" + groupAssignTablePaginationId).on("change", function () {
+        selectedItemsPagination.pageNumber = 1;
+        selectedItemsPagination.pageSize = parseInt($(this).val());
+        displaySelectedItems();
     })
 
     $("#IdNhom").on("change", function () {
@@ -17,6 +32,12 @@
 });
 
 let currentPagination = {
+    pageNumber: 1,
+    pageSize: 10
+};
+
+// pagination cho selectedItems
+let selectedItemsPagination = {
     pageNumber: 1,
     pageSize: 10
 };
@@ -59,11 +80,11 @@ function loadData() {
                 currentPagination.pageSize = pageable.pageSize;
 
                 displayItems(paginationData.data, currentPagination.pageNumber, currentPagination.pageSize);
-                CreatePaginationMinimal(paginationData.total, currentPagination.pageNumber, currentPagination.pageSize, $("#pagination"));
+                CreatePaginationMinimal(paginationData.total, currentPagination.pageNumber, currentPagination.pageSize, $("#groupCheckBoxTablePagination"), loadPage);
             }
         },
-        error: function () {
-            alert("Lỗi khi load dữ liệu");
+        error: function (xhr) {
+            alertify.error('Đã có lỗi xảy ra');
             console.log("XHR:", xhr);
         }
     });
@@ -74,6 +95,11 @@ function loadPage(pageNumber) {
     loadData();
 }
 
+function loadSelectedItemsPage(pageNumber) {
+    selectedItemsPagination.pageNumber = pageNumber;
+    displaySelectedItems();
+}
+
 function loadDetail(id) {
     $.ajax({
         url: '/Group/LoadDetailWpNhomCanbos',
@@ -82,10 +108,14 @@ function loadDetail(id) {
         success: function (response) {
             selectedItems = response.data.WpCanbos;
 
+            // Reset về trang đầu khi load detail mới
+            selectedItemsPagination.pageNumber = 1;
+
             loadData()
             displaySelectedItems();
         },
         error: function (xhr, status, error) {
+            alertify.error('Đã có lỗi xảy ra');
             console.log("XHR:", xhr);
         }
     });
@@ -114,77 +144,103 @@ function submitGroupAssign() {
         dataType: "json",
         success: function (response) {
             if (response.state === 'success') {
-                alertify.set('notifier', 'position', 'top-right');
                 alertify.success(response.msg || 'Phân nhóm thành công');
             } else {
                 alertify.error(response.msg || 'Đã có lỗi xảy ra');
             }
         },
         error: function (xhr, status, error) {
+            alertify.error('Đã có lỗi xảy ra');
             console.log("XHR:", xhr);
         },
     });
 }
 
 function displayItems(items) {
-    $("#groupCheckBoxList").empty();
+    $("#groupCheckBoxTableBody").empty();
     if (items && items.length > 0) {
         items.forEach((item, index) => {
             const isSelected = selectedItems.some(selected => selected.IdCanbo === item.IdCanbo);
-            const row = $("<div>").addClass("checkbox-item").append(
-                $("<div>").addClass("form-check").append(
-                    $("<input>")
-                        .addClass("form-check-input")
-                        .attr("type", "checkbox")
-                        .attr("id", `check-${item.IdCanbo}-${item.MaCanbo}`)
-                        .prop("checked", isSelected)
-                        .data("item", item)
-                        .on("change", function () {
-                            handleItemSelect($(this));
-                        }),
-                    $("<label>")
-                        .addClass("form-check-label")
-                        .attr("for", `check-${item.IdCanbo}-${item.MaCanbo}`)
-                        .html(`${item.TenCanbo} - ${item.SoDt} - ${item.Mota}`)
-                )
-            );
-            $("#groupCheckBoxList").append(row);
+            const row = $("<tr>").css("cursor", "pointer")
+                .append(
+                    $("<td>").append(
+                        $("<input>")
+                            .css("cursor", "pointer")
+                            .addClass("form-check-input")
+                            .attr("type", "checkbox")
+                            .attr("id", `check-${item.IdCanbo}-${item.MaCanbo}`)
+                            .prop("checked", isSelected)
+                            .data("item", item)
+                            .on("change", function (e) {
+                                e.stopPropagation();
+                                handleItemSelect($(this));
+                            })
+                            .on("click", function (e) {
+                                e.stopPropagation();
+                            })
+                    ),
+                    $("<td>").text(item.TenCanbo),
+                    $("<td>").text(item.SoDt),
+                    $("<td>").text(item.Mota)
+                ).on("click", function () {
+                    const checkbox = $(this).find(".form-check-input");
+                    const isChecked = checkbox.prop("checked");
+                    checkbox.prop("checked", !isChecked).trigger("change");
+                });
+
+            $("#groupCheckBoxTableBody").append(row);
         });
     } else {
-        $("#groupCheckBoxList").append($("<div>").append("Không có dữ liệu"));
+        $("#groupCheckBoxTableBody").append($("<div>").append("Không có dữ liệu"));
     }
 }
 
 function displaySelectedItems() {
-    $("#groupAssignList").empty();
+    $("#groupAssignTableBody").empty();
+
     if (selectedItems && selectedItems.length > 0) {
-        selectedItems.forEach((item, index) => {
-            const row = $("<div>").addClass("checkbox-item selected-item").append(
-                $("<div>").addClass("form-check").append(
-                    $("<button>")
-                        .addClass("btn btn-sm btn-outline-danger me-2")
-                        .html("×")
-                        .attr("title", "Bỏ chọn")
-                        .on("click", function () {
-                            removeSelectedItem(item);
-                        }),
-                    $("<label>")
-                        .addClass("form-check-label")
-                        .attr("for", `selected-${item.IdCanbo}-${item.MaCanbo}`)
-                        .html(`${item.TenCanbo} - ${item.SoDt} - ${item.Mota}`),
-                )
-            );
-            $("#groupAssignList").append(row);
+        const startIndex = (selectedItemsPagination.pageNumber - 1) * selectedItemsPagination.pageSize;
+        const endIndex = startIndex + selectedItemsPagination.pageSize;
+        const currentPageItems = selectedItems.slice(startIndex, endIndex);
+
+        currentPageItems.forEach((item, index) => {
+            const row = $("<tr>").css("cursor", "pointer")
+                .append(
+                    $("<td>").append(
+                        $("<button>")
+                            .addClass("btn btn-sm btn-outline-danger me-2")
+                            .html("×")
+                            .attr("title", "Bỏ chọn")
+                            .on("click", function () {
+                                removeSelectedItem(item);
+                            })
+                    ),
+                    $("<td>").text(item.TenCanbo),
+                    $("<td>").text(item.SoDt),
+                    $("<td>").text(item.Mota)
+                );
+            $("#groupAssignTableBody").append(row);
         });
+
 
         // Thêm thông tin số người chọn
         $("#groupAssignTotal").text(`${selectedItems.length}`);
     } else {
-        $("#groupAssignList").append($("<div>").addClass("text-muted").text("Chưa có ai được chọn"));
+        $("#groupAssignTableBody").append($("<tr>").append($("<td>").attr("colspan", "100%").text("Chưa có ai được chọn")));
 
+        $("#groupAssignTablePagination").empty();
         // Thêm thông tin số người chọn
         $("#groupAssignTotal").text(`${selectedItems.length}`);
     }
+
+    // tạo phân trang cho selected 
+    CreatePaginationMinimal(
+        selectedItems.length,
+        selectedItemsPagination.pageNumber,
+        selectedItemsPagination.pageSize,
+        $("#groupAssignTablePagination"),
+        loadSelectedItemsPage
+    );
 }
 
 function handleItemSelect(checkbox) {
@@ -199,6 +255,12 @@ function handleItemSelect(checkbox) {
     } else {
         // Bỏ khỏi danh sách đã chọn
         selectedItems = selectedItems.filter(selected => selected.IdCanbo !== item.IdCanbo);
+    }
+
+    // Kiểm tra và điều chỉnh trang hiện tại nếu cần
+    const maxPage = Math.ceil(selectedItems.length / selectedItemsPagination.pageSize);
+    if (selectedItemsPagination.pageNumber > maxPage && maxPage > 0) {
+        selectedItemsPagination.pageNumber = maxPage;
     }
 
     displaySelectedItems();
@@ -220,12 +282,19 @@ function removeSelectedItem(item) {
     // Cập nhật checkbox bên trái
     $(`#check-${item.IdCanbo}-${item.MaCanbo}`).prop("checked", false);
 
+    const maxPage = Math.ceil(selectedItems.length / selectedItemsPagination.pageSize);
+    if (selectedItemsPagination.pageNumber > maxPage && maxPage > 0) {
+        selectedItemsPagination.pageNumber = maxPage;
+    } else if (selectedItems.length === 0) {
+        selectedItemsPagination.pageNumber = 1;
+    }
+
     displaySelectedItems();
 }
 
 function selectAll() {
     const visibleItems = [];
-    $("#groupCheckBoxList .form-check-input").each(function () {
+    $("#groupCheckBoxTableBody .form-check-input").each(function () {
         const item = $(this).data("item");
         if (item) {
             visibleItems.push(item);
@@ -245,6 +314,7 @@ function selectAll() {
 
 function unselectAllSelected() {
     selectedItems = [];
-    $("#groupCheckBoxList .form-check-input").prop("checked", false);
+    selectedItemsPagination.pageNumber = 1; // Reset về trang đầu
+    $("#groupCheckBoxTableBody .form-check-input").prop("checked", false);
     displaySelectedItems();
 }

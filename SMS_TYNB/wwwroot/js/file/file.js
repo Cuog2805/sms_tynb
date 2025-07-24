@@ -1,8 +1,13 @@
 ﻿$(document).ready(function () {
 	// xử lý file upload modal
+	let debounceTimer;
 	$("#searchInput").on("input", function () {
-		currentPagination.pageNumber = 1;
-		loadData();
+		clearTimeout(debounceTimer);
+
+		debounceTimer = setTimeout(function () {
+			currentPagination.pageNumber = 1;
+			loadData();
+		}, 300);
 	});
 
 	$('#inputFileModal').on('shown.bs.modal', function () {

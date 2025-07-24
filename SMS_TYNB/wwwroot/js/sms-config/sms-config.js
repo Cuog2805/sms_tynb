@@ -10,6 +10,7 @@
 			loadData();
 		}, 300);
 	});
+
 	$("#pageSize").on("change", function () {
 		currentPagination.pageNumber = 1;
 		currentPagination.pageSize = parseInt($(this).val());
@@ -57,11 +58,11 @@ function loadData() {
 	let pageable = {
 		pageNumber: currentPagination.pageNumber,
 		pageSize: currentPagination.pageSize,
-		sort: 'TenCanbo'
+		sort: ''
 	};
 
 	$.ajax({
-		url: '/Contact/LoadData',
+		url: '/SmsConfig/LoadData',
 		type: 'GET',
 		data: $.param({
 			'model.searchInput': model.searchInput,
@@ -81,7 +82,8 @@ function loadData() {
 				CreatePagination(paginationData.total, currentPagination.pageNumber, currentPagination.pageSize, $("#pagination"));
 			}
 		},
-		error: function () {
+		error: function (xhr) {
+			console.log(xhr);
 			alert("Lỗi khi load dữ liệu");
 		}
 	});
@@ -101,18 +103,26 @@ function displayItems(items, pageNumber, pageSize) {
 			tableHtml += `
                 <tr>
                     <td class="text-center">${startIndex + index + 1}</td>
-                    <td>${item.TenCanbo}</td>
-                    <td>${item.SoDt}</td>
-                    <td>${item.Gioitinh}</td>
-                    <td>${item.Mota || ''}</td>
-					<td>${item.Trangthai}</td>
+					<td>${item.LabelId}</td>
+					<td>${item.ContractId}</td>
+					<td>${item.TemplateId}</td>
+					<td>${item.IsTelCoSub}</td>
+					<td>${item.AgentId}</td>
+					<td>${item.ApiUser}</td>
+					<td>${item.ApiPass}</td>
+					<td>${item.UserName}</td>
+					<td>${item.DataCoding}</td>
+					<td>${item.SaleOrderId}</td>
+					<td>${item.PakageId}</td>
+					<td>${item.UrlSms}</td>
+					<td>${item.IssEnSms}</td>
                     <td class="text-center">
                         <button 
                             class="btn btn-sm btn-primary" 
                             type="button"  
                             data-bs-toggle="modal" 
                             data-bs-target="#data-form" 
-                            onclick="startEdit(${item.IdCanbo})"
+                            onclick="startEdit(${item.Id})"
                             title="Sửa">
                             <i class="bi bi-pencil-square"></i>
                         </button>
@@ -123,26 +133,26 @@ function displayItems(items, pageNumber, pageSize) {
 	} else {
 		tableHtml = `
             <tr>
-                <td colspan="6" class="text-center text-muted">
+                <td colspan="100%" class="text-center text-muted">
                     Không có dữ liệu
                 </td>
             </tr>
         `;
 	}
-	$('#contactTableBody').html(tableHtml);
+	$('#smsConfigTableBody').html(tableHtml);
 }
 
 function loadDetail(id) {
 	if (id) {
 		$.ajax({
-			url: '/Contact/LoadDetail',
+			url: '/SmsConfig/LoadDetail',
 			type: 'GET',
 			data: { id: id },
 			success: function (response) {
 				$('#data-form').html(response);
 				formState.isEditing = true;
 				formState.currentEditId = id;
-				$("#data-form-header").html("Cập nhật cán bộ");
+				$("#data-form-header").html("Cập nhật sms config");
 			},
 			error: function () {
 				alert("Lỗi khi load thông tin chi tiết");
@@ -151,9 +161,9 @@ function loadDetail(id) {
 	}
 }
 
-function addWpCanbo(formData) {
+function addSmsConfig(formData) {
 	$.ajax({
-		url: '/Contact/Create',
+		url: '/SmsConfig/Create',
 		type: 'POST',
 		data: formData,
 		dataType: "json",
@@ -178,9 +188,9 @@ function addWpCanbo(formData) {
 	});
 }
 
-function editWpCanbo(formData) {
+function editSmsConfig(formData) {
 	$.ajax({
-		url: '/Contact/Update',
+		url: '/SmsConfig/Update',
 		type: 'POST',
 		data: formData,
 		dataType: "json",
@@ -207,38 +217,87 @@ function editWpCanbo(formData) {
 
 // form action
 function initFormValidate() {
-	$('#contactForm').validate({
+	$('#smsConfigForm').validate({
 		rules: {
-			'Data.TenCanbo': {
+			LabelId: {
 				required: true
 			},
-			'Data.Gioitinh': {
+			ContractId: {
 				required: true
 			},
-			'Data.SoDt': {
+			TemplateId: {
 				required: true
 			},
-			'Data.Trangthai': {
+			IsTelCoSub: {
+				required: true
+			},
+			AgentId: {
+				required: true
+			},
+			ApiUser: {
+				required: true
+			},
+			ApiPass: {
+				required: true
+			},
+			UserName: {
+				required: true
+			},
+			DataCoding: {
+				required: true
+			},
+			SaleOrderId: {
+				required: true
+			},
+			PakageId: {
+				required: true
+			},
+			UrlSms: {
 				required: true
 			},
 		},
 		messages: {
-			'Data.TenCanbo': {
-				required: "Vui lòng nhập tên cán bộ"
+			LabelId: {
+				required: "LabelId không được để trống!"
 			},
-			'Data.Gioitinh': {
-				required: "Vui lòng chọn giới tính"
+			ContractId: {
+				required: "ContractId không được để trống!"
 			},
-			'Data.SoDt': {
-				required: "Vui lòng nhập số điện thoại"
+			TemplateId: {
+				required: "TemplateId không được để trống!"
 			},
-			'Data.Trangthai': {
-				required: "Vui lòng chọn trạng thái"
-			}
+			IsTelCoSub: {
+				required: "IsTelCoSub không được để trống!"
+			},
+			AgentId: {
+				required: "AgentId không được để trống!"
+			},
+			ApiUser: {
+				required: "ApiUser không được để trống!"
+			},
+			ApiPass: {
+				required: "ApiPass không được để trống!"
+			},
+			UserName: {
+				required: "UserName không được để trống!"
+			},
+			DataCoding: {
+				required: "DataCoding không được để trống!"
+			},
+			SaleOrderId: {
+				required: "SaleOrderId không được để trống!"
+			},
+			PakageId: {
+				required: "PakageId không được để trống!"
+			},
+			UrlSms: {
+				required: "UrlSms không được để trống!"
+			},
 		},
 		errorClass: "text-danger",
-		errorElement: "div",
+		errorElement: "div"
 	});
+
 }
 
 function startEdit(id) {
@@ -251,46 +310,61 @@ function beforeAdd() {
 	formState.isEditing = false;
 	formState.currentEditId = null;
 	clearForm();
-	$("#data-form-header").html("Thêm cán bộ");
+	$("#data-form-header").html("Thêm sms config");
 
-	$('#TenCanbo').focus();
+	$('#LabelId').focus();
 }
 
 function clearForm() {
-	$('#IdCanbo').val('');
-	$('#MaCanbo').val('');
-	$('#TenCanbo').val('');
-	$('#SoDt').val('');
-	$('#Mota').val('');
+	$('#LabelId').val('');
+	$('#ContractId').val('');
+	$('#TemplateId').val('');
+	$('#IsTelCoSub').val('');
+	$('#AgentId').val('');
+	$('#ApiUser').val('');
+	$('#ApiPass').val('');
+	$('#UserName').val('');
+	$('#DataCoding').val('');
+	$('#SaleOrderId').val('');
+	$('#PakageId').val('');
+	$('#UrlSms').val('');
+	$('#IssEnSms').prop('checked', false);
 
 	// Reset validation
-	if ($('#contactForm').data('validator')) {
-		$('#contactForm').data('validator').resetForm();
+	if ($('#smsConfigForm').data('validator')) {
+		$('#smsConfigForm').data('validator').resetForm();
 	}
-	$('#contactForm').find('.text-danger').remove();
-	$('#contactForm').find('.is-invalid').removeClass('is-invalid');
+	$('#smsConfigForm').find('.text-danger').remove();
+	$('#smsConfigForm').find('.is-invalid').removeClass('is-invalid');
 }
 
 function submitForm() {
-	if (!$('#contactForm').data('validator')) {
+	if (!$('#smsConfigForm').data('validator')) {
 		initFormValidate();
 	}
 
-	if ($('#contactForm').valid()) {
+	if ($('#smsConfigForm').valid()) {
 		const formData = {
-			IdCanbo: $('#IdCanbo').val(),
-			MaCanbo: $('#MaCanbo').val(),
-			TenCanbo: $('#TenCanbo').val(),
-			Gioitinh: $('#Gioitinh').val(),
-			SoDt: $('#SoDt').val(),
-			Mota: $('#Mota').val(),
-			Trangthai: $('#Trangthai').val(),
+			Id: $("#Id").val(),
+			LabelId: $('#LabelId').val(),
+			ContractId: $('#ContractId').val(),
+			TemplateId: $('#TemplateId').val(),
+			IsTelCoSub: $('#IsTelCoSub').val(),
+			AgentId: $('#AgentId').val(),
+			ApiUser: $('#ApiUser').val(),
+			ApiPass: $('#ApiPass').val(),
+			UserName: $('#UserName').val(),
+			DataCoding: $('#DataCoding').val(),
+			SaleOrderId: $('#SaleOrderId').val(),
+			PakageId: $('#PakageId').val(),
+			UrlSms: $('#UrlSms').val(),
+			IssEnSms: $('#IssEnSms').prop('checked')
 		};
 
 		if (formState.isEditing && formState.currentEditId) {
-			editWpCanbo(formData);
+			editSmsConfig(formData);
 		} else {
-			addWpCanbo(formData);
+			addSmsConfig(formData);
 		}
 	}
 }

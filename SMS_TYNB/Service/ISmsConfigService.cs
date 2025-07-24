@@ -1,4 +1,6 @@
-﻿using SMS_TYNB.Models.Master;
+﻿using SMS_TYNB.Common;
+using SMS_TYNB.Models.Master;
+using SMS_TYNB.ViewModel;
 
 namespace SMS_TYNB.Service
 {
@@ -9,5 +11,7 @@ namespace SMS_TYNB.Service
         Task<SmsConfig> Create(SmsConfig obj);
         Task<SmsConfig?> GetById(int id);
         Task<List<SmsConfig>> GetAll();
-    }
+        Task<PageResult<SmsConfig>> SearchSmsConfig(SmsConfigSearchViewModel model, Pageable pageable);
+
+	}
 }

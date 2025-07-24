@@ -1,9 +1,15 @@
 ﻿$(document).ready(function () {
     loadData();
+
+    let debounceTimer;
     $("#searchInput").on("input", function () {
-        currentPagination.pageNumber = 1;
-        loadData();
-    })
+        clearTimeout(debounceTimer);
+
+        debounceTimer = setTimeout(function () {
+            currentPagination.pageNumber = 1;
+            loadData();
+        }, 300);
+    });
     $("#pageSize").on("change", function () {
         currentPagination.pageNumber = 1;
         currentPagination.pageSize = parseInt($(this).val());

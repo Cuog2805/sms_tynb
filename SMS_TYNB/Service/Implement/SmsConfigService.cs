@@ -1,5 +1,8 @@
-﻿using SMS_TYNB.Models.Master;
+﻿using Microsoft.EntityFrameworkCore;
+using SMS_TYNB.Common;
+using SMS_TYNB.Models.Master;
 using SMS_TYNB.Repository;
+using SMS_TYNB.ViewModel;
 using System.Threading.Tasks;
 
 namespace SMS_TYNB.Service.Implement
@@ -11,7 +14,20 @@ namespace SMS_TYNB.Service.Implement
         {
             _smsConfigRepository = smsConfigRepository;
         }
-        public async Task<List<SmsConfig>> GetAll()
+		public async Task<PageResult<SmsConfig>> SearchSmsConfig(SmsConfigSearchViewModel model, Pageable pageable)
+		{
+			IQueryable<SmsConfig> smsConfigs = await _smsConfigRepository.Search(model);
+			var wpCanbosPage = await _smsConfigRepository.GetPagination(smsConfigs, pageable);
+
+			int total = await smsConfigs.CountAsync();
+
+			return new PageResult<SmsConfig>
+			{
+				Data = wpCanbosPage,
+				Total = total,
+			};
+		}
+		public async Task<List<SmsConfig>> GetAll()
         {
             var data = await _smsConfigRepository.GetAll();
             return data.ToList();

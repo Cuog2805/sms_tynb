@@ -157,7 +157,7 @@ function displayItems(items, pageNumber, pageSize) {
     } else {
         tableHtml = `
             <tr>
-                <td colspan="7" class="text-center text-muted">
+                <td colspan="100%" class="text-center text-muted">
                     <i class="fas fa-info-circle"></i>
                     Không có dữ liệu
                 </td>

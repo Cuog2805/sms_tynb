@@ -122,7 +122,7 @@ function displayItems(items, pageNumber, pageSize) {
     } else {
         tableHtml = `
             <tr>
-                <td colspan="4" class="text-center text-muted">
+                <td colspan="100%" class="text-center text-muted">
                     <i class="fas fa-info-circle"></i>
                     Không có dữ liệu
                 </td>
@@ -131,25 +131,6 @@ function displayItems(items, pageNumber, pageSize) {
     }
     $('#groupTableBody').html(tableHtml);
 }
-
-//function selectRow(rowId) {
-//    if (formState.isEditing && formState.selectedRowId !== rowId) {
-//        // Reset form state
-//        formState.isEditing = false;
-//        formState.originalData = null;
-//        disableFormInputs();
-//    }
-
-//    let rows = document.querySelectorAll("#groupTableBody tr");
-//    rows.forEach(r => r.classList.remove("table-primary"));
-
-//    $(`#row-${rowId}`).addClass('table-primary');
-
-//    formState.selectedRowId = rowId;
-
-//    loadDetail(rowId);
-//    updateButtonStates();
-//}
 
 function loadDetail(id) {
     if (id) {

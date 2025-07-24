@@ -123,7 +123,7 @@ function displayItems(items, pageNumber, pageSize) {
 	} else {
 		tableHtml = `
             <tr>
-                <td colspan="6" class="text-center text-muted">
+                <td colspan="100%" class="text-center text-muted">
                     Không có dữ liệu
                 </td>
             </tr>

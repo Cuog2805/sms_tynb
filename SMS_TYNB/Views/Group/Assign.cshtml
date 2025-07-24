@@ -49,12 +49,22 @@
 			
 			<div class="row mt-4">
 				<!-- Cột trái - Danh sách -->
-				<div class="col-md-6 border-end border-1 border-light">
-					<div class="checkbox-list" id="groupCheckBoxList">
-					</div>
-					<div class="a">
+				<div class="col-md-6">
+					<table class="table table-hover" id="groupCheckBoxTable">
+						<thead class="table-primary text-white">
+							<tr class="bg-primary">
+								<th></th>
+								<th>Tên cán bộ</th>
+								<th>SĐT</th>
+								<th>Mô tả</th>
+							</tr>
+						</thead>
+						<tbody id="groupCheckBoxTableBody">
+						</tbody>
+					</table>
+					<div>
 						@{
-							await Html.RenderPartialAsync("_PaginationMinimal");
+							await Html.RenderPartialAsync("_PaginationMinimal", "groupCheckBoxTablePagination");
 						}
 					</div>
 					<div class="mt-4">
@@ -64,7 +74,25 @@
 				
 				<!-- Cột phải - Danh sách đã chọn -->
 				<div class="col-md-6">
-					<div class="checkbox-list" id="groupAssignList">
+					<table class="table table-hover" id="groupAssignTable">
+						<thead class="table-primary text-white">
+							<tr class="bg-primary">
+								<th></th>
+								<th>Tên cán bộ</th>
+								<th>SĐT</th>
+								<th>Mô tả</th>
+							</tr>
+						</thead>
+						<tbody id="groupAssignTableBody">
+							<tr class="bg-primary">
+								<td colspan="100%">Chưa có ai được chọn</td>
+							</tr>
+						</tbody>
+					</table>
+					<div>
+						@{
+							await Html.RenderPartialAsync("_PaginationMinimal", "groupAssignTablePagination");
+						}
 					</div>
 				</div>
 			</div>

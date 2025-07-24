@@ -58,13 +58,15 @@
 		@if (TempData["SuccessMessage"] != null)
 		{
 			<text>
-					alertify.success('@TempData["SuccessMessage"]');
+				alertify.set('notifier', 'position', 'top-left');
+				alertify.success('@TempData["SuccessMessage"]');
 			</text>
 		}
 
 		@if (TempData["ErrorMessage"] != null)
 		{
 			<text>
+						alertify.set('notifier', 'position', 'top-left');
 					alertify.error('@TempData["ErrorMessage"]');
 			</text>
 		}

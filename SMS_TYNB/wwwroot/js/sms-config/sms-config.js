@@ -84,7 +84,6 @@ function loadData() {
 		},
 		error: function (xhr) {
 			console.log(xhr);
-			alertify.set('notifier', 'position', 'top-center');
 			alertify.error('Đã có lỗi xảy ra');
 		}
 	});
@@ -156,7 +155,6 @@ function loadDetail(id) {
 				$("#data-form-header").html("Cập nhật sms config");
 			},
 			error: function () {
-				alertify.set('notifier', 'position', 'top-center');
 				alertify.error('Đã có lỗi xảy ra');
 			}
 		});
@@ -171,7 +169,6 @@ function addSmsConfig(formData) {
 		dataType: "json",
 		success: function (response) {
 			if (response.state === 'success') {
-				alertify.set('notifier', 'position', 'top-center');
 				alertify.success(response.msg || 'Thêm thành công');
 
 				// Reset form state
@@ -181,12 +178,10 @@ function addSmsConfig(formData) {
 				loadData();
 				$('#data-form').modal('hide');
 			} else {
-				alertify.set('notifier', 'position', 'top-center');
 				alertify.error(response.msg || 'Đã có lỗi xảy ra');
 			}
 		},
 		error: function () {
-			alertify.set('notifier', 'position', 'top-center');
 			alertify.error('Đã có lỗi xảy ra');
 		}
 	});
@@ -200,7 +195,6 @@ function editSmsConfig(formData) {
 		dataType: "json",
 		success: function (response) {
 			if (response.state === 'success') {
-				alertify.set('notifier', 'position', 'top-center');
 				alertify.success(response.msg || 'Cập nhật thành công');
 
 				// Reset form state
@@ -210,12 +204,10 @@ function editSmsConfig(formData) {
 				loadData();
 				$('#data-form').modal('hide');
 			} else {
-				alertify.set('notifier', 'position', 'top-center');
 				alertify.error(response.msg || 'Đã có lỗi xảy ra');
 			}
 		},
 		error: function () {
-            alertify.set('notifier', 'position', 'top-center');
 			alertify.error('Có lỗi xảy ra khi cập nhật dữ liệu');
 		}
 	});

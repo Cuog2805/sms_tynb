@@ -11,6 +11,12 @@
 	}, function (param, element) {
 		return `Kích thước mỗi tệp không được vượt quá ${Math.round(param / 1024 / 1024)}MB`;
 	});
+
+	// set alertify
+	alertify.set('notifier', 'position', 'bottom-right');
+	alertify.set('notifier', 'delay', 3);
+	alertify.set('notifier', 'closeButton', true);
+	alertify.set('notifier', 'transition', 'slide');
 });
 
 function CreatePagination(totalItems, currentPage, itemsPerPage, paginationId) {

@@ -144,8 +144,10 @@ function loadDetail(id) {
 				formState.currentEditId = id;
 				$("#data-form-header").html("Cập nhật cán bộ");
 			},
-			error: function () {
-				alert("Lỗi khi load thông tin chi tiết");
+			error: function (xhr, error) {
+				console.log("xhr", xhr);
+				console.log("error", error);
+				alertify.error("Lỗi khi load thông tin chi tiết");
 			}
 		});
 	}
@@ -169,10 +171,12 @@ function addWpCanbo(formData) {
 				loadData();
 				$('#data-form').modal('hide');
 			} else {
+				alertify.set('notifier', 'position', 'top-center');
 				alertify.error(response.msg || 'Đã có lỗi xảy ra');
 			}
 		},
 		error: function () {
+			alertify.set('notifier', 'position', 'top-center');
 			alertify.error('Có lỗi xảy ra khi thêm dữ liệu');
 		}
 	});
@@ -186,7 +190,7 @@ function editWpCanbo(formData) {
 		dataType: "json",
 		success: function (response) {
 			if (response.state === 'success') {
-				alertify.set('notifier', 'position', 'top-right');
+				alertify.set('notifier', 'position', 'top-center');
 				alertify.success(response.msg || 'Cập nhật thành công');
 
 				// Reset form state
@@ -196,10 +200,12 @@ function editWpCanbo(formData) {
 				loadData();
 				$('#data-form').modal('hide');
 			} else {
+				alertify.set('notifier', 'position', 'top-center');
 				alertify.error(response.msg || 'Đã có lỗi xảy ra');
 			}
 		},
 		error: function () {
+			alertify.set('notifier', 'position', 'top-center');
 			alertify.error('Có lỗi xảy ra khi cập nhật dữ liệu');
 		}
 	});

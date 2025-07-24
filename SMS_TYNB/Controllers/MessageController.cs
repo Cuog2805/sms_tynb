@@ -16,12 +16,14 @@ namespace SMS_TYNB.Controllers
 	[Authorize(Roles = "Admin, User")]
 	public class MessageController : Controller
 	{
+		private readonly ILogger<MessageController> _logger;
 		private readonly IWpSmsService _wpSmsService;
 		private readonly UserManager<WpUsers> _userManager;
-		public MessageController(IWpSmsService wpSmsService, UserManager<WpUsers> userManager) 
+		public MessageController(IWpSmsService wpSmsService, UserManager<WpUsers> userManager, ILogger<MessageController> logger) 
 		{
 			_wpSmsService = wpSmsService;
 			_userManager = userManager;
+			_logger = logger;
 		}
 		public IActionResult SendMessage()
 		{
@@ -31,15 +33,28 @@ namespace SMS_TYNB.Controllers
 		[HttpPost]
 		public async Task<JsonResult> SendMessage([FromForm] WpSmsViewModel model, List<IFormFile> fileDinhKem, List<long> selectedFileIds)
 		{
-			// gán người gửi
-			WpUsers? user = await _userManager.GetUserAsync(HttpContext.User);
-			if (user != null) await _wpSmsService.SendMessage(model, fileDinhKem, selectedFileIds, user);
-			return Json(new
+			try
 			{
-				state = "success",
-				msg = "Gửi tin nhắn thành công!",
-				data = new { },
-			});
+				// gán người gửi
+				WpUsers? user = await _userManager.GetUserAsync(HttpContext.User);
+				if (user != null) await _wpSmsService.SendMessage(model, fileDinhKem, selectedFileIds, user);
+				_logger.LogInformation("SendMessage succeed");
+				return Json(new
+				{
+					state = "success",
+					msg = "Gửi tin nhắn thành công!",
+					data = new { },
+				});
+			} catch (Exception ex)
+			{
+				_logger.LogError(ex, "Error occurred while SendMessage");
+				return Json(new
+				{
+					state = "error",
+					msg = "Đã xảy ra lỗi khi gửi tin nhắn!",
+					data = new { },
+				});
+			}
 		}
 		public async Task<IActionResult> MessageStatistical()
 		{

@@ -86,6 +86,8 @@ function loadDetail(id) {
             displaySelectedItems();
         },
         error: function (xhr, status, error) {
+            alertify.set('notifier', 'position', 'top-center');
+            alertify.error('Đã có lỗi xảy ra');
             console.log("XHR:", xhr);
         }
     });
@@ -114,13 +116,16 @@ function submitGroupAssign() {
         dataType: "json",
         success: function (response) {
             if (response.state === 'success') {
-                alertify.set('notifier', 'position', 'top-right');
+                alertify.set('notifier', 'position', 'top-center');
                 alertify.success(response.msg || 'Phân nhóm thành công');
             } else {
+                alertify.set('notifier', 'position', 'top-center');
                 alertify.error(response.msg || 'Đã có lỗi xảy ra');
             }
         },
         error: function (xhr, status, error) {
+            alertify.set('notifier', 'position', 'top-center');
+            alertify.error('Đã có lỗi xảy ra');
             console.log("XHR:", xhr);
         },
     });

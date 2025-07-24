@@ -178,7 +178,7 @@ function addWpNhom(formData) {
         dataType: "json",
         success: function (response) {
             if (response.state === 'success') {
-                alertify.set('notifier', 'position', 'top-right');
+                alertify.set('notifier', 'position', 'top-center');
                 alertify.success(response.msg || 'Thêm thành công');
 
                 // Reset form state
@@ -188,10 +188,13 @@ function addWpNhom(formData) {
                 loadData();
                 $('#data-form').modal('hide');
             } else {
+                alertify.set('notifier', 'position', 'top-center');
                 alertify.error(response.msg || 'Đã có lỗi xảy ra');
             }
         },
         error: function (xhr, status, error) {
+            alertify.set('notifier', 'position', 'top-center');
+            alertify.error('Đã có lỗi xảy ra');
             console.log("XHR:", xhr);
         },
     });
@@ -205,7 +208,7 @@ function editWpNhom(formData) {
         dataType: "json",
         success: function (response) {
             if (response.state === 'success') {
-                alertify.set('notifier', 'position', 'top-right');
+                alertify.set('notifier', 'position', 'top-center');
                 alertify.success(response.msg || 'Cập nhật thành công');
 
                 // Reset form state
@@ -215,10 +218,13 @@ function editWpNhom(formData) {
                 loadData();
                 $('#data-form').modal('hide');
             } else {
+                alertify.set('notifier', 'position', 'top-center');
                 alertify.error(response.msg || 'Đã có lỗi xảy ra');
             }
         },
         error: function (xhr, status, error) {
+            alertify.set('notifier', 'position', 'top-center');
+            alertify.error('Đã có lỗi xảy ra');
             console.log("XHR:", xhr);
         },
     });

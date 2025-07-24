@@ -1,9 +1,14 @@
 ﻿$(document).ready(function () {
     loadData();
 
+    let debounceTimer;
     $("#searchInput").on("input", function () {
-        loadData();
-    })
+        clearTimeout(debounceTimer);
+
+        debounceTimer = setTimeout(function () {
+            loadData();
+        }, 300);
+    });
 
     $("#btnSendMessage").on("click", function () {
         sendMessage();

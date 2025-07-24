@@ -62,6 +62,10 @@
                             <a class="nav-link text-light @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Group" && ViewContext.RouteData.Values["Action"]?.ToString() == "Assign" ? "active" : "")"
                                asp-area="" asp-controller="Group" asp-action="Assign">Phân nhóm</a>
                         </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-light @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Config" && ViewContext.RouteData.Values["Action"]?.ToString() == "Index" ? "active" : "")"
+                               asp-area="" asp-controller="Config" asp-action="Index">Cấu hình hệ thống</a>
+                        </li>
                     </ul>
                     <div class="d-flex align-items-center">
                         @if (User.Identity?.IsAuthenticated ?? false)

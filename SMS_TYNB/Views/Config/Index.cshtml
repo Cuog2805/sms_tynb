@@ -1,0 +1,86 @@
+﻿@model SMS_TYNB.Models.Master.Config
+@{
+	ViewBag.Title = "Cấu hình hệ thống";
+	Layout = "~/Views/Shared/_Layout.cshtml";
+	bool autoDeleteEnabled = Model.IsUsed == 1;
+	string autoDeleteDays = Model.Value;
+}
+@* @if (TempData["SuccessMessage"] != null) *@
+@* { *@
+@* 	<div class="alert alert-success">@TempData["SuccessMessage"]</div> *@
+@* } *@
+<div class="container-fluid">
+	<div class="card shadow-sm mb-4">
+		<div class="card-header bg-primary text-white">
+			<h5 class="card-title mb-0">Cấu hình xóa file</h5>
+		</div>
+		<form method="post" asp-controller="Config" asp-action="Index" class="g-3">
+			@Html.AntiForgeryToken()
+			<div class="card-body">
+				<input type="hidden" name="Key" value="file_delete_after" />
+
+				<div class="row align-items-center">
+					<div class="col-md-6">
+						<div class="form-check form-switch">
+							<input class="form-check-input" type="checkbox" id="autoDeleteSwitch"
+								   name="IsUsed" value="1" @(autoDeleteEnabled ? "checked" : "")>
+							<label class="form-label" for="autoDeleteSwitch">
+								Tự động xóa file
+							</label>
+							<div><small class="text-muted">Sau khi bật, file sẽ được tự động xóa vào 0h hàng ngày.</small></div>
+						</div>
+					</div>
+
+					<div class="col-md-6">
+						<label for="autoDeleteDays" class="form-label">Tự động xóa sau (ngày)</label>
+						<input type="hidden" name="Value" id="autoDeleteDaysHidden" value="@autoDeleteDays" />
+
+						<input type="number" class="form-control" id="autoDeleteDays"
+							   min="1" value="@autoDeleteDays"
+						@(autoDeleteEnabled ? "" : "disabled") />
+
+					</div>
+				</div>
+			</div>
+			<div class="card-footer">
+				<div class="row justify-content-center">
+					<button type="submit" class="btn btn-primary" style="width: 200px;">
+						Lưu cấu hình
+					</button>
+				</div>
+			</div>
+		</form>
+	</div>
+</div>
+
+@section Scripts {
+	<script>
+		@if (TempData["SuccessMessage"] != null)
+		{
+			<text>
+					alertify.success('@TempData["SuccessMessage"]');
+			</text>
+		}
+
+		@if (TempData["ErrorMessage"] != null)
+		{
+			<text>
+					alertify.error('@TempData["ErrorMessage"]');
+			</text>
+		}
+		(function () {
+			var sw = document.getElementById('autoDeleteSwitch');
+			var daysInput = document.getElementById('autoDeleteDays');
+			var hiddenInput = document.getElementById('autoDeleteDaysHidden');
+
+			sw.addEventListener('change', function () {
+				daysInput.disabled = !sw.checked;
+				hiddenInput.value = daysInput.value;
+			});
+
+			daysInput.addEventListener('input', function () {
+				hiddenInput.value = daysInput.value;
+			});
+		})();
+	</script>
+}

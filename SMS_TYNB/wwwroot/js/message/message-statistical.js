@@ -150,7 +150,7 @@ function displayItems(items, pageNumber, pageSize) {
                     <td>${item.TenNguoigui}</td>
                     <td>${item.Ngaygui.replace("T", " ")}</td>
                     <td>${item.SoTn}</td>
-                    <td>${0}</td>
+                    <td>${item.SoTnLoi}</td>
                 </tr>
             `;
         });

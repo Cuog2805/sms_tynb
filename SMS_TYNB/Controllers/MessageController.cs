@@ -10,6 +10,7 @@ using SMS_TYNB.Service;
 using SMS_TYNB.Service.Implement;
 using SMS_TYNB.ViewModel;
 using System.Threading.Tasks;
+using static SMS_TYNB.ViewModel.ApiModel.SmsApiViewModel;
 
 namespace SMS_TYNB.Controllers
 {
@@ -18,10 +19,12 @@ namespace SMS_TYNB.Controllers
 	{
 		private readonly ILogger<MessageController> _logger;
 		private readonly IWpSmsService _wpSmsService;
+		private readonly ISmsConfigService _smsConfigService;
 		private readonly UserManager<WpUsers> _userManager;
-		public MessageController(IWpSmsService wpSmsService, UserManager<WpUsers> userManager, ILogger<MessageController> logger) 
+		public MessageController(IWpSmsService wpSmsService, ISmsConfigService smsConfigService, UserManager<WpUsers> userManager, ILogger<MessageController> logger) 
 		{
 			_wpSmsService = wpSmsService;
+			_smsConfigService = smsConfigService;
 			_userManager = userManager;
 			_logger = logger;
 		}
@@ -37,8 +40,19 @@ namespace SMS_TYNB.Controllers
 			{
 				// gán người gửi
 				WpUsers? user = await _userManager.GetUserAsync(HttpContext.User);
+
+				//gửi tin nhắn qua dịch vụ SMS
+				var smsConfig = _smsConfigService.GetSmsConfigActive(true);
+				var res = new SmsRes();
+				if (smsConfig.Id > 0)
+				{
+					res = SmsHelper.SendSms(smsConfig, "test tin nhắn", "84842562345");
+				}
+
+				//gán tin nhắn vào người dùng
 				if (user != null) await _wpSmsService.SendMessage(model, fileDinhKem, selectedFileIds, user);
 				_logger.LogInformation("SendMessage succeed");
+
 				return Json(new
 				{
 					state = "success",

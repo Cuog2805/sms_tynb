@@ -127,6 +127,7 @@ namespace SMS_TYNB.ViewModel.ApiModel
             public string ERROR_DESC { get; set; }
             public string name { get; set; }
             public string ERROR { get; set; }
+            public bool ISERROR { get; set; }
         }
     }
 }

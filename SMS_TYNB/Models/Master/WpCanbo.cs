@@ -19,6 +19,7 @@ namespace SMS_TYNB.Models.Master
         public int? Gioitinh { get; set; }
         public int? Trangthai { get; set; }
         public string? IdUser { get; set; }
+        public string SoDTGui { get; set; }
 
         public virtual ICollection<WpNhomCanbo> WpNhomCanbo { get; set; }
         public virtual ICollection<WpSmsCanbo> WpSmsCanbo { get; set; }

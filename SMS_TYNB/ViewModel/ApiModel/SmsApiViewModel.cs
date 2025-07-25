@@ -34,7 +34,7 @@ namespace SMS_TYNB.ViewModel.ApiModel
             public string MobileList { get; set; }
 
             [XmlElement(ElementName = "ISTELCOSUB")]
-            public int IsTelcoSub { get; set; } = 0;
+            public string IsTelcoSub { get; set; } = "0";
 
             [XmlElement(ElementName = "AGENTID")]
             public string AgentId { get; set; }
@@ -49,7 +49,7 @@ namespace SMS_TYNB.ViewModel.ApiModel
             public string UserName { get; set; }
 
             [XmlElement(ElementName = "DATACODING")]
-            public int DataCoding { get; set; } = 0;
+            public string DataCoding { get; set; } = "0";
 
             [XmlElement(ElementName = "SALEORDERID")]
             public string SaleOrderId { get; set; }

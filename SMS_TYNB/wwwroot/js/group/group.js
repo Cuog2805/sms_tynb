@@ -1,9 +1,15 @@
 ﻿$(document).ready(function () {
     loadData();
+
+    let debounceTimer;
     $("#searchInput").on("input", function () {
-        currentPagination.pageNumber = 1;
-        loadData();
-    })
+        clearTimeout(debounceTimer);
+
+        debounceTimer = setTimeout(function () {
+            currentPagination.pageNumber = 1;
+            loadData();
+        }, 300);
+    });
     $("#pageSize").on("change", function () {
         currentPagination.pageNumber = 1;
         currentPagination.pageSize = parseInt($(this).val());
@@ -76,7 +82,7 @@ function loadData() {
             }
         },
         error: function (xhr, status, error) {
-            alert("Lỗi khi load dữ liệu");
+            alertify.error('Đã có lỗi xảy ra');
             console.log("XHR:", xhr);
         }
     });
@@ -116,7 +122,7 @@ function displayItems(items, pageNumber, pageSize) {
     } else {
         tableHtml = `
             <tr>
-                <td colspan="4" class="text-center text-muted">
+                <td colspan="100%" class="text-center text-muted">
                     <i class="fas fa-info-circle"></i>
                     Không có dữ liệu
                 </td>
@@ -125,25 +131,6 @@ function displayItems(items, pageNumber, pageSize) {
     }
     $('#groupTableBody').html(tableHtml);
 }
-
-//function selectRow(rowId) {
-//    if (formState.isEditing && formState.selectedRowId !== rowId) {
-//        // Reset form state
-//        formState.isEditing = false;
-//        formState.originalData = null;
-//        disableFormInputs();
-//    }
-
-//    let rows = document.querySelectorAll("#groupTableBody tr");
-//    rows.forEach(r => r.classList.remove("table-primary"));
-
-//    $(`#row-${rowId}`).addClass('table-primary');
-
-//    formState.selectedRowId = rowId;
-
-//    loadDetail(rowId);
-//    updateButtonStates();
-//}
 
 function loadDetail(id) {
     if (id) {
@@ -172,7 +159,6 @@ function addWpNhom(formData) {
         dataType: "json",
         success: function (response) {
             if (response.state === 'success') {
-                alertify.set('notifier', 'position', 'top-right');
                 alertify.success(response.msg || 'Thêm thành công');
 
                 // Reset form state
@@ -186,6 +172,7 @@ function addWpNhom(formData) {
             }
         },
         error: function (xhr, status, error) {
+            alertify.error('Đã có lỗi xảy ra');
             console.log("XHR:", xhr);
         },
     });
@@ -199,7 +186,6 @@ function editWpNhom(formData) {
         dataType: "json",
         success: function (response) {
             if (response.state === 'success') {
-                alertify.set('notifier', 'position', 'top-right');
                 alertify.success(response.msg || 'Cập nhật thành công');
 
                 // Reset form state
@@ -213,6 +199,7 @@ function editWpNhom(formData) {
             }
         },
         error: function (xhr, status, error) {
+            alertify.error('Đã có lỗi xảy ra');
             console.log("XHR:", xhr);
         },
     });

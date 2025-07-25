@@ -1,4 +1,5 @@
-﻿using SMS_TYNB.Models;
+﻿using Microsoft.EntityFrameworkCore;
+using SMS_TYNB.Models;
 using SMS_TYNB.Models.Master;
 using TodoApi.Repository;
 
@@ -15,7 +16,11 @@ namespace SMS_TYNB.Repository
 
 			if (!string.IsNullOrWhiteSpace(searchInput))
 			{
-				query = query.Where(item => item.TenNhom.Contains(searchInput));
+				var pattern = "%" + searchInput.Trim().ToLower() + "%";
+
+				query = query.Where(item =>
+					EF.Functions.Like(item.TenNhom.ToLower(), pattern)
+				);
 			}
 
 			return Task.FromResult(query);

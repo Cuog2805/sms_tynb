@@ -1,23 +1,34 @@
 ﻿$(document).ready(function () {
 	// xử lý file upload modal
-	$("#searchInput").on("input", function () {
-		currentPagination.pageNumber = 1;
-		loadData();
+	let debounceTimer;
+	$("#searchFileInput").on("input", function () {
+		clearTimeout(debounceTimer);
+
+		debounceTimer = setTimeout(function () {
+			currentFilePagination.pageNumber = 1;
+			LoadFileInput();
+		}, 300);
 	});
 
 	$('#inputFileModal').on('shown.bs.modal', function () {
 		LoadFileInput();
     });
 
-    $("#uploadNewFileBtn").on("click", function () {
-		$('#inputFileModal').modal('hide');
-		displaySelectedFiles();
+	$("#uploadNewFileBtn").on("click", function () {
+		if (!$('#uploadFileModalForm').data('validator')) {
+			initFileFormValidate();
+		}
+
+		if ($("#uploadFileModalForm").valid()) {
+			$('#inputFileModal').modal('hide');
+			displaySelectedFiles();
+		}
     });
 });
 
 let currentFilePagination = {
 	pageNumber: 1,
-	pageSize: 12
+	pageSize: 10
 };
 
 let paginationFileData = {
@@ -28,7 +39,7 @@ let paginationFileData = {
 let selectedFiles = [];
 
 function LoadFileInput() {
-	let searchInput = $('#searchInput').val();
+	let searchInput = $('#searchFileInput').val();
 	let pageable = {
 		pageNumber: currentFilePagination.pageNumber,
 		pageSize: currentFilePagination.pageSize,
@@ -58,7 +69,7 @@ function LoadFileInput() {
 		},
 		error: function (xhr) {
 			console.log("xhr", xhr);
-			alert("Lỗi khi load dữ liệu");
+			alertify.error('Đã có lỗi xảy ra');
 		}
 	});
 }
@@ -135,6 +146,12 @@ function displaySelectedFiles() {
     filesList.html(html);
 }
 
+function clearSelectedFiles() {
+	$('#selectedFilesList').empty();
+	$("#FileDinhKem").val('');
+	selectedFiles = [];
+}
+
 function handleItemSelect(checkbox) {
 	const item = checkbox.data("item");
 	const isChecked = checkbox.prop("checked");
@@ -146,4 +163,23 @@ function handleItemSelect(checkbox) {
 	} else {
 		selectedFiles = selectedFiles.filter(selected => selected.IdFile !== item.IdFile);
 	}
+}
+
+function initFileFormValidate() {
+    $('#uploadFileModalForm').validate({
+        rules: {
+            'FileDinhKem': {
+                extension: "doc|docx|pdf|png|jpg",
+                filesize: 5 * 1024 * 1024
+            }
+        },
+        messages: {
+            'FileDinhKem': {
+                extension: "Chỉ chấp nhận .doc, .docx, .pdf, .png, .jpg",
+                filesize: "Kích thước mỗi tệp không được vượt quá 5MB"
+            }
+        },
+        errorClass: "text-danger",
+        errorElement: "div",
+    });
 }

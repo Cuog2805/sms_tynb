@@ -1,9 +1,14 @@
 ﻿$(document).ready(function () {
     loadData();
 
+    let debounceTimer;
     $("#searchInput").on("input", function () {
-        loadData();
-    })
+        clearTimeout(debounceTimer);
+
+        debounceTimer = setTimeout(function () {
+            loadData();
+        }, 300);
+    });
 
     $("#btnSendMessage").on("click", function () {
         sendMessage();
@@ -91,8 +96,9 @@ function sendMessage() {
                     alertify.error(res.msg);
                 }
             },
-            error: function (xhr) {
+            error: function (xhr, error) {
                 console.log("xhr", xhr);
+                console.log("error", error);
                 alertify.error("Lỗi khi gửi tin nhắn");
             }
         });

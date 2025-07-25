@@ -10,8 +10,6 @@
     <link rel="stylesheet" href="~/SMS_TYNB.styles.css" asp-append-version="true" />
 	<link href="~/lib/alertifyjs/css/alertify.css" rel="stylesheet" />
 	<link href="~/lib/alertifyjs/css/alertify.min.css" rel="stylesheet" />
-	<link href="~/lib/alertifyjs/css/alertify.rtl.css" rel="stylesheet" />
-	<link href="~/lib/alertifyjs/css/alertify.rtl.min.css" rel="stylesheet" />
 	<link href="~/lib/jstree/themes/default/style.min.css" rel="stylesheet" />
 	<link href="~/lib/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet" />
 	<link href="~/lib/bootstrap-icons/font/bootstrap-icons.min.css" rel="stylesheet" />
@@ -65,6 +63,10 @@
                         <li class="nav-item">
                             <a class="nav-link text-light @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Config" && ViewContext.RouteData.Values["Action"]?.ToString() == "Index" ? "active" : "")"
                                asp-area="" asp-controller="Config" asp-action="Index">Cấu hình hệ thống</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-light @(ViewContext.RouteData.Values["Controller"]?.ToString() == "SmsConfig" ? "active" : "")"
+                               asp-area="" asp-controller="SmsConfig" asp-action="Index">SMS Config</a>
                         </li>
                     </ul>
                     <div class="d-flex align-items-center">

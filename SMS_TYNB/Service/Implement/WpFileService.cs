@@ -165,7 +165,7 @@ namespace SMS_TYNB.Service.Implement
 				throw new Exception("File không hợp lệ");
 
 			// Validate file extension của file mới
-			var allowedExtensions = new[] { ".jpg", ".png", ".pdf", ".doc", ".docx" };
+			var allowedExtensions = new[] { oldFile.DuoiFile };
 			var newFileExtension = Path.GetExtension(file.FileName).ToLower();
 			if (!allowedExtensions.Contains(newFileExtension))
 			{

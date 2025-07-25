@@ -32,6 +32,25 @@
 	$(document).on("click", "#btnSave", function () {
 		submitForm();
 	});
+
+	// nhập/xuất dữ liệu
+	$("#btnDownloadTemplate").on("click", function () {
+		downloadTemplate("template_can_bo.xlsx");
+	});
+
+	//modal nhập dữ liệu
+	$("#btnImportTemplate").on("click", function () {
+		$('#inputFileTemplateModal').modal('show');
+	});
+
+	$("#previewFileTemplateBtn").on("click", function () {
+		readFile();
+	});
+
+	createImportFileConfig({
+		headers: ["TenCanbo", "SoDt", "Gioitinh", "Mota"],
+		range: 1
+	});
 });
 
 let currentPagination = {

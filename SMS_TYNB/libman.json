@@ -13,6 +13,10 @@
     {
       "library": "bootstrap-icons@1.13.1",
       "destination": "wwwroot/lib/bootstrap-icons/"
+    },
+    {
+      "library": "xlsx@0.18.5",
+      "destination": "wwwroot/lib/xlsx/"
     }
   ]
 }

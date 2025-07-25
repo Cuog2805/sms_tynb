@@ -8,6 +8,7 @@ using SMS_TYNB.Data;
 using SMS_TYNB.Helper;
 using SMS_TYNB.Models.Identity;
 using SMS_TYNB.Models.Master;
+using SMS_TYNB.BackgoundSercvice;
 
 namespace SMS_TYNB
 {
@@ -44,6 +45,7 @@ namespace SMS_TYNB
             AddRateLimited(builder);
             builder.Services.AddApplicationServices();
             builder.Services.AddScoped<IEmailSender, EmailSender>();
+            builder.Services.AddHostedService<FileCleanupService>();
 
             var app = builder.Build();
             app.UseMiddleware<MyIPRateLimitMiddleware>();
@@ -55,7 +57,7 @@ namespace SMS_TYNB
                 app.UseHsts();
             }
 
-            app.UseHttpsRedirection();
+            //app.UseHttpsRedirection();
             app.UseRouting();
 
             app.UseAuthentication();

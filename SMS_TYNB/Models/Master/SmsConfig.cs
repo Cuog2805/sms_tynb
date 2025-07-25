@@ -12,7 +12,7 @@ namespace SMS_TYNB.Models.Master
         public string ContractId { get; set; }
         public string TemplateId { get; set; }
         public string IsTelCoSub { get; set; }
-        public string AgentId { get; set; }
+        public int AgentId { get; set; }
         public string ApiUser { get; set; }
         public string ApiPass { get; set; }
         public string UserName { get; set; }
@@ -21,5 +21,6 @@ namespace SMS_TYNB.Models.Master
         public string PakageId { get; set; }
         public string UrlSms { get; set; }
         public bool IssEnSms { get; set; }
+        public bool IsActive { get; set; }
     }
 }

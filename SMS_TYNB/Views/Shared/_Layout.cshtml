@@ -6,10 +6,12 @@
     <title>Hệ thống tin nhắn điều hành</title>
     <script type="importmap"></script>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
-    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link href="~/css/site.css" rel="stylesheet" />
     <link rel="stylesheet" href="~/SMS_TYNB.styles.css" asp-append-version="true" />
-	<link href="~/lib/alertifyjs/css/alertify.css" rel="stylesheet" />
-	<link href="~/lib/alertifyjs/css/alertify.min.css" rel="stylesheet" />
+	<link href="~/lib/AlertifyJS/css/alertify.css" rel="stylesheet" />
+	<link href="~/lib/AlertifyJS/css/alertify.min.css" rel="stylesheet" />
+	<link href="~/lib/AlertifyJS/css/alertify.rtl.css" rel="stylesheet" />
+	<link href="~/lib/AlertifyJS/css/alertify.rtl.min.css" rel="stylesheet" />
 	<link href="~/lib/jstree/themes/default/style.min.css" rel="stylesheet" />
 	<link href="~/lib/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet" />
 	<link href="~/lib/bootstrap-icons/font/bootstrap-icons.min.css" rel="stylesheet" />
@@ -61,6 +63,10 @@
                                asp-area="" asp-controller="Group" asp-action="Assign">Phân nhóm</a>
                         </li>
                         <li class="nav-item">
+                            <a class="nav-link text-light @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Config" && ViewContext.RouteData.Values["Action"]?.ToString() == "Index" ? "active" : "")"
+                               asp-area="" asp-controller="Config" asp-action="Index">Cấu hình hệ thống</a>
+                        </li>
+                        <li class="nav-item">
                             <a class="nav-link text-light @(ViewContext.RouteData.Values["Controller"]?.ToString() == "SmsConfig" ? "active" : "")"
                                asp-area="" asp-controller="SmsConfig" asp-action="Index">SMS Config</a>
                         </li>
@@ -103,8 +109,8 @@
 	<script src="~/lib/jstree/jstree.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
-	<script src="~/lib/alertifyjs/alertify.js"></script>
-	<script src="~/lib/alertifyjs/alertify.min.js"></script>
+	<script src="~/lib/AlertifyJS/alertify.js"></script>
+	<script src="~/lib/AlertifyJS/alertify.min.js"></script>
 	<script src="~/js/common.js?v=@DateTime.Now.Ticks"></script>
 	<script src="~/js/file/file.js?v=@DateTime.Now.Ticks"></script>
 	<script src="~/lib/xlsx/xlsx.full.min.js"></script>

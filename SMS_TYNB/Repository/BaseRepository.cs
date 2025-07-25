@@ -57,8 +57,12 @@ namespace TodoApi.Repository
 
 			return existingEntity;
 		}
+        public IQueryable<T> Query()
+        {
+            return context.Set<T>().AsQueryable();
+        }
 
-		public async Task Delete(TKey id)
+        public async Task Delete(TKey id)
 		{
 			T? entity = await FindById(id);
 

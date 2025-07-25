@@ -11,6 +11,7 @@ namespace SMS_TYNB.Service
         Task<SmsConfig> Create(SmsConfig obj);
         Task<SmsConfig?> GetById(int id);
         Task<List<SmsConfig>> GetAll();
+        SmsConfig GetSmsConfigActive(bool isActive);
         Task<PageResult<SmsConfig>> SearchSmsConfig(SmsConfigSearchViewModel model, Pageable pageable);
 
 	}

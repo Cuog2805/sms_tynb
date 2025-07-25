@@ -9,8 +9,10 @@ namespace SMS_TYNB.Repository
         public SmsConfigRepository(SmsTynContext _context) : base(_context)
         {
         }
-
-		public Task<IQueryable<SmsConfig>> Search(SmsConfigSearchViewModel model)
+		public SmsConfig? GetSmsConfigActive(bool isActive) {
+            return context.SmsConfig.FirstOrDefault(x => x != null && x.IsActive == isActive);
+		}
+        public Task<IQueryable<SmsConfig>> Search(SmsConfigSearchViewModel model)
 		{
 			var query = context.Set<SmsConfig>().AsQueryable();
 

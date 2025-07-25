@@ -33,7 +33,7 @@
         $('#newFileInput').val('');
     });
 
-    $('#uploadNewFileBtn').on('click', function () {
+    $('#updateFileModalFormBtn').on('click', function () {
         uploadNewFile();
     });
 });

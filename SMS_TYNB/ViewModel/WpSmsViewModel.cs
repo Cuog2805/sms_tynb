@@ -17,6 +17,7 @@ namespace SMS_TYNB.ViewModel
 		public DateTime? Ngaygui { get; set; }
 
 		public int? SoTn { get; set; }
+		public int? SoTnLoi { get; set; }
 
 		public virtual ICollection<WpCanboViewModel> WpCanbos { get; set; } = new List<WpCanboViewModel>();
 	}

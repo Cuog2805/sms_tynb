@@ -30,6 +30,7 @@ namespace SMS_TYNB.Common
 			services.AddScoped<IWpFileService, WpFileService>();
 			services.AddScoped<ISmsConfigService, SmsConfigService>();
 			services.AddScoped<IConfigService, ConfigService>();
+			services.AddScoped<IDataTransportService, DataTransportService>();
 			return services;
 		}
 		public static IServiceCollection AddApplicationServices(this IServiceCollection services) 

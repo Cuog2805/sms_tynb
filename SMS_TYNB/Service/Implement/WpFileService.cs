@@ -69,7 +69,7 @@ namespace SMS_TYNB.Service.Implement
 
 			// Tạo thư mục upload nếu chưa tồn tại
 			var subFolderUser = Path.Combine(subFolder, creator.Id, DateTime.Now.ToString("ddMMyyyy"));
-			var uploadPath = Path.Combine(_environment.WebRootPath, "wwwroot", subFolderUser);
+			var uploadPath = Path.Combine(_environment.WebRootPath, subFolderUser);
 			if (!Directory.Exists(uploadPath))
 			{
 				Directory.CreateDirectory(uploadPath);
@@ -128,7 +128,7 @@ namespace SMS_TYNB.Service.Implement
 		{
 			// Tạo thư mục mới
 			var subFolderUser = Path.Combine(subFolder, creator.Id, DateTime.Now.ToString("ddMMyyyy"));
-			var destinationPath = Path.Combine(_environment.WebRootPath, "wwwroot", subFolderUser);
+			var destinationPath = Path.Combine(_environment.WebRootPath, subFolderUser);
 
 			if (!Directory.Exists(destinationPath))
 			{
@@ -136,8 +136,7 @@ namespace SMS_TYNB.Service.Implement
 			}
 
 			// Lấy đường dẫn file gốc
-			var originalFilePath = Path.Combine(_environment.WebRootPath, "wwwroot",
-				originalFile.FileUrl.TrimStart('/').Replace('/', Path.DirectorySeparatorChar));
+			var originalFilePath = Path.Combine(_environment.WebRootPath, originalFile.FileUrl.TrimStart('/').Replace('/', Path.DirectorySeparatorChar));
 
 			if (!File.Exists(originalFilePath))
 			{
@@ -166,7 +165,7 @@ namespace SMS_TYNB.Service.Implement
 				throw new Exception("File không hợp lệ");
 
 			// Validate file extension của file mới
-			var allowedExtensions = new[] { ".jpg", ".png", ".pdf", ".doc", ".docx" };
+			var allowedExtensions = new[] { oldFile.DuoiFile };
 			var newFileExtension = Path.GetExtension(file.FileName).ToLower();
 			if (!allowedExtensions.Contains(newFileExtension))
 			{
@@ -176,7 +175,7 @@ namespace SMS_TYNB.Service.Implement
 			try
 			{
 				var oldFileRelativePath = oldFile.FileUrl.TrimStart('/');
-				var oldFilePath = Path.Combine(_environment.WebRootPath, "wwwroot", oldFileRelativePath);
+				var oldFilePath = Path.Combine(_environment.WebRootPath, oldFileRelativePath);
 
 				// Backup file cũ
 				string backupFilePath = null;
@@ -211,7 +210,7 @@ namespace SMS_TYNB.Service.Implement
 			catch (Exception ex)
 			{
 				var oldFileRelativePath = oldFile.FileUrl.TrimStart('/');
-				var oldFilePath = Path.Combine(_environment.WebRootPath, "wwwroot", oldFileRelativePath);
+				var oldFilePath = Path.Combine(_environment.WebRootPath, oldFileRelativePath);
 				var backupFilePath = oldFilePath + ".bak";
 
 				if (File.Exists(backupFilePath))
@@ -233,7 +232,7 @@ namespace SMS_TYNB.Service.Implement
 			{
 				if (!string.IsNullOrEmpty(fileUrl))
 				{
-					var filePath = Path.Combine(_environment.WebRootPath, "wwwroot", fileUrl.TrimStart('/'));
+					var filePath = Path.Combine(_environment.WebRootPath, fileUrl.TrimStart('/'));
 					if (File.Exists(filePath))
 					{
 						File.Delete(filePath);

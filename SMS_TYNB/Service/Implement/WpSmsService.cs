@@ -6,6 +6,7 @@ using SMS_TYNB.Models.Identity;
 using SMS_TYNB.Models.Master;
 using SMS_TYNB.Repository;
 using SMS_TYNB.ViewModel;
+using static SMS_TYNB.ViewModel.ApiModel.SmsApiViewModel;
 
 namespace SMS_TYNB.Service.Implement
 {
@@ -15,18 +16,24 @@ namespace SMS_TYNB.Service.Implement
 		private readonly WpSmsCanboRepository _wpSmsCanboRepository;
 		private readonly WpUsersRepository _wpUsersRepository;
 		private readonly IWpFileService _wpFileService;
+		private readonly ISmsConfigService _smsConfigService;
+		private readonly ILogger<WpSmsService> _logger;
 		public WpSmsService
 		(
 			WpSmsRepository wpSmsRepository,
 			WpSmsCanboRepository wpSmsCanboRepository,
 			IWpFileService wpFileService,
-			WpUsersRepository wpUsersRepository
+			WpUsersRepository wpUsersRepository,
+			ILogger<WpSmsService> logger,
+			ISmsConfigService smsConfigService
 		)
 		{
 			_wpSmsRepository = wpSmsRepository;
 			_wpSmsCanboRepository = wpSmsCanboRepository;
 			_wpFileService = wpFileService;
 			_wpUsersRepository = wpUsersRepository;
+			_logger = logger;
+			_smsConfigService = smsConfigService;
 		}
 		public async Task SendMessage(WpSmsViewModel model, List<IFormFile> fileDinhKem, List<long> selectedFileIds, WpUsers user)
 		{
@@ -35,38 +42,98 @@ namespace SMS_TYNB.Service.Implement
 				Noidung = model.Noidung,
 				Ngaygui = DateTime.Now,
 				IdNguoigui = user.Id,
-				SoTn = model.WpCanbos.Count
+				SoTn = model.WpCanbos.Count,
+				SoTnLoi = 0
 			};
 			wpSms = await _wpSmsRepository.Create(wpSms);
 
+			int errorCount = 0;
+			int successCount = 0;
+
+
 			// Xử lý file đính kèm
-			if (fileDinhKem != null && fileDinhKem.Count > 0)
+			await HandleFileAttachments(fileDinhKem, selectedFileIds, user, wpSms.IdSms);
+
+			// Gửi tin nhắn qua dịch vụ SMS
+			var smsConfig = _smsConfigService.GetSmsConfigActive(true);
+			if (smsConfig?.Id > 0)
 			{
-				foreach (var file in fileDinhKem)
+				var phoneNumbers = model.WpCanbos.Select(c => c.SoDTGui)
+												.Where(s => !string.IsNullOrEmpty(s))
+												.ToList();
+
+				if (phoneNumbers.Count > 0)
 				{
-					if (file.Length > 0)
+					phoneNumbers.ForEach(phoneNumber =>
 					{
-						await _wpFileService.SaveFile(file, user, "wp_sms", wpSms.IdSms);
-					}
+						if(!string.IsNullOrEmpty(phoneNumber))
+						{
+							var res = SmsHelper.SendSms(smsConfig, model.Noidung ?? " ", phoneNumber);
+
+							if (res.RPLY.ISERROR)
+							{
+								errorCount += 1;
+							}
+							else
+							{
+								successCount += 1;
+							}
+						}
+					});
 				}
 			}
-
-			//Xử lý files đã chọn từ selectedFileIds
-			await _wpFileService.CreateFromFileExisted(selectedFileIds, user, "wp_sms", wpSms.IdSms);
-
-			// Xử lý gửi tin nhắn cho cán bộ
-			foreach (var item in model.WpCanbos)
+			else
 			{
-				if (item.IdNhom.HasValue)
+				errorCount = model.WpCanbos.Count;
+				successCount = 0;
+			}
+
+			// Xử lý gán tin nhắn cho cán bộ
+			var sendTasks = model.WpCanbos.Where(item => item.IdNhom.HasValue)
+										  .Select(item => SendMessageToCanbo(item, wpSms.IdSms));
+			await Task.WhenAll(sendTasks);
+
+			// Cập nhật số liệu thống kê
+			wpSms.SoTn = successCount;
+			wpSms.SoTnLoi = errorCount;
+			await _wpSmsRepository.Update(wpSms.IdSms, wpSms);
+		}
+
+		private async Task HandleFileAttachments(List<IFormFile> fileDinhKem, List<long> selectedFileIds, WpUsers user, long smsId)
+		{
+			try
+			{
+				// Xử lý file đính kèm mới
+				if (fileDinhKem != null && fileDinhKem.Count > 0)
 				{
-					WpSmsCanbo wpSmsCanbo = new WpSmsCanbo()
-					{
-						IdSms = wpSms.IdSms,
-						IdCanbo = item.IdCanbo,
-						IdNhom = item.IdNhom.Value
-					};
-					await _wpSmsCanboRepository.Create(wpSmsCanbo);
+					var uploadTasks = fileDinhKem.Where(file => file.Length > 0)
+											   .Select(file => _wpFileService.SaveFile(file, user, "wp_sms", smsId));
+					await Task.WhenAll(uploadTasks);
 				}
+
+				// Xử lý files đã chọn từ selectedFileIds
+				if (selectedFileIds != null && selectedFileIds.Count > 0)
+				{
+					await _wpFileService.CreateFromFileExisted(selectedFileIds, user, "wp_sms", smsId);
+				}
+			}
+			catch (Exception ex)
+			{
+				_logger.LogError(ex, "Error HandleFileAttachments for SMS {SmsId}", smsId);
+			}
+		}
+
+		private async Task SendMessageToCanbo(WpCanboViewModel canbo, long smsId)
+		{
+			if (canbo != null && canbo.IdCanbo.HasValue && canbo.IdNhom.HasValue)
+			{
+				WpSmsCanbo wpSmsCanbo = new WpSmsCanbo()
+				{
+					IdSms = smsId,
+					IdCanbo = canbo.IdCanbo.Value,
+					IdNhom = canbo.IdNhom.Value
+				};
+				await _wpSmsCanboRepository.Create(wpSmsCanbo);
 			}
 		}
 		public async Task<PageResult<WpSmsViewModel>> SearchMessage(WpSmsSearchViewModel model, Pageable pageable)
@@ -98,7 +165,8 @@ namespace SMS_TYNB.Service.Implement
 									 IdNguoigui = wpsGroup.Key.wps.IdNguoigui,
 									 TenNguoigui = wpsGroup.Key.wpu.UserName,
 									 Ngaygui = wpsGroup.Key.wps.Ngaygui,
-									 SoTn = wpsGroup.Key.wps.SoTn
+									 SoTn = wpsGroup.Key.wps.SoTn,
+									 SoTnLoi = wpsGroup.Key.wps.SoTnLoi
 								 };
 
 			return new PageResult<WpSmsViewModel>

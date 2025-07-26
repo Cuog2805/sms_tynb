@@ -189,6 +189,7 @@ public partial class SmsTynContext : DbContext
                 .UseCollation("utf8mb3_general_ci")
                 .HasCharSet("utf8mb3");
             entity.Property(e => e.SoTn).HasColumnName("so_tn");
+            entity.Property(e => e.SoTnLoi).HasColumnName("so_tn_loi");
         });
 
         modelBuilder.Entity<WpSmsCanbo>(entity =>

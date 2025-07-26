@@ -69,8 +69,9 @@ namespace SMS_TYNB.Helper
                         {
                             name = "send_sms_list",
                             ERROR = $"HTTP {response.StatusCode}",
-                            ERROR_DESC = "Gửi SMS thất bại"
-                        }
+                            ERROR_DESC = "Gửi SMS thất bại",
+							ISERROR = true
+						}
                     };
                     return res;
                 }
@@ -86,7 +87,8 @@ namespace SMS_TYNB.Helper
                     {
                         name = "send_sms_list",
                         ERROR = "exception",
-                        ERROR_DESC = ex.Message
+                        ERROR_DESC = ex.Message,
+                        ISERROR = true
                     }
                 };
             }

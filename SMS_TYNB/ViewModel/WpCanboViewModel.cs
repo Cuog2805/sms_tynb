@@ -2,13 +2,14 @@
 {
 	public class WpCanboViewModel
 	{
-		public int IdCanbo { get; set; }
+		public int? IdCanbo { get; set; }
 
 		public string? MaCanbo { get; set; }
 
 		public string? TenCanbo { get; set; }
 
 		public string? SoDt { get; set; }
+		public string? SoDTGui { get; set; }
 
 		public string? Mota { get; set; }
 

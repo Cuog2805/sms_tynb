@@ -5,12 +5,6 @@ namespace SMS_TYNB.Models.Master
 {
     public partial class WpNhom
     {
-        public WpNhom()
-        {
-            WpNhomCanbo = new HashSet<WpNhomCanbo>();
-            WpSmsCanbo = new HashSet<WpSmsCanbo>();
-        }
-
         public int IdNhom { get; set; }
         public int? IdNhomCha { get; set; }
         public string? TenNhom { get; set; }

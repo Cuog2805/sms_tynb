@@ -144,7 +144,7 @@ namespace SMS_TYNB.Service.Implement
 				var wpNhomCanbo = new WpNhomCanbo
 				{
 					IdNhom = model.IdNhom,
-					IdCanbo = item.IdCanbo
+					IdCanbo = item.IdCanbo.Value
 				};
 
 				await _wpNhomCanboRepository.Create(wpNhomCanbo);

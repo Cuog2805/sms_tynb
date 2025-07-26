@@ -22,15 +22,25 @@ namespace SMS_TYNB.Helper
         }
         public static SmsRes SendSms(SmsConfig config, string paramContent, string phoneList)
         {
+#if DEBUG
+            return new SmsRes()
+            {
+                RPLY = new SmsResponseObj()
+                {
+                    name = "test",
+                    ERROR = "0",
+                    ERROR_DESC = "success",
+                    REQID = GetRequestId()
+                }
+            };
+#endif
             var res = new SmsRes();
-            var reqId = GetRequestId();
-
+            var reqId = string.Empty;
             try
             {
                 using var client = new HttpClient();
                 using var request = new HttpRequestMessage(HttpMethod.Post, "http://123.31.36.151:8888/smsbn/api");
-
-
+                reqId = GetRequestId();
                 var requestObj = new SmsRequestWrapper
                 {
                     RQST = new SmsRequestData
@@ -65,13 +75,13 @@ namespace SMS_TYNB.Helper
                 {
                     res = new SmsRes
                     {
-						RPLY = new SmsResponseObj
+                        RPLY = new SmsResponseObj
                         {
-						    REQID = reqId,
+                            REQID = reqId,
                             name = "send_sms_list",
                             ERROR = $"HTTP {response.StatusCode}",
                             ERROR_DESC = "Gửi SMS thất bại"
-						}
+                        }
                     };
                     return res;
                 }
@@ -96,13 +106,13 @@ namespace SMS_TYNB.Helper
             return new SmsRes
             {
                 RPLY = new SmsResponseObj
-				{
-					REQID = reqId,
-					name = res.RPLY.name,
-					ERROR = res.RPLY.ERROR,
-					ERROR_DESC = res.RPLY.ERROR_DESC
-				}
-			};
+                {
+                    REQID = reqId,
+                    name = res.RPLY.name,
+                    ERROR = res.RPLY.ERROR,
+                    ERROR_DESC = res.RPLY.ERROR_DESC
+                }
+            };
         }
     }
 }

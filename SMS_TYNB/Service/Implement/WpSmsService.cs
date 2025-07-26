@@ -66,7 +66,7 @@ namespace SMS_TYNB.Service.Implement
 				{
 					string phoneNumbersString = string.Join(",", phoneNumbers);
 
-					var res = SmsHelper.SendSms(smsConfig, model.Noidung ?? " ", phoneNumbersString); // Sử dụng model.Noidung thay vì "test tin nhắn"
+					var res = SmsHelper.SendSms(smsConfig, model.Noidung ?? " ", phoneNumbersString);
 
 					if (res.RPLY.ISERROR)
 					{
@@ -89,7 +89,7 @@ namespace SMS_TYNB.Service.Implement
 			// Xử lý gán tin nhắn cho cán bộ
 			var sendTasks = model.WpCanbos.Where(item => item.IdNhom.HasValue)
 										  .Select(item => SendMessageToCanbo(item, wpSms.IdSms));
-			var results = await Task.WhenAll(sendTasks);
+			await Task.WhenAll(sendTasks);
 
 			// Cập nhật số liệu thống kê
 			wpSms.SoTn = successCount;

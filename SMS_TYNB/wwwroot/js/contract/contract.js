@@ -43,10 +43,6 @@
 		$('#inputFileTemplateModal').modal('show');
 	});
 
-	$("#previewFileTemplateBtn").on("click", function () {
-		readFile();
-	});
-
 	createImportFileConfig({
 		headers: ["TenCanbo", "SoDt", "Gioitinh", "Mota"],
 		range: 1

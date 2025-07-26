@@ -41,15 +41,6 @@ namespace SMS_TYNB.Controllers
 				// gán người gửi
 				WpUsers? user = await _userManager.GetUserAsync(HttpContext.User);
 
-				//gửi tin nhắn qua dịch vụ SMS
-				var smsConfig = _smsConfigService.GetSmsConfigActive(true);
-				var res = new SmsRes();
-				if (smsConfig.Id > 0)
-				{
-					res = SmsHelper.SendSms(smsConfig, "test tin nhắn", "84842562345");
-				}
-
-				//gán tin nhắn vào người dùng
 				if (user != null) await _wpSmsService.SendMessage(model, fileDinhKem, selectedFileIds, user);
 				_logger.LogInformation("SendMessage succeed");
 

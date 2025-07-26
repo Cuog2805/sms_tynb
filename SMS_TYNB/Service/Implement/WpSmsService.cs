@@ -20,7 +20,6 @@ namespace SMS_TYNB.Service.Implement
 		private readonly IWpFileService _wpFileService;
 		private readonly ISmsConfigService _smsConfigService;
 		private readonly ILogger<WpSmsService> _logger;
-		private readonly IWebHostEnvironment _environment;
 		public WpSmsService
 		(
 			WpSmsRepository wpSmsRepository,
@@ -29,8 +28,7 @@ namespace SMS_TYNB.Service.Implement
 			WpUsersRepository wpUsersRepository,
 			ILogger<WpSmsService> logger,
 			ISmsConfigService smsConfigService,
-            WpCanboRepository wpCanboRepository,
-			IWebHostEnvironment environment
+            WpCanboRepository wpCanboRepository
 		)
 		{
 			_wpSmsRepository = wpSmsRepository;
@@ -40,7 +38,6 @@ namespace SMS_TYNB.Service.Implement
 			_logger = logger;
 			_smsConfigService = smsConfigService;
 			_wpCanboRepository = wpCanboRepository;
-			_environment = environment;
 
         }
         public async Task SendMessage(WpSmsViewModel model, List<IFormFile> fileDinhKem, List<long> selectedFileIds, WpUsers user)
@@ -61,11 +58,12 @@ namespace SMS_TYNB.Service.Implement
             int errorCount = 0;
             int successCount = 0;
 
-            // Xử lý file đính kèm
-            var fileUrls = await HandleFileAttachments(fileDinhKem, selectedFileIds, user, wpSms.IdSms);
-
             // Gửi tin nhắn
             var smsConfig = _smsConfigService.GetSmsConfigActive(true);
+
+            // Xử lý file đính kèm
+            var fileUrls = await HandleFileAttachments(fileDinhKem, selectedFileIds, user, wpSms.IdSms, smsConfig.Domain);
+
             //var canbos = model.WpCanbos.Where(c => !string.IsNullOrEmpty(c.SoDTGui)).ToList();
 
             if (smsConfig?.Id > 0 && model.WpCanbos.Any())
@@ -100,7 +98,7 @@ namespace SMS_TYNB.Service.Implement
             wpSms.SoTnLoi = errorCount;
             await _wpSmsRepository.Update(wpSms.IdSms, wpSms);
         }
-		private async Task<string> HandleFileAttachments(List<IFormFile> fileDinhKem, List<long> selectedFileIds, WpUsers user, long smsId)
+		private async Task<string> HandleFileAttachments(List<IFormFile> fileDinhKem, List<long> selectedFileIds, WpUsers user, long smsId, string domain)
 		{
 			try
 			{
@@ -128,15 +126,7 @@ namespace SMS_TYNB.Service.Implement
 					fileUrls.AddRange(createdFiles.Select(f => f.FileUrl));
 				}
 
-				// Ensure _environment.WebRootPath is not null before using it
-				if (!string.IsNullOrEmpty(_environment?.WebRootPath))
-				{
-					return string.Join(" ", fileUrls.Select(f => (_environment.WebRootPath + f).Replace("\\", "/")));
-				}
-				else
-				{
-					throw new Exception("WebRootPath is null or empty.");
-				}
+				return string.Join(" ", fileUrls.Select(f => (domain + f).Replace("\\", "/")));
 			}
 			catch (Exception ex)
 			{

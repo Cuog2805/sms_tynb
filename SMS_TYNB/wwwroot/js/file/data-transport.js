@@ -9,6 +9,8 @@ var configFileTemplate = {
     range: 1
 };
 
+var dataPreview = [];
+
 function createImportFileConfig(options = {}) {
     configFileTemplate = {
         headers: options.headers || [],
@@ -47,7 +49,15 @@ function readFile() {
                 }
 
                 const jsonData = XLSX.utils.sheet_to_json(worksheet, options);
+
                 console.log(jsonData);
+
+                if (jsonData.length > 0) {
+                    dataPreview = jsonData;
+                    displayDataPreview(dataPreview);
+                } else {
+                    alertify.error("Không có dữ liệu trong file");
+                }
 
             } catch (error) {
                 console.error('Error reading Excel file:', error);
@@ -61,6 +71,29 @@ function readFile() {
 
         reader.readAsBinaryString(file);
     }
+}
+
+function displayDataPreview(items) {
+    const $thead = $('<thead></thead>');
+    const $theadRow = $('<tr></tr>');
+
+    // Tạo header
+    configFileTemplate.headers.forEach(header => {
+        $theadRow.append($('<th></th>').text(header));
+    });
+    $thead.append($theadRow);
+
+    // Tạo body
+    const $tbody = $('<tbody></tbody>');
+    items.forEach(row => {
+        const $tr = $('<tr></tr>');
+        configFileTemplate.headers.forEach(header => {
+            $tr.append($('<td></td>').text(row[header] || ''));
+        });
+        $tbody.append($tr);
+    });
+
+    $('#previewDataImportTable').empty().append($thead).append($tbody);
 }
 
 function downloadTemplate(filename) {

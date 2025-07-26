@@ -64,20 +64,22 @@ namespace SMS_TYNB.Service.Implement
 
 				if (phoneNumbers.Count > 0)
 				{
-					string phoneNumbersString = string.Join(",", phoneNumbers);
-
-					var res = SmsHelper.SendSms(smsConfig, model.Noidung ?? " ", phoneNumbersString);
-
-					if (res.RPLY.ISERROR)
+					phoneNumbers.ForEach(phoneNumber =>
 					{
-						errorCount = phoneNumbers.Count;
-						successCount = 0;
-					}
-					else
-					{
-						errorCount = 0;
-						successCount = phoneNumbers.Count;
-					}
+						if(!string.IsNullOrEmpty(phoneNumber))
+						{
+							var res = SmsHelper.SendSms(smsConfig, model.Noidung ?? " ", phoneNumber);
+
+							if (res.RPLY.ISERROR)
+							{
+								errorCount += 1;
+							}
+							else
+							{
+								successCount += 1;
+							}
+						}
+					});
 				}
 			}
 			else
@@ -121,26 +123,17 @@ namespace SMS_TYNB.Service.Implement
 			}
 		}
 
-		private async Task<bool> SendMessageToCanbo(WpCanboViewModel canbo, long smsId)
+		private async Task SendMessageToCanbo(WpCanboViewModel canbo, long smsId)
 		{
-			try
+			if (canbo != null && canbo.IdCanbo.HasValue && canbo.IdNhom.HasValue)
 			{
-				if (canbo != null && canbo.IdCanbo.HasValue && canbo.IdNhom.HasValue)
+				WpSmsCanbo wpSmsCanbo = new WpSmsCanbo()
 				{
-					WpSmsCanbo wpSmsCanbo = new WpSmsCanbo()
-					{
-						IdSms = smsId,
-						IdCanbo = canbo.IdCanbo.Value,
-						IdNhom = canbo.IdNhom.Value
-					};
-					await _wpSmsCanboRepository.Create(wpSmsCanbo);
-					return true;
-				}
-				return false;
-			}
-			catch (Exception)
-			{
-				return false;
+					IdSms = smsId,
+					IdCanbo = canbo.IdCanbo.Value,
+					IdNhom = canbo.IdNhom.Value
+				};
+				await _wpSmsCanboRepository.Create(wpSmsCanbo);
 			}
 		}
 		public async Task<PageResult<WpSmsViewModel>> SearchMessage(WpSmsSearchViewModel model, Pageable pageable)

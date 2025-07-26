@@ -212,30 +212,6 @@ public partial class SmsTynContext : DbContext
             entity.Property(e => e.IdNhom).HasColumnName("id_nhom");
             entity.Property(e => e.IdSms).HasColumnName("id_sms");
 
-			entity.Property(e => e.ReqId)
-				.HasMaxLength(500)
-				.HasColumnName("ReqId")
-				.UseCollation("utf8mb3_general_ci")
-				.HasCharSet("utf8mb3");
-
-			entity.Property(e => e.TenSmsReponse)
-				.HasMaxLength(500)
-				.HasColumnName("TenSmsReponse")
-				.UseCollation("utf8mb3_general_ci")
-				.HasCharSet("utf8mb3");
-
-			entity.Property(e => e.Loi)
-				.HasMaxLength(500)
-				.HasColumnName("Loi")
-				.UseCollation("utf8mb3_general_ci")
-				.HasCharSet("utf8mb3");
-
-			entity.Property(e => e.MoTaLoi)
-				.HasMaxLength(500)
-				.HasColumnName("MoTaLoi")
-				.UseCollation("utf8mb3_general_ci")
-				.HasCharSet("utf8mb3");
-
 			entity.HasOne(d => d.IdCanboNavigation).WithMany(p => p.WpSmsCanbo)
                 .HasForeignKey(d => d.IdCanbo)
                 .OnDelete(DeleteBehavior.ClientSetNull)

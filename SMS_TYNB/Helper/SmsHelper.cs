@@ -23,13 +23,13 @@ namespace SMS_TYNB.Helper
         public static SmsRes SendSms(SmsConfig config, string paramContent, string phoneList)
         {
             var res = new SmsRes();
+            var reqId = GetRequestId();
 
             try
             {
                 using var client = new HttpClient();
                 using var request = new HttpRequestMessage(HttpMethod.Post, "http://123.31.36.151:8888/smsbn/api");
 
-                var reqId = GetRequestId();
 
                 var requestObj = new SmsRequestWrapper
                 {
@@ -65,9 +65,9 @@ namespace SMS_TYNB.Helper
                 {
                     res = new SmsRes
                     {
-						REQID = GetRequestId(),
 						RPLY = new SmsResponseObj
                         {
+						    REQID = reqId,
                             name = "send_sms_list",
                             ERROR = $"HTTP {response.StatusCode}",
                             ERROR_DESC = "Gửi SMS thất bại"
@@ -83,9 +83,9 @@ namespace SMS_TYNB.Helper
             {
                 res = new SmsRes
                 {
-                    REQID = GetRequestId(),
                     RPLY = new SmsResponseObj
                     {
+                        REQID = reqId,
                         name = "send_sms_list",
                         ERROR = "exception",
                         ERROR_DESC = ex.Message
@@ -95,8 +95,13 @@ namespace SMS_TYNB.Helper
 
             return new SmsRes
             {
-				REQID = GetRequestId(),
-				RPLY = res.RPLY
+                RPLY = new SmsResponseObj
+				{
+					REQID = reqId,
+					name = res.RPLY.name,
+					ERROR = res.RPLY.ERROR,
+					ERROR_DESC = res.RPLY.ERROR_DESC
+				}
 			};
         }
     }

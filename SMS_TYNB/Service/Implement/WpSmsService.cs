@@ -121,10 +121,10 @@ namespace SMS_TYNB.Service.Implement
 					IdSms = smsId,
 					IdCanbo = canbo.IdCanbo.Value,
 					IdNhom = canbo.IdNhom.Value,
-					ReqId = res.REQID,
-					TenSmsReponse = res.RPLY.name,
-					Loi = res.RPLY.ERROR,
-					MoTaLoi = res.RPLY.ERROR_DESC
+					REQID = res.RPLY.REQID,
+					name = res.RPLY.name,
+					ERROR = res.RPLY.ERROR,
+					ERROR_DESC = res.RPLY.ERROR_DESC
 				};
 				await _wpSmsCanboRepository.Create(wpSmsCanbo);
 			}

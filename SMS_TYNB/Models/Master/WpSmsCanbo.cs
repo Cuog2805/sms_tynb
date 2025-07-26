@@ -9,8 +9,12 @@ namespace SMS_TYNB.Models.Master
         public long IdSms { get; set; }
         public int IdCanbo { get; set; }
         public int IdNhom { get; set; }
+		public string ReqId { get; set; }
+		public string TenSmsReponse { get; set; }
+		public string Loi { get; set; }
+		public string MoTaLoi { get; set; }
 
-        public virtual WpCanbo IdCanboNavigation { get; set; } = null!;
+		public virtual WpCanbo IdCanboNavigation { get; set; } = null!;
         public virtual WpNhom IdNhomNavigation { get; set; } = null!;
         public virtual WpSms IdSmsNavigation { get; set; } = null!;
     }

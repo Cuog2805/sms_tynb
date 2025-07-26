@@ -120,8 +120,9 @@ namespace SMS_TYNB.ViewModel.ApiModel
         }
         public class SmsRes
         {
+			public string REQID { get; set; }
             public SmsResponseObj RPLY { get; set; }
-        }
+		}
         public class SmsResponseObj
         {
             public string ERROR_DESC { get; set; }

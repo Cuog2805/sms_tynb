@@ -70,13 +70,13 @@ namespace SMS_TYNB.Service.Implement
 						{
 							var res = SmsHelper.SendSms(smsConfig, model.Noidung ?? " ", phoneNumber);
 
-							if (res.RPLY.ISERROR)
+							if (res.RPLY.ERROR == "0")
 							{
-								errorCount += 1;
+								successCount += 1;
 							}
 							else
 							{
-								successCount += 1;
+								errorCount += 1;
 							}
 						}
 					});

@@ -92,6 +92,20 @@ function sendMessage() {
                     alertify.success(res.msg);
                     $("#messageForm")[0].reset();
                     selectedItems = [];
+
+                    //reset lại input file
+                    if (typeof clearSelectedFiles === 'function') {
+                        clearSelectedFiles();
+                    } else {
+                        $('#selectedFilesList').empty();
+                        $("#FileDinhKem").val('');
+                        if (typeof selectedFiles !== 'undefined') {
+                            selectedFiles = [];
+                        }
+                    }
+
+                    //cập nhật lại hiển thị danh sách
+                    displaySelectedItems();
                 } else {
                     alertify.error(res.msg);
                 }

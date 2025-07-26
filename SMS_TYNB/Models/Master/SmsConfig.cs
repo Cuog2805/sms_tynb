@@ -22,5 +22,6 @@ namespace SMS_TYNB.Models.Master
         public string UrlSms { get; set; }
         public bool IssEnSms { get; set; }
         public bool IsActive { get; set; }
+        public string Domain { get; set; }
     }
 }

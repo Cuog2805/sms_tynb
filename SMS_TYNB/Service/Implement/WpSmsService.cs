@@ -15,6 +15,7 @@ namespace SMS_TYNB.Service.Implement
 		private readonly WpSmsRepository _wpSmsRepository;
 		private readonly WpSmsCanboRepository _wpSmsCanboRepository;
 		private readonly WpUsersRepository _wpUsersRepository;
+		private readonly WpCanboRepository _wpCanboRepository;
 		private readonly IWpFileService _wpFileService;
 		private readonly ISmsConfigService _smsConfigService;
 		private readonly ILogger<WpSmsService> _logger;
@@ -25,8 +26,9 @@ namespace SMS_TYNB.Service.Implement
 			IWpFileService wpFileService,
 			WpUsersRepository wpUsersRepository,
 			ILogger<WpSmsService> logger,
-			ISmsConfigService smsConfigService
-		)
+			ISmsConfigService smsConfigService,
+            WpCanboRepository wpCanboRepository
+        )
 		{
 			_wpSmsRepository = wpSmsRepository;
 			_wpSmsCanboRepository = wpSmsCanboRepository;
@@ -34,7 +36,9 @@ namespace SMS_TYNB.Service.Implement
 			_wpUsersRepository = wpUsersRepository;
 			_logger = logger;
 			_smsConfigService = smsConfigService;
-		}
+			_wpCanboRepository = wpCanboRepository;
+
+        }
         public async Task SendMessage(WpSmsViewModel model, List<IFormFile> fileDinhKem, List<long> selectedFileIds, WpUsers user)
         {
             if (model == null || user == null)
@@ -58,21 +62,24 @@ namespace SMS_TYNB.Service.Implement
 
             // Gửi tin nhắn
             var smsConfig = _smsConfigService.GetSmsConfigActive(true);
-            var canbos = model.WpCanbos.Where(c => c.IdNhom.HasValue && !string.IsNullOrEmpty(c.SoDTGui)).ToList();
+            //var canbos = model.WpCanbos.Where(c => !string.IsNullOrEmpty(c.SoDTGui)).ToList();
 
-            if (smsConfig?.Id > 0 && canbos.Any())
+            if (smsConfig?.Id > 0 && model.WpCanbos.Any())
             {
-                foreach (var canbo in canbos)
+                foreach (var canbo in model.WpCanbos)
                 {
                     try
                     {
-                        var res = SmsHelper.SendSms(smsConfig, model.Noidung ?? " ", canbo.SoDTGui);
-                        await SendMessageToCanbo(canbo, wpSms.IdSms, res);
+						var cb = _wpCanboRepository.FindById(canbo.IdCanbo??0).Result;
+						if (cb!=null && cb.IdCanbo > 0) {
+                            var res = SmsHelper.SendSms(smsConfig, model.Noidung ?? " ", cb.SoDTGui);
+                            await SendMessageToCanbo(canbo, wpSms.IdSms, res);
 
-                        if (res?.RPLY?.ERROR == "0")
-                            successCount++;
-                        else
-                            errorCount++;
+                            if (res?.RPLY?.ERROR == "0")
+                                successCount++;
+                            else
+                                errorCount++;
+                        }
                     }
                     catch (Exception)
                     {

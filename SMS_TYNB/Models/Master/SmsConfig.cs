@@ -18,7 +18,7 @@ namespace SMS_TYNB.Models.Master
         public string UserName { get; set; }
         public string DataCoding { get; set; }
         public string SaleOrderId { get; set; }
-        public string PakageId { get; set; }
+        public string PackageId { get; set; }
         public string UrlSms { get; set; }
         public bool IssEnSms { get; set; }
         public bool IsActive { get; set; }

@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
 using SMS_TYNB.Common;
 using SMS_TYNB.Helper;
 using SMS_TYNB.Models.Identity;
@@ -9,6 +10,7 @@ using SMS_TYNB.Models.Master;
 using SMS_TYNB.Service;
 using SMS_TYNB.Service.Implement;
 using SMS_TYNB.ViewModel;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using static SMS_TYNB.ViewModel.ApiModel.SmsApiViewModel;
 
@@ -34,14 +36,20 @@ namespace SMS_TYNB.Controllers
 			return View(formViewModel);
 		}
 		[HttpPost]
-		public async Task<JsonResult> SendMessage([FromForm] WpSmsViewModel model, List<IFormFile> fileDinhKem, List<long> selectedFileIds)
+		public async Task<JsonResult> SendMessage(string Noidung, string Canbos, List<IFormFile> fileDinhKem, List<long> selectedFileIds)
 		{
 			try
 			{
 				// gán người gửi
 				WpUsers? user = await _userManager.GetUserAsync(HttpContext.User);
+				var cb = JsonConvert.DeserializeObject<List<WpCanboViewModel>>(Canbos);
+				var model = new WpSmsViewModel()
+				{
+					Noidung = Noidung,
+					WpCanbos = cb
+				};
 
-				if (user != null) await _wpSmsService.SendMessage(model, fileDinhKem, selectedFileIds, user);
+                if (user != null) await _wpSmsService.SendMessage(model, fileDinhKem, selectedFileIds, user);
 				_logger.LogInformation("SendMessage succeed");
 
 				return Json(new

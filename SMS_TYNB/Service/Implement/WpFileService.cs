@@ -62,7 +62,7 @@ namespace SMS_TYNB.Service.Implement
 			return wpFile;
 		}
 
-		public async Task SaveFile(IFormFile file, WpUsers creator, string tableName, long tableId, string subFolder = "upload")
+		public async Task<WpFile> SaveFile(IFormFile file, WpUsers creator, string tableName, long tableId, string subFolder = "upload")
 		{
 			if (file == null || file.Length == 0)
 				throw new Exception("File không hợp lệ");
@@ -107,11 +107,13 @@ namespace SMS_TYNB.Service.Implement
 				BangLuuFileId = tableId,
 			};
 
-			await Create(fileSave);
+			return await Create(fileSave);
 		}
 
-		public async Task CreateFromFileExisted(List<long> selectedFileIds, WpUsers creator, string tableName, long tableId)
+		public async Task<IEnumerable<WpFile>> CreateFromFileExisted(List<long> selectedFileIds, WpUsers creator, string tableName, long tableId)
 		{
+			var createdFiles = new List<WpFile>();
+
 			if (selectedFileIds != null && selectedFileIds.Any())
 			{
 				var existingFiles = await _wpFileRepository.GetByIdFiles(selectedFileIds);
@@ -119,9 +121,12 @@ namespace SMS_TYNB.Service.Implement
 				foreach (var existingFile in existingFiles)
 				{
 					var newFile = CopyFileToNewLocation(existingFile, creator, tableName, tableId);
-					await Create(newFile);
+					var createdFile = await Create(newFile);
+					createdFiles.Add(createdFile);
 				}
 			}
+
+			return createdFiles;
 		}
 
 		private WpFile CopyFileToNewLocation(WpFile originalFile, WpUsers creator, string tableName, long tableId, string subFolder = "upload")

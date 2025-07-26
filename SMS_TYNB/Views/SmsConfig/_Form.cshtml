@@ -181,21 +181,6 @@
                 <div class="row">
                     <div class="col-md-6">
                         <div class="form-group mb-3">
-                            <label for="PakageId" class="form-label">PakageId <span class="text-danger">*</span></label>
-                            @Html.EditorFor(model => model.PakageId, 
-                                new { 
-                                    htmlAttributes = new { 
-                                        @class = "form-control",
-                                        @name = "PakageId",
-                                        @id = "PakageId",
-                                    } 
-                                }
-                            )
-                            @Html.ValidationMessageFor(model => model.PakageId, "", new { @class = "text-danger" })
-                        </div>
-                    </div>
-                    <div class="col-md-6">
-                        <div class="form-group mb-3">
                             <label for="UrlSms" class="form-label">UrlSms <span class="text-danger">*</span></label>
                             @Html.EditorFor(model => model.UrlSms, 
                                 new { 
@@ -209,9 +194,6 @@
                             @Html.ValidationMessageFor(model => model.UrlSms, "", new { @class = "text-danger" })
                         </div>
                     </div>
-                </div>	
-
-                 <div class="row">
                     <div class="col-md-6">
                         <div class="form-group mb-3">
                             @Html.CheckBoxFor(model => model.IssEnSms, 

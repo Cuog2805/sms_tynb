@@ -6,6 +6,7 @@ using SMS_TYNB.Models.Identity;
 using SMS_TYNB.Models.Master;
 using SMS_TYNB.Repository;
 using SMS_TYNB.ViewModel;
+using System.Collections.Generic;
 using static SMS_TYNB.ViewModel.ApiModel.SmsApiViewModel;
 
 namespace SMS_TYNB.Service.Implement
@@ -19,6 +20,7 @@ namespace SMS_TYNB.Service.Implement
 		private readonly IWpFileService _wpFileService;
 		private readonly ISmsConfigService _smsConfigService;
 		private readonly ILogger<WpSmsService> _logger;
+		private readonly IWebHostEnvironment _environment;
 		public WpSmsService
 		(
 			WpSmsRepository wpSmsRepository,
@@ -27,8 +29,9 @@ namespace SMS_TYNB.Service.Implement
 			WpUsersRepository wpUsersRepository,
 			ILogger<WpSmsService> logger,
 			ISmsConfigService smsConfigService,
-            WpCanboRepository wpCanboRepository
-        )
+            WpCanboRepository wpCanboRepository,
+			IWebHostEnvironment environment
+		)
 		{
 			_wpSmsRepository = wpSmsRepository;
 			_wpSmsCanboRepository = wpSmsCanboRepository;
@@ -37,6 +40,7 @@ namespace SMS_TYNB.Service.Implement
 			_logger = logger;
 			_smsConfigService = smsConfigService;
 			_wpCanboRepository = wpCanboRepository;
+			_environment = environment;
 
         }
         public async Task SendMessage(WpSmsViewModel model, List<IFormFile> fileDinhKem, List<long> selectedFileIds, WpUsers user)
@@ -58,7 +62,7 @@ namespace SMS_TYNB.Service.Implement
             int successCount = 0;
 
             // Xử lý file đính kèm
-            await HandleFileAttachments(fileDinhKem, selectedFileIds, user, wpSms.IdSms);
+            var fileUrls = await HandleFileAttachments(fileDinhKem, selectedFileIds, user, wpSms.IdSms);
 
             // Gửi tin nhắn
             var smsConfig = _smsConfigService.GetSmsConfigActive(true);
@@ -72,7 +76,7 @@ namespace SMS_TYNB.Service.Implement
                     {
 						var cb = _wpCanboRepository.FindById(canbo.IdCanbo??0).Result;
 						if (cb!=null && cb.IdCanbo > 0) {
-                            var res = SmsHelper.SendSms(smsConfig, model.Noidung ?? " ", cb.SoDTGui);
+                            var res = SmsHelper.SendSms(smsConfig, model.Noidung ?? " " + fileUrls, cb.SoDTGui);
                             await SendMessageToCanbo(canbo, wpSms.IdSms, res);
 
                             if (res?.RPLY?.ERROR == "0")
@@ -96,27 +100,47 @@ namespace SMS_TYNB.Service.Implement
             wpSms.SoTnLoi = errorCount;
             await _wpSmsRepository.Update(wpSms.IdSms, wpSms);
         }
-        private async Task HandleFileAttachments(List<IFormFile> fileDinhKem, List<long> selectedFileIds, WpUsers user, long smsId)
+		private async Task<string> HandleFileAttachments(List<IFormFile> fileDinhKem, List<long> selectedFileIds, WpUsers user, long smsId)
 		{
 			try
 			{
+				List<string> fileUrls = new List<string>();
 				// Xử lý file đính kèm mới
 				if (fileDinhKem != null && fileDinhKem.Count > 0)
 				{
-					var uploadTasks = fileDinhKem.Where(file => file.Length > 0)
-											   .Select(file => _wpFileService.SaveFile(file, user, "wp_sms", smsId));
-					await Task.WhenAll(uploadTasks);
+					foreach (var file in fileDinhKem)
+					{
+						if (file.Length > 0)
+						{
+							var savedFile = await _wpFileService.SaveFile(file, user, "wp_sms", smsId);
+							if (savedFile != null)
+							{
+								fileUrls.Add(savedFile.FileUrl);
+							}
+						}
+					}
 				}
 
 				// Xử lý files đã chọn từ selectedFileIds
 				if (selectedFileIds != null && selectedFileIds.Count > 0)
 				{
-					await _wpFileService.CreateFromFileExisted(selectedFileIds, user, "wp_sms", smsId);
+					var createdFiles = await _wpFileService.CreateFromFileExisted(selectedFileIds, user, "wp_sms", smsId);
+					fileUrls.AddRange(createdFiles.Select(f => f.FileUrl));
+				}
+
+				// Ensure _environment.WebRootPath is not null before using it
+				if (!string.IsNullOrEmpty(_environment?.WebRootPath))
+				{
+					return string.Join(" ", fileUrls.Select(f => (_environment.WebRootPath + f).Replace("\\", "/")));
+				}
+				else
+				{
+					throw new Exception("WebRootPath is null or empty.");
 				}
 			}
 			catch (Exception ex)
 			{
-				_logger.LogError(ex, "Error HandleFileAttachments for SMS {SmsId}", smsId);
+				throw new Exception("Lỗi khi xử lý file đính kèm: " + ex.Message);
 			}
 		}
 

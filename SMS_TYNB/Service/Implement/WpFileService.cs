@@ -68,7 +68,7 @@ namespace SMS_TYNB.Service.Implement
 				throw new Exception("File không hợp lệ");
 
 			// Tạo thư mục upload nếu chưa tồn tại
-			var subFolderUser = Path.Combine(subFolder, creator.Id, DateTime.Now.ToString("ddMMyyyy"));
+			var subFolderUser = Path.Combine(subFolder, DateTime.Now.ToString("ddMMyyyy"));
 			var uploadPath = Path.Combine(_environment.WebRootPath, subFolderUser);
 			if (!Directory.Exists(uploadPath))
 			{

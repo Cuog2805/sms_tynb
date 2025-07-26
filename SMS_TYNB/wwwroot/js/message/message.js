@@ -91,6 +91,15 @@ function sendMessage() {
                 if (res.state === 'success') {
                     alertify.success(res.msg);
                     $("#messageForm")[0].reset();
+                    $("#messageAssignList").empty();
+                    $("#selectedFilesList").empty();
+                    $("#messageAssignTotal").text('0');
+                    const treeRef = $.jstree.reference('#messageCheckBoxTree');
+                    if (treeRef) {
+                        treeRef.uncheck_all();    
+                        treeRef.close_all();       
+                    }
+
                     selectedItems = [];
                 } else {
                     alertify.error(res.msg);

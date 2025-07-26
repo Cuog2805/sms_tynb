@@ -78,7 +78,7 @@ namespace SMS_TYNB.Service.Implement
 			}
 			else
 			{
-				errorCount = canbos.Count;
+				errorCount = model.WpCanbos.Count;
 				successCount = 0;
 			}
 

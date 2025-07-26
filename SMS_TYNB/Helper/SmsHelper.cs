@@ -65,7 +65,8 @@ namespace SMS_TYNB.Helper
                 {
                     res = new SmsRes
                     {
-                        RPLY = new SmsResponseObj
+						REQID = GetRequestId(),
+						RPLY = new SmsResponseObj
                         {
                             name = "send_sms_list",
                             ERROR = $"HTTP {response.StatusCode}",
@@ -82,6 +83,7 @@ namespace SMS_TYNB.Helper
             {
                 res = new SmsRes
                 {
+                    REQID = GetRequestId(),
                     RPLY = new SmsResponseObj
                     {
                         name = "send_sms_list",
@@ -91,7 +93,11 @@ namespace SMS_TYNB.Helper
                 };
             }
 
-            return res;
+            return new SmsRes
+            {
+				REQID = GetRequestId(),
+				RPLY = res.RPLY
+			};
         }
     }
 }

@@ -56,42 +56,31 @@ namespace SMS_TYNB.Service.Implement
 
 			// Gửi tin nhắn qua dịch vụ SMS
 			var smsConfig = _smsConfigService.GetSmsConfigActive(true);
-			if (smsConfig?.Id > 0)
+			var canbos = model.WpCanbos.Where(c => c.IdNhom.HasValue && !string.IsNullOrEmpty(c.SoDTGui)).ToList();
+			if (smsConfig?.Id > 0 && canbos.Count > 0)
 			{
-				var phoneNumbers = model.WpCanbos.Select(c => c.SoDTGui)
-												.Where(s => !string.IsNullOrEmpty(s))
-												.ToList();
-
-				if (phoneNumbers.Count > 0)
+				canbos.ForEach(async canbo =>
 				{
-					phoneNumbers.ForEach(phoneNumber =>
-					{
-						if(!string.IsNullOrEmpty(phoneNumber))
-						{
-							var res = SmsHelper.SendSms(smsConfig, model.Noidung ?? " ", phoneNumber);
 
-							if (res.RPLY.ERROR == "0")
-							{
-								successCount += 1;
-							}
-							else
-							{
-								errorCount += 1;
-							}
-						}
-					});
-				}
+					var res = SmsHelper.SendSms(smsConfig, model.Noidung ?? " ", canbo.SoDTGui);
+
+					await SendMessageToCanbo(canbo, wpSms.IdSms, res);
+
+					if (res.RPLY.ERROR == "0")
+					{
+						successCount += 1;
+					}
+					else
+					{
+						errorCount += 1;
+					}
+				});
 			}
 			else
 			{
-				errorCount = model.WpCanbos.Count;
+				errorCount = canbos.Count;
 				successCount = 0;
 			}
-
-			// Xử lý gán tin nhắn cho cán bộ
-			var sendTasks = model.WpCanbos.Where(item => item.IdNhom.HasValue)
-										  .Select(item => SendMessageToCanbo(item, wpSms.IdSms));
-			await Task.WhenAll(sendTasks);
 
 			// Cập nhật số liệu thống kê
 			wpSms.SoTn = successCount;
@@ -123,7 +112,7 @@ namespace SMS_TYNB.Service.Implement
 			}
 		}
 
-		private async Task SendMessageToCanbo(WpCanboViewModel canbo, long smsId)
+		private async Task SendMessageToCanbo(WpCanboViewModel canbo, long smsId, SmsRes res)
 		{
 			if (canbo != null && canbo.IdCanbo.HasValue && canbo.IdNhom.HasValue)
 			{
@@ -131,7 +120,11 @@ namespace SMS_TYNB.Service.Implement
 				{
 					IdSms = smsId,
 					IdCanbo = canbo.IdCanbo.Value,
-					IdNhom = canbo.IdNhom.Value
+					IdNhom = canbo.IdNhom.Value,
+					ReqId = res.REQID,
+					TenSmsReponse = res.RPLY.name,
+					Loi = res.RPLY.ERROR,
+					MoTaLoi = res.RPLY.ERROR_DESC
 				};
 				await _wpSmsCanboRepository.Create(wpSmsCanbo);
 			}

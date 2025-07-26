@@ -126,7 +126,7 @@ namespace SMS_TYNB.Service.Implement
 					fileUrls.AddRange(createdFiles.Select(f => f.FileUrl));
 				}
 
-				return string.Join(" ", fileUrls.Select(f => (domain + f).Replace("\\", "/")));
+				return string.Join(" ", fileUrls.Select(f => (domain + f).Replace("\\", "/").Replace("//", "/")));
 			}
 			catch (Exception ex)
 			{

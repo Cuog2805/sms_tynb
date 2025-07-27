@@ -40,12 +40,12 @@ namespace SMS_TYNB.Service.Implement
 			_wpCanboRepository = wpCanboRepository;
 
         }
-        public async Task SendMessage(WpSmsViewModel model, List<IFormFile> fileDinhKem, List<long> selectedFileIds, WpUsers user)
+        public async Task<WpSmsViewModel> SendMessage(WpSmsViewModel model, List<IFormFile> fileDinhKem, List<long> selectedFileIds, WpUsers user)
         {
             if (model == null || user == null)
-                return;
+				throw new Exception("Lỗi khi xử lý SendMessage");
 
-            WpSms wpSms = new WpSms()
+			WpSms wpSms = new WpSms()
             {
                 Noidung = model.Noidung,
                 Ngaygui = DateTime.Now,
@@ -63,10 +63,9 @@ namespace SMS_TYNB.Service.Implement
 
             // Xử lý file đính kèm
             var fileUrls = await HandleFileAttachments(fileDinhKem, selectedFileIds, user, wpSms.IdSms, smsConfig.Domain);
+			var noidungGui = model.Noidung + " " + fileUrls;
 
-            //var canbos = model.WpCanbos.Where(c => !string.IsNullOrEmpty(c.SoDTGui)).ToList();
-
-            if (smsConfig?.Id > 0 && model.WpCanbos.Any())
+			if (smsConfig?.Id > 0 && model.WpCanbos.Any())
             {
                 foreach (var canbo in model.WpCanbos)
                 {
@@ -74,7 +73,7 @@ namespace SMS_TYNB.Service.Implement
                     {
 						var cb = _wpCanboRepository.FindById(canbo.IdCanbo??0).Result;
 						if (cb!=null && cb.IdCanbo > 0) {
-                            var res = SmsHelper.SendSms(smsConfig, model.Noidung ?? " " + fileUrls, cb.SoDTGui);
+                            var res = SmsHelper.SendSms(smsConfig, noidungGui, cb.SoDTGui);
                             await SendMessageToCanbo(canbo, wpSms.IdSms, res);
 
                             if (res?.RPLY?.ERROR == "0")
@@ -96,7 +95,19 @@ namespace SMS_TYNB.Service.Implement
             }
             wpSms.SoTn = successCount;
             wpSms.SoTnLoi = errorCount;
-            await _wpSmsRepository.Update(wpSms.IdSms, wpSms);
+			wpSms = await _wpSmsRepository.Update(wpSms.IdSms, wpSms);
+
+			return new WpSmsViewModel()
+			{
+				IdSms = wpSms.IdSms,
+				Noidung = wpSms.Noidung,
+				NoidungGui = noidungGui,
+				IdNguoigui = wpSms.IdNguoigui,
+				TenNguoigui = user.UserName,
+				Ngaygui = wpSms.Ngaygui,
+				SoTn = wpSms.SoTn,
+				SoTnLoi = wpSms.SoTnLoi
+			};
         }
 		private async Task<string> HandleFileAttachments(List<IFormFile> fileDinhKem, List<long> selectedFileIds, WpUsers user, long smsId, string domain)
 		{

@@ -1,4 +1,14 @@
 ﻿$(document).ready(function () {
+    // Khởi tạo Select2 cho dropdown IdNhom
+    $('#IdNhom').select2({
+        theme: 'bootstrap-5',
+        placeholder: '--Chọn nhóm--',
+        allowClear: true,
+        width: '100%',
+        dropdownParent: $('#IdNhom').parent()
+    });
+
+    //Load dữ liệu
     loadData();
     let debounceTimer;
     $("#searchInput").on("input", function () {
@@ -27,7 +37,13 @@
     })
 
     $("#IdNhom").on("change", function () {
-        loadDetail($(this).val());
+        var selectedValue = $(this).val();
+
+        if (!selectedValue || selectedValue === "" || selectedValue === null) {
+            return;
+        }
+
+        loadDetail(selectedValue);
     })
 });
 

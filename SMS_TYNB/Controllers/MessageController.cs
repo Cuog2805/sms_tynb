@@ -49,14 +49,24 @@ namespace SMS_TYNB.Controllers
 					WpCanbos = cb
 				};
 
-                if (user != null) await _wpSmsService.SendMessage(model, fileDinhKem, selectedFileIds, user);
+                if (user == null)
+				{
+					return Json(new
+					{
+						state = "error",
+						msg = "Lỗi khi thông tin người dùng!",
+						data = new { },
+					});
+				}
+
+				var data = await _wpSmsService.SendMessage(model, fileDinhKem, selectedFileIds, user);
 				_logger.LogInformation("SendMessage succeed");
 
 				return Json(new
 				{
 					state = "success",
 					msg = "Gửi tin nhắn thành công!",
-					data = new { },
+					data = data,
 				});
 			} catch (Exception ex)
 			{

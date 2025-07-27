@@ -84,6 +84,45 @@
 	await Html.RenderPartialAsync("_InputFile");
 }
 
+<!-- Modal popup thông báo khi gửi tin thành công -->
+<div class="modal fade" id="successMessageModal" tabindex="-1" aria-labelledby="successMessageModalLabel" aria-hidden="true">
+	<div class="modal-dialog modal-lg">
+		<div class="modal-content">
+			<div class="modal-header bg-success text-white">
+				<h5 class="modal-title" id="successMessageModalLabel">
+					Gửi tin nhắn thành công
+				</h5>
+				<button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+			</div>
+			<div class="modal-body">
+				<!-- Thống kê gửi tin -->
+				<div class="alert alert-success d-flex align-items-center mb-3">
+                    <strong id="smsSucceedNumber">0</strong>&ensp;Tin nhắn thành công
+                </div>
+                <div class="alert alert-danger d-flex align-items-center mb-3">
+                    <strong id="smsErrorNumber">0</strong>&ensp;Tin nhắn thất bại
+                </div>
+				
+				<!-- Nội dung -->
+				<div class="mb-3">
+					<label class="form-label fw-semibold text-muted mb-2">Nội dung:</label>
+					<div class="border rounded-3 p-3" style="background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%); min-height: 80px;">
+						<p id="smsContent" class="mb-0 text-dark" style="line-height: 1.6; white-space: pre-wrap;"></p>
+					</div>
+				</div>
+						
+			</div>
+			<div class="modal-footer justify-content-between">
+				<!-- Thông tin người gửi và thời gian -->
+				<div class="d-flex align-items-center text-muted">
+						Người gửi:&ensp;<small id="smsInfo" class="mb-0"></small>
+				</div>
+				<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+			</div>
+		</div>
+	</div>
+</div>
+
 @section Scripts {
 	<script src="~/js/message/message.js?v=@DateTime.Now.Ticks"></script>
 }

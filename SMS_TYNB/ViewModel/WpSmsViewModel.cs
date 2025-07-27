@@ -8,6 +8,7 @@ namespace SMS_TYNB.ViewModel
 		public long IdSms { get; set; }
 
 		public string? Noidung { get; set; }
+		public string? NoidungGui { get; set; }
 
 		public List<WpFile>? FileDinhKem { get; set; }
 

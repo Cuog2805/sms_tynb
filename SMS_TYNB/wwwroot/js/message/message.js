@@ -54,17 +54,12 @@ function sendMessage() {
 
     if ($('#messageForm').valid()) {
         const formData = new FormData();
+        const messageContent = $("#Noidung").val();
 
-        formData.append('Noidung', $("#Noidung").val());
-        
-        //if (selectedItems && selectedItems.length > 0) {
-        //    selectedItems.forEach((item, index) => {
-        //        for (let key in item) {
-        //            formData.append(`WpCanbos[${index}].${key}`, item[key]);
-        //        }
-        //    });
-        //}
+        formData.append('Noidung', messageContent);
+
         formData.append('Canbos', JSON.stringify(selectedItems));
+
         // File
         const fileInput = $("#FileDinhKem")[0];
         const files = fileInput.files;
@@ -89,7 +84,9 @@ function sendMessage() {
             contentType: false,
             success: function (res) {
                 if (res.state === 'success') {
-                    alertify.success(res.msg);
+                    // Hiển thị modal thông báo thành công
+                    showSuccessModal(res.data);
+
                     $("#messageForm")[0].reset();
                     selectedItems = [];
 
@@ -120,6 +117,19 @@ function sendMessage() {
 
 }
 
+function showSuccessModal(data) {
+    // nội dung tin nhắn
+    $('#smsContent').text(data.NoidungGui);
+    $('#smsInfo').text(data.TenNguoigui + " - " + formatDateTime(new Date(data.Ngaygui)));
+
+    // số lượng người nhận
+    $('#smsSucceedNumber').html(data.SoTn);
+    $('#smsErrorNumber').html(data.SoTnLoi);
+
+    $('#successMessageModal').modal('show');
+}
+
+//tree action
 function initJsTree(treeData) {
     if ($.jstree.reference('#messageCheckBoxTree')) {
         $('#messageCheckBoxTree').jstree("destroy");

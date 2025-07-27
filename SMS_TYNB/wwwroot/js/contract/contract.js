@@ -43,8 +43,35 @@
 		$('#inputFileTemplateModal').modal('show');
 	});
 
+	$("#importFileTemplateBtn").on("click", function () {
+		readFile(function (data) {
+			importWpCanbos(data);
+		});
+	});
+
+	$("#btnExportTemplate").on("click", function () {
+		$.ajax({
+			url: '/Contact/LoadData',
+			type: 'GET',
+			data: $.param({
+				'pageable.PageNumber': 1,
+				'pageable.PageSize': 999999,
+				'pageable.Sort': ''
+			}),
+			success: function (response) {
+				if (response.state === "success") {
+					exportExcel(response.content.Data);
+				}
+			},
+			error: function () {
+				alertify.error('Có lỗi xảy ra khi load dữ liệu');
+			}
+		});
+	});
+
 	createImportFileConfig({
 		headers: ["TenCanbo", "SoDt", "Gioitinh", "Mota"],
+		headersLabel: ["Tên cán bộ", "Số điện thoại", "Giới tính", "Mô tả"],
 		range: 1
 	});
 });
@@ -166,6 +193,47 @@ function loadDetail(id) {
 			}
 		});
 	}
+}
+
+function importWpCanbos(data) {
+	const validData = data.filter(item => {
+		return item.TenCanbo && item.TenCanbo.trim() !== '' &&
+			item.SoDt && item.SoDt.trim() !== '';
+	});
+
+	if (validData.length === 0) {
+		alertify.error('Không có dữ liệu hợp lệ để import');
+		return;
+	}
+
+	const importData = {
+		model: validData.map(item => ({
+			TenCanbo: item.TenCanbo?.toString().trim() || '',
+			SoDt: item.SoDt?.toString().trim() || '',
+			Gioitinh: item.Gioitinh?.toString().trim() == 'Nam' ? 1 : 0,
+			Mota: item.Mota?.toString().trim() || '',
+			Trangthai: 1, // Mặc định active
+		}))
+	};
+	$.ajax({
+		url: '/Contact/Import',
+		type: 'POST',
+		data: importData,
+		dataType: "json",
+		success: function (response) {
+			if (response.state === 'success') {
+				alertify.success(response.msg || 'Import thành công');
+
+				loadData();
+				$('#inputFileTemplateModal').modal('hide');
+			} else {
+				alertify.error(response.msg || 'Đã có lỗi xảy ra');
+			}
+		},
+		error: function () {
+			alertify.error('Có lỗi xảy ra khi Import dữ liệu');
+		}
+	});
 }
 
 function addWpCanbo(formData) {

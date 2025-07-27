@@ -46,6 +46,20 @@ namespace SMS_TYNB.Repository
 			return entityNew.Entity;
 		}
 
+		public override async Task<List<WpCanbo>> CreateRange(List<WpCanbo> entities)
+		{
+			foreach (var entity in entities)
+			{
+				entity.SoDTGui = !string.IsNullOrWhiteSpace(entity.SoDt) && entity.SoDt.StartsWith("0")
+					? string.Concat("84", entity.SoDt.Trim().AsSpan(1))
+					: entity.SoDt?.Trim() ?? "";
+			}
+
+			context.Set<WpCanbo>().AddRange(entities);
+			await context.SaveChangesAsync();
+			return entities;
+		}
+
 		public override async Task<WpCanbo?> Update(int id, WpCanbo entityUpdate)
 		{
 			var existingEntity = await context.Set<WpCanbo>().FindAsync(id);

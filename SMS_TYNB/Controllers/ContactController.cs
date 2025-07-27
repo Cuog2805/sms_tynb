@@ -80,5 +80,16 @@ namespace SMS_TYNB.Controllers
 				data = model
 			});
 		}
+		[HttpPost]
+		public async Task<JsonResult> Import(List<WpCanbo> model)
+		{
+			List<WpCanbo> data = await _wpCanboService.CreateMulti(model);
+			return Json(new
+			{
+				state = "success",
+				msg = "Import thành công!",
+				data = data
+			});
+		}
 	}
 }

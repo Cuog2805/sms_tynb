@@ -6,6 +6,7 @@
 
 var configFileTemplate = {
     headers: [],
+    headersLabel: [],
     range: 1
 };
 
@@ -14,11 +15,63 @@ var dataPreview = [];
 function createImportFileConfig(options = {}) {
     configFileTemplate = {
         headers: options.headers || [],
+        headersLabel: options.headersLabel || [],
         range: options.range || 1
     };
 }
 
-function readFile() {
+function exportExcel(data, fileName = 'export.xlsx') {
+    const exportData = [];
+
+    exportData.push(configFileTemplate.headersLabel);
+
+    if (data && data.length > 0) {
+        data.forEach(item => {
+            const row = [];
+            configFileTemplate.headers.forEach(header => {
+                let value = item[header];
+
+                if (value === null || value === undefined) {
+                    value = '';
+                } else if (typeof value === 'object') {
+                    value = JSON.stringify(value);
+                } else {
+                    value = value.toString();
+                }
+
+                row.push(value);
+            });
+            exportData.push(row);
+        });
+    }
+
+    const ws = XLSX.utils.aoa_to_sheet(exportData);
+
+    autoResizeColumns(ws, exportData);
+
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, 'Sheet1');
+
+    XLSX.writeFile(wb, fileName);
+}
+
+function autoResizeColumns(ws, data) {
+    const colWidths = [];
+
+    data.forEach(row => {
+        row.forEach((cell, colIndex) => {
+            const cellLength = cell ? cell.toString().length : 0;
+            colWidths[colIndex] = Math.max(colWidths[colIndex] || 0, cellLength);
+        });
+    });
+
+    // Thiết lập column widths
+    ws['!cols'] = colWidths.map(width => ({
+        wch: Math.min(Math.max(width + 2, 10), 50)
+    }));
+}
+
+function readFile(callback) {
     if (!$('#inputFileTemplateModalForm').data('validator')) {
         initImportFileFormValidate();
     }
@@ -55,6 +108,11 @@ function readFile() {
                 if (jsonData.length > 0) {
                     dataPreview = jsonData;
                     displayDataPreview(dataPreview);
+
+                    // Gọi callback
+                    if (typeof callback === 'function') {
+                        callback(jsonData);
+                    }
                 } else {
                     alertify.error("Không có dữ liệu trong file");
                 }
@@ -78,7 +136,7 @@ function displayDataPreview(items) {
     const $theadRow = $('<tr></tr>');
 
     // Tạo header
-    configFileTemplate.headers.forEach(header => {
+    configFileTemplate.headersLabel.forEach(header => {
         $theadRow.append($('<th></th>').text(header));
     });
     $thead.append($theadRow);

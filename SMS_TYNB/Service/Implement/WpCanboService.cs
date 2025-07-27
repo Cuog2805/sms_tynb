@@ -71,5 +71,10 @@ namespace SMS_TYNB.Service.Implement
 		{
 			await _wpCanboRepository.Delete(wpCanbo.IdCanbo);
 		}
+		public async Task<List<WpCanbo>> CreateMulti(List<WpCanbo> wpCanbos)
+		{
+			List<WpCanbo> wpCanboNew = await _wpCanboRepository.CreateRange(wpCanbos);
+			return wpCanboNew;
+		}
 	}
 }

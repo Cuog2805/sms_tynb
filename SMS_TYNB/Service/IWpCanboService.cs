@@ -13,5 +13,6 @@ namespace SMS_TYNB.Service
 		Task<WpCanbo> Create(WpCanbo wpCanbo);
 		Task<WpCanbo?> Update(WpCanbo wpCanbo);
 		Task Delete(WpCanbo wpCanbo);
+		Task<List<WpCanbo>> CreateMulti(List<WpCanbo> wpCanbos);
 	}
 }

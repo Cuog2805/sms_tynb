@@ -113,6 +113,7 @@ function displayItems(items, pageNumber, pageSize) {
 
     if (items && items.length > 0) {
         items.forEach((item, index) => {
+            //danh sách file
             let fileHtml = '';
             if (item.FileDinhKem && Array.isArray(item.FileDinhKem)) {
                 fileHtml = item.FileDinhKem.map(file => {
@@ -142,10 +143,31 @@ function displayItems(items, pageNumber, pageSize) {
             } else {
                 fileHtml = 'Không có file';
             }
+
+            //danh sách cán bộ
+            let canboHtml = '<div class="overflow-auto" style="max-height: 200px; overflow-y: auto;">';
+            if (item.WpCanbos && Array.isArray(item.WpCanbos)) {
+                item.WpCanbos.forEach(canbo => {
+                    if (canbo) {
+                        canboHtml += `
+                            <div class="selected-file-item d-flex mb-2 p-2 border rounded bg-white">
+                                <div class="d-flex align-items-center">
+                                    <span class="file-name">${canbo.TenCanbo} - ${canbo.SoDt} - ${canbo.TenNhom}</span>
+                                </div>
+                            </div>
+                        `;
+                    }
+                });
+                canboHtml += '</div>';
+            } else {
+                canboHtml = '<div>Không có cán bộ</div>';
+            }
+
             tableHtml += `
                 <tr id="row-${item.IdSms}">
                     <td class="text-center">${startIndex + index + 1}</td>
                     <td>${item.Noidung}</td>
+                    <td>${canboHtml}</td>
                     <td>${fileHtml}</td>
                     <td>${item.TenNguoigui}</td>
                     <td>${item.Ngaygui.replace("T", " ")}</td>

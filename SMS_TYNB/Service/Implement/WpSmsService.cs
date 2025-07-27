@@ -17,6 +17,8 @@ namespace SMS_TYNB.Service.Implement
 		private readonly WpSmsCanboRepository _wpSmsCanboRepository;
 		private readonly WpUsersRepository _wpUsersRepository;
 		private readonly WpCanboRepository _wpCanboRepository;
+		private readonly WpNhomCanboRepository _wpNhomCanboRepository;
+		private readonly WpNhomRepository _wpNhomRepository;
 		private readonly IWpFileService _wpFileService;
 		private readonly ISmsConfigService _smsConfigService;
 		private readonly ILogger<WpSmsService> _logger;
@@ -28,7 +30,9 @@ namespace SMS_TYNB.Service.Implement
 			WpUsersRepository wpUsersRepository,
 			ILogger<WpSmsService> logger,
 			ISmsConfigService smsConfigService,
-            WpCanboRepository wpCanboRepository
+            WpCanboRepository wpCanboRepository,
+			WpNhomCanboRepository wpNhomCanboRepository,
+			WpNhomRepository wpNhomRepository
 		)
 		{
 			_wpSmsRepository = wpSmsRepository;
@@ -38,8 +42,9 @@ namespace SMS_TYNB.Service.Implement
 			_logger = logger;
 			_smsConfigService = smsConfigService;
 			_wpCanboRepository = wpCanboRepository;
-
-        }
+			_wpNhomCanboRepository = wpNhomCanboRepository;
+			_wpNhomRepository = wpNhomRepository;
+		}
         public async Task<WpSmsViewModel> SendMessage(WpSmsViewModel model, List<IFormFile> fileDinhKem, List<long> selectedFileIds, WpUsers user)
         {
             if (model == null || user == null)
@@ -177,23 +182,38 @@ namespace SMS_TYNB.Service.Implement
 
 			var wpFileList = await _wpFileService.GetByBangLuuFile("wp_sms");
 			var wpUserList = await _wpUsersRepository.GetAll();
+			var wpCanboList = await _wpCanboRepository.GetAll();
+			var wpSmsCanboList = await _wpSmsCanboRepository.GetAll();
+			var wpNhomList = await _wpNhomRepository.GetAll();
+			var wpNhomCanboList = await _wpNhomCanboRepository.GetAll();
 
 			var wpSmsViewModel = from wps in wpSmsPage
-								 join wpf in wpFileList on wps.IdSms equals wpf.BangLuuFileId into wpsWithFileGroup
-								 from gwpf in wpsWithFileGroup.DefaultIfEmpty()
-								 join wpu in wpUserList on wps.IdNguoigui equals wpu.Id
-								 group new { wps, gwpf, wpu } by new { wps, wpu } into wpsGroup
-								 select new WpSmsViewModel
-								 {
-									 IdSms = wpsGroup.Key.wps.IdSms,
-									 Noidung = wpsGroup.Key.wps.Noidung,
-									 FileDinhKem = wpsGroup.Where(x => x.gwpf != null).Select(x => x.gwpf).ToList(),
-									 IdNguoigui = wpsGroup.Key.wps.IdNguoigui,
-									 TenNguoigui = wpsGroup.Key.wpu.UserName,
-									 Ngaygui = wpsGroup.Key.wps.Ngaygui,
-									 SoTn = wpsGroup.Key.wps.SoTn,
-									 SoTnLoi = wpsGroup.Key.wps.SoTnLoi
-								 };
+								  join wpu in wpUserList on wps.IdNguoigui equals wpu.Id
+								  select new WpSmsViewModel
+								  {
+									  IdSms = wps.IdSms,
+									  Noidung = wps.Noidung,
+									  IdNguoigui = wps.IdNguoigui,
+									  TenNguoigui = wpu.UserName,
+									  Ngaygui = wps.Ngaygui,
+									  SoTn = wps.SoTn,
+									  SoTnLoi = wps.SoTnLoi,
+									  // sub query cho fiel
+									  FileDinhKem = wpFileList.Where(f => f.BangLuuFileId == wps.IdSms).ToList(),
+									  // sub query cho cán bộ
+									  WpCanbos = (from wpsc in wpSmsCanboList.Where(sc => sc.IdSms == wps.IdSms)
+												  join wpc in wpCanboList on wpsc.IdCanbo equals wpc.IdCanbo
+												  join wpn in wpNhomList on wpsc.IdNhom equals wpn.IdNhom
+												  select new WpCanboViewModel
+												  {
+													  IdCanbo = wpc.IdCanbo,
+													  TenCanbo = wpc.TenCanbo,
+													  SoDt = wpc.SoDt,
+													  SoDTGui = wpc.SoDTGui,
+													  IdNhom = wpn.IdNhom,
+													  TenNhom = wpn.TenNhom
+												  }).ToList()
+								  };
 
 			return new PageResult<WpSmsViewModel>
 			{

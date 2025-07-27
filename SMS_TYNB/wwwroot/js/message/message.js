@@ -88,6 +88,15 @@ function sendMessage() {
                     showSuccessModal(res.data);
 
                     $("#messageForm")[0].reset();
+                    $("#messageAssignList").empty();
+                    $("#selectedFilesList").empty();
+                    $("#messageAssignTotal").text('0');
+                    const treeRef = $.jstree.reference('#messageCheckBoxTree');
+                    if (treeRef) {
+                        treeRef.uncheck_all();    
+                        treeRef.close_all();       
+                    }
+
                     selectedItems = [];
 
                     //reset lại input file

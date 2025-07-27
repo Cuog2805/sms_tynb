@@ -49,6 +49,12 @@ namespace SMS_TYNB.Service.Implement
 			return wpNhom;
 		}
 
+		public async Task<IEnumerable<WpNhom>> GetAllWpNhomById(int id)
+		{
+			IEnumerable<WpNhom> wpNhoms = await _wpNhomRepository.FilterById(id);
+			return wpNhoms;
+		}
+
 		public async Task<List<WpNhomViewModel>> GetAllWpNhomCanbos(WpNhomSearchViewModel model)
 		{
 			var wpCanboSearch = _wpCanboRepository.Search(model.searchInput);
@@ -108,7 +114,7 @@ namespace SMS_TYNB.Service.Implement
 			IEnumerable<WpNhom> wpNhomsPage = await _wpNhomRepository.GetPagination(wpNhoms, pageable);
 
 			var wpNhomsViewModel = from wpn in wpNhomsPage
-								   join wpdm in await _wpDanhmucRepository.GetByType("TRANGTHAI") on wpn.TrangThai equals wpdm.MaDanhmuc
+								   join wpdm in await _wpDanhmucRepository.GetByType("TRANGTHAI") on wpn.TrangThai equals wpdm.Value
 								   join wpnCha in wpNhoms on wpn.IdNhomCha equals wpnCha.IdNhom into groupWpn
 								   from wpnCha in groupWpn.DefaultIfEmpty()
 								   where (wpn.TrangThai == model.TrangThai || model.TrangThai == null)

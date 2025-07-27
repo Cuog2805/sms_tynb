@@ -21,8 +21,8 @@ namespace SMS_TYNB.Controllers
 		}
 		private async Task<BaseFormViewModel<WpCanbo>> CreateFormViewModel(WpCanbo? model = null)
 		{
-			SelectList wpTrangThaiSelectList = new SelectList(await _wpDanhmucService.GetWpDanhmucByType("TRANGTHAI"), "MaDanhmuc", "TenDanhmuc");
-			SelectList wpGioiTinhSelectList = new SelectList(await _wpDanhmucService.GetWpDanhmucByType("GIOITINH"), "MaDanhmuc", "TenDanhmuc");
+			SelectList wpTrangThaiSelectList = new SelectList(await _wpDanhmucService.GetWpDanhmucByType("TRANGTHAI"), "Value", "TenDanhmuc");
+			SelectList wpGioiTinhSelectList = new SelectList(await _wpDanhmucService.GetWpDanhmucByType("GIOITINH"), "Value", "TenDanhmuc");
 			var selectLists = new Dictionary<string, SelectList>
 			{
 				{ "wpTrangThaiSelectList", wpTrangThaiSelectList },

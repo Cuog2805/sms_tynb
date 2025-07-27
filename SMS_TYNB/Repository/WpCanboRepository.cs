@@ -28,6 +28,13 @@ namespace SMS_TYNB.Repository
 			return Task.FromResult(query);
 		}
 
+		public Task<IQueryable<WpCanbo>> FilterById(int id)
+		{
+			var query = context.Set<WpCanbo>().AsQueryable().Where(item => item.IdCanbo == id);
+
+			return Task.FromResult(query);
+		}
+
 		public override async Task<WpCanbo> Create(WpCanbo entity)
 		{
 			entity.SoDTGui = !string.IsNullOrWhiteSpace(entity.SoDt) && entity.SoDt.StartsWith("0")

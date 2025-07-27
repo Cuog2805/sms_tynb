@@ -1,4 +1,29 @@
 ﻿$(document).ready(function () {
+    // Khởi tạo Select2 cho dropdown IdNhom
+    $('#IdNhom').select2({
+        theme: 'bootstrap-5',
+        placeholder: '--Chọn nhóm--',
+        allowClear: true,
+        width: '100%',
+        dropdownParent: $('#IdNhom').parent()
+    });
+    $('#IdCanBo').select2({
+        theme: 'bootstrap-5',
+        placeholder: '--Chọn cán bộ--',
+        allowClear: true,
+        width: '100%',
+        dropdownParent: $('#IdCanBo').parent()
+    });
+    $('#IdFile').select2({
+        theme: 'bootstrap-5',
+        placeholder: '--Chọn file đính kèm--',
+        allowClear: true,
+        width: '100%',
+        dropdownParent: $('#IdFile').parent()
+    });
+
+
+    //load dữ liệu
     loadData();
 
     let debounceTimer;
@@ -57,16 +82,20 @@ let currentEditingFile = {
 };
 
 function loadData() {
+    // tham số tìm kiếm
     // xử lý input date
     const dateFromStr = $("#dateFrom").val();
     const dateToStr = $("#dateTo").val();
     const dateFrom = formatDateTime(new Date(dateFromStr + 'T00:00:00'));
     const dateTo = formatDateTime(new Date(dateToStr + 'T23:59:59'));
 
-    //const dateFrom = $("#dateFrom").val();
-    //const dateTo = $("#dateTo").val();
 
     let searchInput = $('#searchInput').val();
+    let IdNhom = $('#IdNhom').val();
+    let IdCanBo = $('#IdCanBo').val();
+    let IdFile = $('#IdFile').val();
+    let Trangthai = $('#Trangthai').val();
+
     let pageable = {
         pageNumber: currentPagination.pageNumber,
         pageSize: currentPagination.pageSize,
@@ -78,6 +107,10 @@ function loadData() {
         type: 'GET',
         data: $.param({
             'model.searchInput': searchInput,
+            'model.IdNhom': IdNhom,
+            'model.IdCanBo': IdCanBo,
+            'model.IdFile': IdFile,
+            'model.Trangthai': Trangthai,
             'model.dateFrom': dateFrom,
             'model.dateTo': dateTo,
             'pageable.PageNumber': pageable.pageNumber,

@@ -20,6 +20,7 @@ namespace SMS_TYNB.Service.Implement
 		private readonly WpCanboRepository _wpCanboRepository;
 		private readonly WpNhomCanboRepository _wpNhomCanboRepository;
 		private readonly WpNhomRepository _wpNhomRepository;
+		private readonly WpFileRepository _wpFileRepository;
 		private readonly IWpFileService _wpFileService;
 		private readonly ISmsConfigService _smsConfigService;
 		private readonly ILogger<WpSmsService> _logger;
@@ -34,7 +35,8 @@ namespace SMS_TYNB.Service.Implement
 			ISmsConfigService smsConfigService,
 			WpCanboRepository wpCanboRepository,
 			WpNhomCanboRepository wpNhomCanboRepository,
-			WpNhomRepository wpNhomRepository
+			WpNhomRepository wpNhomRepository,
+			WpFileRepository wpFileRepository
 		)
 		{
 			_wpSmsRepository = wpSmsRepository;
@@ -46,6 +48,7 @@ namespace SMS_TYNB.Service.Implement
 			_wpCanboRepository = wpCanboRepository;
 			_wpNhomCanboRepository = wpNhomCanboRepository;
 			_wpNhomRepository = wpNhomRepository;
+			_wpFileRepository = wpFileRepository;
 		}
 
 		public async Task<WpSmsViewModel> SendMessage(WpSmsViewModel model, List<IFormFile> fileDinhKem, List<long> selectedFileIds, WpUsers user)
@@ -182,23 +185,64 @@ namespace SMS_TYNB.Service.Implement
 
 		public async Task<PageResult<WpSmsViewModel>> SearchMessage(WpSmsSearchViewModel model, Pageable pageable)
 		{
-			IQueryable<WpSms> wpSms = await _wpSmsRepository.Search(model.searchInput);
+			IQueryable<WpSms> baseQuery = await _wpSmsRepository.Search(model.searchInput);
 
-			if (model.dateFrom.HasValue && model.dateTo.HasValue)
+			if (model.Trangthai.HasValue)
 			{
-				wpSms = wpSms.Where(wps => wps.Ngaygui >= model.dateFrom && wps.Ngaygui <= model.dateTo);
+				if(model.Trangthai.Value == 1)
+				{
+					baseQuery = baseQuery.Where(wps => wps.SoTnLoi == 0);
+				}
+				else if (model.Trangthai.Value == 0)
+				{
+					baseQuery = baseQuery.Where(wps => wps.SoTnLoi > 0);
+				}
 			}
 
-			int total = await wpSms.CountAsync();
+			if (model.IdCanBo.HasValue || model.IdNhom.HasValue)
+			{
+				var smsCanboQuery = _wpSmsCanboRepository.Query();
+				if (model.IdCanBo.HasValue)
+				{
+					smsCanboQuery = smsCanboQuery.Where(wpsc => wpsc.IdCanbo == model.IdCanBo);
+				}
+				if (model.IdNhom.HasValue)
+				{
+					smsCanboQuery = smsCanboQuery.Where(wpsc => wpsc.IdNhom == model.IdNhom).Distinct();
+				}
 
-			IEnumerable<WpSms> wpSmsPage = await _wpSmsRepository.GetPagination(wpSms, pageable);
+				baseQuery = (from wps in baseQuery
+							 join wpsc in smsCanboQuery on wps.IdSms equals wpsc.IdSms
+							 select wps).Distinct();
+			}
 
-			var wpFileList = await _wpFileService.GetByBangLuuFile("wp_sms");
+			if (model.IdFile.HasValue)
+			{
+				var fileQuery = _wpFileRepository.Query().Where(wpf =>
+					wpf.BangLuuFile == "wp_sms" && wpf.IdFile == model.IdFile);
+
+				baseQuery = from wps in baseQuery
+							join wpf in fileQuery on wps.IdSms equals wpf.BangLuuFileId
+							select wps;
+			}
+
+			var total = await baseQuery.CountAsync();
+			var wpSmsPage = await _wpSmsRepository.GetPagination(baseQuery, pageable);
+
+			if (!wpSmsPage.Any())
+			{
+				return new PageResult<WpSmsViewModel>
+				{
+					Data = new List<WpSmsViewModel>(),
+					Total = 0
+				};
+			}
+
 			var wpUserList = await _wpUsersRepository.GetAll();
-			var wpCanboList = await _wpCanboRepository.GetAll();
+			var wpFileList = await _wpFileService.GetByBangLuuFile("wp_sms");
 			var wpSmsCanboList = await _wpSmsCanboRepository.GetAll();
+			var wpCanboList = await _wpCanboRepository.GetAll();
 			var wpNhomList = await _wpNhomRepository.GetAll();
-			var wpNhomCanboList = await _wpNhomCanboRepository.GetAll();
 
 			var wpSmsViewModel = from wps in wpSmsPage
 								 join wpu in wpUserList on wps.IdNguoigui equals wpu.Id
@@ -212,11 +256,13 @@ namespace SMS_TYNB.Service.Implement
 									 SoTn = wps.SoTn,
 									 SoTnLoi = wps.SoTnLoi,
 									 // sub query cho file
-									 FileDinhKem = wpFileList.Where(f => f.BangLuuFileId == wps.IdSms).ToList(),
+									 FileDinhKem = wpFileList.Where(f => f.BangLuuFileId == wps.IdSms && (f.IdFile == model.IdFile || model.IdFile == null)).ToList(),
 									 // sub query cho cán bộ
 									 WpCanbos = (from wpsc in wpSmsCanboList.Where(sc => sc.IdSms == wps.IdSms)
 												 join wpc in wpCanboList on wpsc.IdCanbo equals wpc.IdCanbo
 												 join wpn in wpNhomList on wpsc.IdNhom equals wpn.IdNhom
+												 where (wpsc.IdCanbo == model.IdCanBo || model.IdCanBo == null)
+												 && (wpsc.IdNhom == model.IdNhom || model.IdNhom == null)
 												 select new WpCanboViewModel
 												 {
 													 IdCanbo = wpc.IdCanbo,
@@ -231,7 +277,7 @@ namespace SMS_TYNB.Service.Implement
 			return new PageResult<WpSmsViewModel>
 			{
 				Data = wpSmsViewModel,
-				Total = total,
+				Total = total
 			};
 		}
 

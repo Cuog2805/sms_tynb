@@ -8,6 +8,7 @@ namespace SMS_TYNB.Models.Master
         public int IdDanhmuc { get; set; }
         public int? MaDanhmuc { get; set; }
         public string? TenDanhmuc { get; set; }
+        public int Value { get; set; }
         public string? Type { get; set; }
     }
 }

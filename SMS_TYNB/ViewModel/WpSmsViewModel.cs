@@ -28,5 +28,9 @@ namespace SMS_TYNB.ViewModel
 		public string? searchInput { get; set; }
 		public DateTime? dateFrom { get; set; }
 		public DateTime? dateTo { get; set; }
+		public long? IdNhom { get; set; }
+		public long? IdCanBo { get; set; }
+		public long? IdFile { get; set; }
+		public long? Trangthai { get; set; }
 	}
 }

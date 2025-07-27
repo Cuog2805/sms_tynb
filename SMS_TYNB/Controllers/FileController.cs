@@ -15,7 +15,7 @@ namespace SMS_TYNB.Controllers
 		[HttpGet]
 		public async Task<IActionResult> LoadData(string searchInput, Pageable pageable)
 		{
-			var datas = await _wpFileService.GetAllWpFile(searchInput, pageable);
+			var datas = await _wpFileService.SearchWpFile(searchInput, pageable);
 			return Json(new
 			{
 				state = "success",

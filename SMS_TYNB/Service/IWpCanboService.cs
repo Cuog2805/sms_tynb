@@ -7,6 +7,7 @@ namespace SMS_TYNB.Service
 	public interface IWpCanboService
 	{
 		Task<IEnumerable<WpCanbo>> GetAllWpCanbo();
+		Task<IEnumerable<WpCanbo>> FilterById(int id);
 		Task<PageResult<WpCanboViewModel>> SearchWpCanbo(WpCanboSearchViewModel model, Pageable pageable);
 		Task<WpCanbo?> GetById(int wpCanboId);
 		Task<WpCanbo> Create(WpCanbo wpCanbo);

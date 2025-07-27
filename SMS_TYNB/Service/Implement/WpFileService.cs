@@ -62,14 +62,14 @@ namespace SMS_TYNB.Service.Implement
 			return wpFile;
 		}
 
-		public async Task SaveFile(IFormFile file, WpUsers creator, string tableName, long tableId, string subFolder = "upload")
+		public async Task<WpFile> SaveFile(IFormFile file, WpUsers creator, string tableName, long tableId, string subFolder = "upload")
 		{
 			if (file == null || file.Length == 0)
 				throw new Exception("File không hợp lệ");
 
 			// Tạo thư mục upload nếu chưa tồn tại
-			var subFolderUser = Path.Combine(subFolder, creator.Id, DateTime.Now.ToString("ddMMyyyy"));
-			var uploadPath = Path.Combine(_environment.WebRootPath, "wwwroot", subFolderUser);
+			var subFolderUser = Path.Combine(subFolder, DateTime.Now.ToString("ddMMyyyy"));
+			var uploadPath = Path.Combine(_environment.WebRootPath, subFolderUser);
 			if (!Directory.Exists(uploadPath))
 			{
 				Directory.CreateDirectory(uploadPath);
@@ -107,11 +107,13 @@ namespace SMS_TYNB.Service.Implement
 				BangLuuFileId = tableId,
 			};
 
-			await Create(fileSave);
+			return await Create(fileSave);
 		}
 
-		public async Task CreateFromFileExisted(List<long> selectedFileIds, WpUsers creator, string tableName, long tableId)
+		public async Task<IEnumerable<WpFile>> CreateFromFileExisted(List<long> selectedFileIds, WpUsers creator, string tableName, long tableId)
 		{
+			var createdFiles = new List<WpFile>();
+
 			if (selectedFileIds != null && selectedFileIds.Any())
 			{
 				var existingFiles = await _wpFileRepository.GetByIdFiles(selectedFileIds);
@@ -119,16 +121,19 @@ namespace SMS_TYNB.Service.Implement
 				foreach (var existingFile in existingFiles)
 				{
 					var newFile = CopyFileToNewLocation(existingFile, creator, tableName, tableId);
-					await Create(newFile);
+					var createdFile = await Create(newFile);
+					createdFiles.Add(createdFile);
 				}
 			}
+
+			return createdFiles;
 		}
 
 		private WpFile CopyFileToNewLocation(WpFile originalFile, WpUsers creator, string tableName, long tableId, string subFolder = "upload")
 		{
 			// Tạo thư mục mới
 			var subFolderUser = Path.Combine(subFolder, creator.Id, DateTime.Now.ToString("ddMMyyyy"));
-			var destinationPath = Path.Combine(_environment.WebRootPath, "wwwroot", subFolderUser);
+			var destinationPath = Path.Combine(_environment.WebRootPath, subFolderUser);
 
 			if (!Directory.Exists(destinationPath))
 			{
@@ -136,8 +141,7 @@ namespace SMS_TYNB.Service.Implement
 			}
 
 			// Lấy đường dẫn file gốc
-			var originalFilePath = Path.Combine(_environment.WebRootPath, "wwwroot",
-				originalFile.FileUrl.TrimStart('/').Replace('/', Path.DirectorySeparatorChar));
+			var originalFilePath = Path.Combine(_environment.WebRootPath, originalFile.FileUrl.TrimStart('/').Replace('/', Path.DirectorySeparatorChar));
 
 			if (!File.Exists(originalFilePath))
 			{
@@ -166,7 +170,7 @@ namespace SMS_TYNB.Service.Implement
 				throw new Exception("File không hợp lệ");
 
 			// Validate file extension của file mới
-			var allowedExtensions = new[] { ".jpg", ".png", ".pdf", ".doc", ".docx" };
+			var allowedExtensions = new[] { oldFile.DuoiFile };
 			var newFileExtension = Path.GetExtension(file.FileName).ToLower();
 			if (!allowedExtensions.Contains(newFileExtension))
 			{
@@ -176,7 +180,7 @@ namespace SMS_TYNB.Service.Implement
 			try
 			{
 				var oldFileRelativePath = oldFile.FileUrl.TrimStart('/');
-				var oldFilePath = Path.Combine(_environment.WebRootPath, "wwwroot", oldFileRelativePath);
+				var oldFilePath = Path.Combine(_environment.WebRootPath, oldFileRelativePath);
 
 				// Backup file cũ
 				string backupFilePath = null;
@@ -211,7 +215,7 @@ namespace SMS_TYNB.Service.Implement
 			catch (Exception ex)
 			{
 				var oldFileRelativePath = oldFile.FileUrl.TrimStart('/');
-				var oldFilePath = Path.Combine(_environment.WebRootPath, "wwwroot", oldFileRelativePath);
+				var oldFilePath = Path.Combine(_environment.WebRootPath, oldFileRelativePath);
 				var backupFilePath = oldFilePath + ".bak";
 
 				if (File.Exists(backupFilePath))
@@ -233,7 +237,7 @@ namespace SMS_TYNB.Service.Implement
 			{
 				if (!string.IsNullOrEmpty(fileUrl))
 				{
-					var filePath = Path.Combine(_environment.WebRootPath, "wwwroot", fileUrl.TrimStart('/'));
+					var filePath = Path.Combine(_environment.WebRootPath, fileUrl.TrimStart('/'));
 					if (File.Exists(filePath))
 					{
 						File.Delete(filePath);

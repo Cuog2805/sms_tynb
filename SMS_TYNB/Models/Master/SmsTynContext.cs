@@ -29,10 +29,10 @@ public partial class SmsTynContext : DbContext
     public virtual DbSet<WpSms> WpSms { get; set; }
 
     public virtual DbSet<WpSmsCanbo> WpSmsCanbo { get; set; }
-    public virtual DbSet<SmsConfig> SmsConfig { get; set; }
+    public virtual DbSet<SmsConfig?> SmsConfig { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        => optionsBuilder.UseMySql("server=10.30.29.14;port=3306;database=vnpt_sms_tunb;user=sms_tunb_usr;password=#$546Awrc!re56;Persist Security Info=False;Connect Timeout=300", ServerVersion.Parse("9.3.0-mysql"));
+        => optionsBuilder.UseMySql("server=10.30.29.14;port=3306;database=vnpt_sms_dubinhmy;user=sms_dubinhmy_usr;password=#$2346ATed%^rede$52w;Persist Security Info=False;Connect Timeout=300;", ServerVersion.Parse("9.3.0-mysql"));
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -189,6 +189,7 @@ public partial class SmsTynContext : DbContext
                 .UseCollation("utf8mb3_general_ci")
                 .HasCharSet("utf8mb3");
             entity.Property(e => e.SoTn).HasColumnName("so_tn");
+            entity.Property(e => e.SoTnLoi).HasColumnName("so_tn_loi");
         });
 
         modelBuilder.Entity<WpSmsCanbo>(entity =>
@@ -211,7 +212,7 @@ public partial class SmsTynContext : DbContext
             entity.Property(e => e.IdNhom).HasColumnName("id_nhom");
             entity.Property(e => e.IdSms).HasColumnName("id_sms");
 
-            entity.HasOne(d => d.IdCanboNavigation).WithMany(p => p.WpSmsCanbo)
+			entity.HasOne(d => d.IdCanboNavigation).WithMany(p => p.WpSmsCanbo)
                 .HasForeignKey(d => d.IdCanbo)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("fk_wp_sms_canbo");

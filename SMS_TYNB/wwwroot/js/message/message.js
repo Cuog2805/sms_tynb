@@ -57,14 +57,14 @@ function sendMessage() {
 
         formData.append('Noidung', $("#Noidung").val());
         
-        if (selectedItems && selectedItems.length > 0) {
-            selectedItems.forEach((item, index) => {
-                for (let key in item) {
-                    formData.append(`WpCanbos[${index}].${key}`, item[key]);
-                }
-            });
-        }
-
+        //if (selectedItems && selectedItems.length > 0) {
+        //    selectedItems.forEach((item, index) => {
+        //        for (let key in item) {
+        //            formData.append(`WpCanbos[${index}].${key}`, item[key]);
+        //        }
+        //    });
+        //}
+        formData.append('Canbos', JSON.stringify(selectedItems));
         // File
         const fileInput = $("#FileDinhKem")[0];
         const files = fileInput.files;
@@ -91,6 +91,15 @@ function sendMessage() {
                 if (res.state === 'success') {
                     alertify.success(res.msg);
                     $("#messageForm")[0].reset();
+                    $("#messageAssignList").empty();
+                    $("#selectedFilesList").empty();
+                    $("#messageAssignTotal").text('0');
+                    const treeRef = $.jstree.reference('#messageCheckBoxTree');
+                    if (treeRef) {
+                        treeRef.uncheck_all();    
+                        treeRef.close_all();       
+                    }
+
                     selectedItems = [];
                 } else {
                     alertify.error(res.msg);
@@ -260,17 +269,33 @@ function processGroupChildren(nodeId, isChecked, treeRef) {
     });
 }
 
+//function syncSelectedItems() {
+//    const treeRef = $.jstree.reference('#messageCheckBoxTree');
+//    const checkedNodes = treeRef.get_checked(true);
+
+//    selectedItems = [];
+//    debugger;
+//    checkedNodes.forEach(node => {
+//        if (node.id.startsWith("canbo_") && node.data) {
+//            selectedItems.push(node.data);
+//        }
+//    });
+
+//    displaySelectedItems();
+//}
 function syncSelectedItems() {
     const treeRef = $.jstree.reference('#messageCheckBoxTree');
+    if (!treeRef) return;
+
     const checkedNodes = treeRef.get_checked(true);
 
     selectedItems = [];
 
-    checkedNodes.forEach(node => {
+    for (const node of checkedNodes) {
         if (node.id.startsWith("canbo_") && node.data) {
             selectedItems.push(node.data);
         }
-    });
+    }
 
     displaySelectedItems();
 }
@@ -303,7 +328,7 @@ function selectAll() {
     if (treeRef) {
         // Mở toàn bộ cây trước
         treeRef.open_all();
-        
+
         setTimeout(() => {
             const allNodes = treeRef.get_json('#', { flat: true });
             allNodes.forEach(node => {
@@ -312,9 +337,34 @@ function selectAll() {
                 }
             });
             syncSelectedItems();
-        }, 300);
+        }, 0);
     }
 }
+//function selectAll() {
+//    const treeRef = $.jstree.reference('#messageCheckBoxTree');
+//    if (!treeRef) return;
+
+//    treeRef.open_all();
+
+//    // Chỉ thực hiện sau khi cây mở hoàn tất
+//    $('#messageCheckBoxTree').on('after_open.jstree', function () {
+//        const allNodes = treeRef.get_json('#', { flat: true });
+
+//        // Sử dụng setTimeout để tránh block UI khi có nhiều node
+//        setTimeout(() => {
+//            for (const node of allNodes) {
+//                if (node.id.startsWith("canbo_")) {
+//                    treeRef.check_node(node.id);
+//                }
+//            }
+
+//            syncSelectedItems();
+
+//            // Gỡ bỏ listener sau khi chạy xong
+//            $('#messageCheckBoxTree').off('after_open.jstree');
+//        }, 0);
+//    });
+//}
 
 function searchInTree(searchText) {
     const treeRef = $.jstree.reference('#messageCheckBoxTree');

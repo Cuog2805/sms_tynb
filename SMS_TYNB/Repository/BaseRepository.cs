@@ -19,7 +19,7 @@ namespace TodoApi.Repository
 			return await context.Set<T>().ToListAsync();
 		}
 
-		public async Task<IEnumerable<T>> GetPagination(IQueryable<T> query, Pageable pageable)
+		public virtual async Task<IEnumerable<T>> GetPagination(IQueryable<T> query, Pageable pageable)
 		{
 			//sắp xếp động
 			if (!string.IsNullOrEmpty(pageable.Sort))
@@ -33,12 +33,12 @@ namespace TodoApi.Repository
 				.ToListAsync();
 		}
 
-		public async Task<T?> FindById(TKey id)
+		public virtual async Task<T?> FindById(TKey id)
 		{
 			return await context.Set<T>().FindAsync(id);
 		}
 
-		public async Task<T> Create(T entity)
+		public virtual async Task<T> Create(T entity)
 		{
 			var entityNew = await context.Set<T>().AddAsync(entity);
 			await context.SaveChangesAsync();
@@ -46,7 +46,7 @@ namespace TodoApi.Repository
 			return entityNew.Entity;
 		}
 
-		public async Task<T?> Update(TKey id, T entityUpdate)
+		public virtual async Task<T?> Update(TKey id, T entityUpdate)
 		{
 			var existingEntity = await context.Set<T>().FindAsync(id);
 			if (existingEntity == null)
@@ -57,8 +57,12 @@ namespace TodoApi.Repository
 
 			return existingEntity;
 		}
+        public IQueryable<T> Query()
+        {
+            return context.Set<T>().AsQueryable();
+        }
 
-		public async Task Delete(TKey id)
+        public async Task Delete(TKey id)
 		{
 			T? entity = await FindById(id);
 

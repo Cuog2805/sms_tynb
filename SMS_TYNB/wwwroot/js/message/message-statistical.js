@@ -129,8 +129,9 @@ function loadData() {
                 CreatePagination(paginationData.total, currentPagination.pageNumber, currentPagination.pageSize, $("#pagination"));
             }
         },
-        error: function () {
-            alert("Lỗi khi load dữ liệu");
+        error: function (xhr) {
+            console.log("xhr", xhr);
+            alertify.error("Lỗi khi gửi tin nhắn");
         }
     });
 }

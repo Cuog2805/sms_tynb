@@ -12,10 +12,17 @@ namespace SMS_TYNB.Service.Implement
 	{
 		private readonly IWebHostEnvironment _environment;
 		private readonly WpFileRepository _wpFileRepository;
-		public WpFileService(WpFileRepository wpFileRepository, IWebHostEnvironment environment)
+		private readonly WpSmsFileRepository _wpSmsFileRepository;
+		public WpFileService
+		(
+			WpFileRepository wpFileRepository, 
+			IWebHostEnvironment environment,
+			WpSmsFileRepository wpSmsFileRepository
+		)
 		{
 			_environment = environment;
 			_wpFileRepository = wpFileRepository;
+			_wpSmsFileRepository = wpSmsFileRepository;
 		}
 
 		public virtual async Task<IEnumerable<WpFile>> GetByBangLuuFile(string tableName)
@@ -68,7 +75,7 @@ namespace SMS_TYNB.Service.Implement
 			return wpFile;
 		}
 
-		public async Task<WpFile> SaveFile(IFormFile file, WpUsers creator, string tableName, long tableId, string subFolder = "upload")
+		public async Task<WpFile> SaveFile(IFormFile file, WpUsers creator, long smsId, string subFolder = "upload")
 		{
 			if (file == null || file.Length == 0)
 				throw new Exception("File không hợp lệ");
@@ -109,66 +116,102 @@ namespace SMS_TYNB.Service.Implement
 				FileUrl = "/" + Path.Combine(subFolderUser, fileName).Replace("\\", "/"),
 				DuoiFile = fileExtension,
 				Type = file.ContentType,
-				BangLuuFile = tableName,
-				BangLuuFileId = tableId,
+				//BangLuuFile = "test",
+				//BangLuuFileId = smsId,
 			};
 
-			return await Create(fileSave);
+			fileSave = await Create(fileSave);
+
+			// Lưu thông tin SmsFile
+			var smsfile = new WpSmsFile()
+			{
+				IdSms = smsId,
+				IdFile = fileSave.IdFile,
+			};
+			await _wpSmsFileRepository.Create(smsfile);
+
+			return fileSave;
 		}
-
-		public async Task<IEnumerable<WpFile>> CreateFromFileExisted(List<long> selectedFileIds, WpUsers creator, string tableName, long tableId)
+		public async Task<IEnumerable<WpFile>> CreateFromFileExisted(List<long> selectedFileIds, WpUsers creator, long smsId)
 		{
-			var createdFiles = new List<WpFile>();
-
+			var linkedFiles = new List<WpFile>();
 			if (selectedFileIds != null && selectedFileIds.Any())
 			{
 				var existingFiles = await _wpFileRepository.GetByIdFiles(selectedFileIds);
-
 				foreach (var existingFile in existingFiles)
 				{
-					var newFile = CopyFileToNewLocation(existingFile, creator, tableName, tableId);
-					var createdFile = await Create(newFile);
-					createdFiles.Add(createdFile);
+					// Kiểm tra xem liên kết đã tồn tại chưa để tránh trùng lặp
+					var existingSmsFile = _wpSmsFileRepository.GetBySmsIdAndFileId(smsId, existingFile.IdFile);
+					if (existingSmsFile == null)
+					{
+						var smsFile = new WpSmsFile
+						{
+							IdSms = smsId,
+							IdFile = existingFile.IdFile
+						};
+
+						await _wpSmsFileRepository.Create(smsFile);
+					}
+
+					linkedFiles.Add(existingFile);
 				}
 			}
-
-			return createdFiles;
+			return linkedFiles;
 		}
 
-		private WpFile CopyFileToNewLocation(WpFile originalFile, WpUsers creator, string tableName, long tableId, string subFolder = "upload")
-		{
-			// Tạo thư mục mới
-			var subFolderUser = Path.Combine(subFolder, creator.Id, DateTime.Now.ToString("ddMMyyyy"));
-			var destinationPath = Path.Combine(_environment.WebRootPath, subFolderUser);
+		//public async Task<IEnumerable<WpFile>> CreateFromFileExisted(List<long> selectedFileIds, WpUsers creator, long smsId)
+		//{
+		//	var createdFiles = new List<WpFile>();
 
-			if (!Directory.Exists(destinationPath))
-			{
-				Directory.CreateDirectory(destinationPath);
-			}
+		//	if (selectedFileIds != null && selectedFileIds.Any())
+		//	{
+		//		var existingFiles = await _wpFileRepository.GetByIdFiles(selectedFileIds);
 
-			// Lấy đường dẫn file gốc
-			var originalFilePath = Path.Combine(_environment.WebRootPath, originalFile.FileUrl.TrimStart('/').Replace('/', Path.DirectorySeparatorChar));
+		//		foreach (var existingFile in existingFiles)
+		//		{
+		//			var newFile = CopyFileToNewLocation(existingFile, creator, smsId);
+		//			var createdFile = await Create(newFile);
+		//			createdFiles.Add(createdFile);
+		//		}
+		//	}
 
-			if (!File.Exists(originalFilePath))
-			{
-				throw new Exception($"File gốc không tồn tại: {originalFile.TenFile}");
-			}
+		//	return createdFiles;
+		//}
 
-			var newFilePath = Path.Combine(destinationPath, originalFile.TenFile);
+		//private WpFile CopyFileToNewLocation(WpFile originalFile, WpUsers creator, long smsId, string subFolder = "upload")
+		//{
+		//	// Tạo thư mục mới
+		//	var subFolderUser = Path.Combine(subFolder, creator.Id, DateTime.Now.ToString("ddMMyyyy"));
+		//	var destinationPath = Path.Combine(_environment.WebRootPath, subFolderUser);
 
-			// Copy file
-			if(originalFilePath != newFilePath) File.Copy(originalFilePath, newFilePath);
+		//	if (!Directory.Exists(destinationPath))
+		//	{
+		//		Directory.CreateDirectory(destinationPath);
+		//	}
 
-			return new WpFile
-			{
-				TenFile = originalFile.TenFile,
-				FileUrl = "/" + Path.Combine(subFolderUser, originalFile.TenFile).Replace("\\", "/"),
-				DuoiFile = originalFile.DuoiFile,
-				Type = originalFile.Type,
-				BangLuuFile = tableName,
-				BangLuuFileId = tableId,
-			};
-		}
+		//	// Lấy đường dẫn file gốc
+		//	var originalFilePath = Path.Combine(_environment.WebRootPath, originalFile.FileUrl.TrimStart('/').Replace('/', Path.DirectorySeparatorChar));
+
+		//	if (!File.Exists(originalFilePath))
+		//	{
+		//		throw new Exception($"File gốc không tồn tại: {originalFile.TenFile}");
+		//	}
+
+		//	var newFilePath = Path.Combine(destinationPath, originalFile.TenFile);
+
+		//	// Copy file
+		//	if(originalFilePath != newFilePath) File.Copy(originalFilePath, newFilePath);
+
+		//	return new WpFile
+		//	{
+		//		TenFile = originalFile.TenFile,
+		//		FileUrl = "/" + Path.Combine(subFolderUser, originalFile.TenFile).Replace("\\", "/"),
+		//		DuoiFile = originalFile.DuoiFile,
+		//		Type = originalFile.Type,
+		//		BangLuuFile = "",
+		//		BangLuuFileId = smsId,
+		//	};
+		//}
 
 		public async Task UpdateContentFile(IFormFile file, WpFile oldFile, WpUsers modifier)
 		{

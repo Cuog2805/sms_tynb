@@ -18,6 +18,7 @@ namespace SMS_TYNB.Common
 			services.AddScoped<WpUsersRepository>();
 			services.AddScoped<SmsConfigRepository>();
 			services.AddScoped<ConfigRepository>();
+			services.AddScoped<WpSmsFileRepository>();
 			return services;
 		}
 

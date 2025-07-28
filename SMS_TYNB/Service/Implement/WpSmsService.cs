@@ -202,33 +202,6 @@ namespace SMS_TYNB.Service.Implement
 				}
 			}
 
-			if (model.IdCanBo.HasValue || model.IdNhom.HasValue)
-			{
-				var smsCanboQuery = _wpSmsCanboRepository.Query();
-				if (model.IdCanBo.HasValue)
-				{
-					smsCanboQuery = smsCanboQuery.Where(wpsc => wpsc.IdCanbo == model.IdCanBo);
-				}
-				if (model.IdNhom.HasValue)
-				{
-					smsCanboQuery = smsCanboQuery.Where(wpsc => wpsc.IdNhom == model.IdNhom).Distinct();
-				}
-
-				baseQuery = (from wps in baseQuery
-							 join wpsc in smsCanboQuery on wps.IdSms equals wpsc.IdSms
-							 select wps).Distinct();
-			}
-
-			if (model.IdFile.HasValue)
-			{
-				var fileQuery = _wpFileRepository.Query().Where(wpf => wpf.IdFile == model.IdFile);
-				var smsFileQuery = _wpSmsFileRepository.Query().Where(wpsf => wpsf.IdFile == model.IdFile);
-
-				baseQuery = from wps in baseQuery
-							join wpsf in smsFileQuery on wps.IdSms equals wpsf.IdSms
-							join wpf in fileQuery on wpsf.IdFile equals wpf.IdFile
-							select wps;
-			}
 
 			var total = await baseQuery.CountAsync();
 			var wpSmsPage = await _wpSmsRepository.GetPagination(baseQuery, pageable);
@@ -267,19 +240,20 @@ namespace SMS_TYNB.Service.Implement
 													where wpsf.IdSms == wps.IdSms && (wpf.IdFile == model.IdFile || model.IdFile == null)
 													select wpf).ToList(),
 									 // sub query cho cán bộ
-									 WpCanbos = (from wpsc in wpSmsCanboList.Where(sc => sc.IdSms == wps.IdSms)
+									 WpCanbosView = (from wpsc in wpSmsCanboList.Where(sc => sc.IdSms == wps.IdSms)
 												 join wpc in wpCanboList on wpsc.IdCanbo equals wpc.IdCanbo
 												 join wpn in wpNhomList on wpsc.IdNhom equals wpn.IdNhom
 												 where (wpsc.IdCanbo == model.IdCanBo || model.IdCanBo == null)
 												 && (wpsc.IdNhom == model.IdNhom || model.IdNhom == null)
-												 select new WpCanboViewModel
+												 select new WpCanboMessageStatisticalViewModel
 												 {
 													 IdCanbo = wpc.IdCanbo,
 													 TenCanbo = wpc.TenCanbo,
 													 SoDt = wpc.SoDt,
-													 SoDTGui = wpc.SoDTGui,
 													 IdNhom = wpn.IdNhom,
-													 TenNhom = wpn.TenNhom
+													 TenNhom = wpn.TenNhom,
+													 ERROR = wpsc.ERROR,
+													 ERROR_DESC = wpsc.ERROR_DESC
 												 }).ToList()
 								 };
 

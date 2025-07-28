@@ -33,53 +33,6 @@
 				<div class="row justify-content-center">
 					<div class="col-md-4">
 						<div class="form-group mb-3">
-							<label for="IdNhom" class="form-label">Nhóm </label>
-							@Html.DropDownListFor(
-								model => model.Data.IdNhom,
-								Model.SelectLists["wpNhomSelectList"],
-								"--Chọn nhóm--",
-								htmlAttributes: new {
-									@class = "form-select",
-									@name = "Data.IdNhom", 
-									@id = "IdNhom",
-								}
-							 )
-						</div>
-					</div>
-					<div class="col-md-4">
-						<div class="form-group mb-3">
-							<label for="IdCanBo" class="form-label">Cán bộ </label>
-							@Html.DropDownListFor(
-								model => model.Data.IdCanBo,
-								Model.SelectLists["wpCanboSelectList"],
-								"--Chọn cán bộ--",
-								htmlAttributes: new {
-									@class = "form-select",
-									@name = "Data.IdCanBo",
-									@id = "IdCanBo",
-								}
-							 )
-						</div>
-					</div>
-				</div>
-				<div class="row justify-content-center">
-					<div class="col-md-4">
-						<div class="form-group mb-3">
-							<label for="IdFile" class="form-label">File đính kèm </label>
-							@Html.DropDownListFor(
-								model => model.Data.IdFile,
-								Model.SelectLists["wpFileSelectList"],
-								"--Chọn file--",
-								htmlAttributes: new {
-									@class = "form-select",
-									@name = "Data.IdFile",
-									@id = "IdFile",
-								}
-							 )
-						</div>
-					</div>
-					<div class="col-md-4">
-						<div class="form-group mb-3">
 							<label for="Trangthai" class="form-label">Trạng thái </label>
 							@Html.DropDownListFor(
 								model => model.Data.Trangthai,
@@ -120,12 +73,12 @@
 				<tr>
 					<th class="text-center">STT</th>
 					<th width="20%">Nội dung</th>
-					<th width="15%">Danh sách cán bộ</th>
 					<th width="20%">File đính kèm</th>
 					<th>Người gửi</th>
 					<th>Ngày gửi</th>
 					<th>Số tin nhắn đã gửi</th>
 					<th>Số tin nhắn gửi lỗi</th>
+					<th>Thao tác</th>
 				</tr>
 			</thead>
 			<tbody id="messaegStatisticalTableBody">
@@ -161,6 +114,46 @@
                 </button>
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
                     Hủy
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+@* detail modal - Hiển thị danh sách cán bộ *@
+<div class="modal fade" id="detailMessaegStatistical" tabindex="-1" aria-labelledby="detailMessaegStatisticalLabel" aria-hidden="true">
+	<div class="modal-dialog modal-xl">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title" id="detailMessaegStatisticalLabel">
+					Danh sách cán bộ
+				</h5>
+				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+			</div>
+			<div class="modal-body">
+				<div class="table-responsive">
+					<table class="table table-bordered table-hover" id="detailMessaegStatisticalTable">
+						<thead class="table-primary text-white">
+							<tr>
+								<th class="text-center" width="5%">STT</th>
+								<th width="25%">Tên cán bộ</th>
+								<th width="15%">Số điện thoại</th>
+								<th width="25%">Tên nhóm</th>
+								<th class="text-center" width="20%">Trạng thái tin nhắn</th>
+							</tr>
+						</thead>
+						<tbody id="detailMessaegStatisticalTableBody">
+						</tbody>
+					</table>
+					<div>
+						@{
+							await Html.RenderPartialAsync("_PaginationMinimal", "detailMessaegStatisticalPagination");
+						}
+					</div>
+				</div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                    Đóng
                 </button>
             </div>
         </div>

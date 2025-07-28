@@ -77,9 +77,16 @@ let currentEditingFile = {
     IdFile: '',
     FileUrl: '',
     TenFile: '',
-    DuoiFile: '',   
+    DuoiFile: '',
     BangLuuFileId: ''
 };
+
+let canBoPagination = {
+    pageNumber: 1,
+    pageSize: 10
+};
+
+let currentCanBoList = [];
 
 function loadData() {
     // tham số tìm kiếm
@@ -178,35 +185,24 @@ function displayItems(items, pageNumber, pageSize) {
                 fileHtml = 'Không có file';
             }
 
-            //danh sách cán bộ
-            let canboHtml = '<div class="overflow-auto" style="max-height: 200px; overflow-y: auto;">';
-            if (item.WpCanbos && Array.isArray(item.WpCanbos)) {
-                item.WpCanbos.forEach(canbo => {
-                    if (canbo) {
-                        canboHtml += `
-                            <div class="selected-file-item d-flex mb-2 p-2 border rounded bg-white">
-                                <div class="d-flex align-items-center">
-                                    <span class="file-name">${canbo.TenCanbo} - ${canbo.SoDt} - ${canbo.TenNhom}</span>
-                                </div>
-                            </div>
-                        `;
-                    }
-                });
-                canboHtml += '</div>';
-            } else {
-                canboHtml = '<div>Không có cán bộ</div>';
-            }
-
             tableHtml += `
                 <tr id="row-${item.IdSms}">
                     <td class="text-center">${startIndex + index + 1}</td>
                     <td>${item.Noidung}</td>
-                    <td>${canboHtml}</td>
                     <td>${fileHtml}</td>
                     <td>${item.TenNguoigui}</td>
                     <td>${item.Ngaygui.replace("T", " ")}</td>
                     <td>${item.SoTn}</td>
                     <td>${item.SoTnLoi}</td>
+                    <td class="text-center">
+                        <button
+                            class="btn btn-sm btn-primary"
+                            type="button"
+                            title="Xem danh sách cán bộ"
+                            onclick="showCanBoDetail('${item.IdSms}')">
+                            <i class="bi bi-people"></i>
+                        </button>
+                    </td>
                 </tr>
             `;
         });
@@ -222,6 +218,135 @@ function displayItems(items, pageNumber, pageSize) {
     }
     $('#messaegStatisticalTableBody').html(tableHtml);
 }
+
+function showCanBoDetail(smsId) {
+    // Tìm dữ liệu SMS theo ID
+    const smsData = paginationData.data.find(item => item.IdSms === Number(smsId));
+
+    if (!smsData) {
+        alertify.error("Không tìm thấy dữ liệu");
+        return;
+    }
+
+    // Lưu danh sách cán bộ hiện tại và reset pagination
+    currentCanBoList = (smsData.WpCanbosView && Array.isArray(smsData.WpCanbosView)) ? smsData.WpCanbosView : [];
+    canBoPagination.pageNumber = 1;
+
+    $('#detailMessaegStatisticalLabel').text(`Danh sách cán bộ - ${smsData.Noidung}`);
+
+    // Hiển thị dữ liệu
+    displayCanBoList();
+
+    // Hiển thị modal
+    $('#detailMessaegStatistical').modal('show');
+}
+
+function displayCanBoList() {
+    let tableBodyHtml = '';
+
+    if (currentCanBoList && currentCanBoList.length > 0) {
+        const startIndex = (canBoPagination.pageNumber - 1) * canBoPagination.pageSize;
+        const endIndex = startIndex + canBoPagination.pageSize;
+        const currentPageItems = currentCanBoList.slice(startIndex, endIndex);
+
+        currentPageItems.forEach((canbo, index) => {
+            if (canbo) {
+                let trangThaiHtml = '';
+                if (canbo.ERROR == "0") {
+                    trangThaiHtml = '<span class="badge bg-success">Thành công</span>';
+                } else {
+                    trangThaiHtml = `<span class="badge bg-danger">Lỗi: ${canbo.ERROR_DESC}</span>`;
+                }
+
+                tableBodyHtml += `
+                    <tr>
+                        <td class="text-center">${index + 1}</td>
+                        <td>${canbo.TenCanbo}</td>
+                        <td>${canbo.SoDt}</td>
+                        <td>${canbo.TenNhom}</td>
+                        <td class="text-center">${trangThaiHtml}</td>
+                    </tr>
+                `;
+            }
+        });
+    } else {
+        tableBodyHtml = `
+            <tr>
+                <td colspan="5" class="text-center text-muted">
+                    <i class="fas fa-info-circle"></i>
+                    Không có cán bộ nào
+                </td>
+            </tr>
+        `;
+    }
+
+    // Cập nhật nội dung bảng
+    $('#detailMessaegStatisticalTableBody').html(tableBodyHtml);
+
+    // Tạo phân trang
+    CreatePaginationMinimal(
+        currentCanBoList.length,
+        canBoPagination.pageNumber,
+        canBoPagination.pageSize,
+        $("#detailMessaegStatisticalPagination"),
+        loadCanBoPage
+    );
+}
+
+// Hàm load trang cho danh sách cán bộ
+function loadCanBoPage(pageNumber) {
+    canBoPagination.pageNumber = pageNumber;
+    displayCanBoList();
+}
+//function showCanBoDetail(smsId) {
+//    // Tìm dữ liệu SMS theo ID
+//    const smsData = paginationData.data.find(item => item.IdSms === Number(smsId));
+
+//    if (!smsData) {
+//        alertify.error("Không tìm thấy dữ liệu");
+//        return;
+//    }
+
+//    let tableBodyHtml = '';
+
+//    if (smsData.WpCanbosView && Array.isArray(smsData.WpCanbosView) && smsData.WpCanbosView.length > 0) {
+//        smsData.WpCanbosView.forEach((canbo, index) => {
+//            if (canbo) {
+//                let trangThaiHtml = '';
+//                if (canbo.ERROR == "0") {
+//                    trangThaiHtml = '<span class="badge bg-success">Thành công</span>';
+//                } else {
+//                    trangThaiHtml = `<span class="badge bg-danger">Lỗi: ${canbo.ERROR_DESC}</span>`;
+//                }
+
+//                tableBodyHtml += `
+//                    <tr>
+//                        <td class="text-center">${index + 1}</td>
+//                        <td>${canbo.TenCanbo}</td>
+//                        <td>${canbo.SoDt}</td>
+//                        <td>${canbo.TenNhom}</td>
+//                        <td class="text-center">${trangThaiHtml}</td>
+//                    </tr>
+//                `;
+//            }
+//        });
+//    } else {
+//        tableBodyHtml = `
+//            <tr>
+//                <td colspan="5" class="text-center text-muted">
+//                    <i class="fas fa-info-circle"></i>
+//                    Không có cán bộ nào
+//                </td>
+//            </tr>
+//        `;
+//    }
+
+//    // Cập nhật nội dung modal
+//    $('#detailMessaegStatisticalTableBody').html(tableBodyHtml);
+//    $('#detailMessaegStatisticalLabel').text(`Danh sách cán bộ - ${smsData.Noidung}`);
+
+//    $('#detailMessaegStatistical').modal('show');
+//}
 
 function toggleFileActions(element) {
     const actions = element.nextElementSibling;

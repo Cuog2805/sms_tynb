@@ -24,6 +24,7 @@ namespace SMS_TYNB.Service.Implement
 		private readonly IWpFileService _wpFileService;
 		private readonly ISmsConfigService _smsConfigService;
 		private readonly ILogger<WpSmsService> _logger;
+		private readonly WpSmsFileRepository _wpSmsFileRepository;
 
 		public WpSmsService
 		(
@@ -36,7 +37,8 @@ namespace SMS_TYNB.Service.Implement
 			WpCanboRepository wpCanboRepository,
 			WpNhomCanboRepository wpNhomCanboRepository,
 			WpNhomRepository wpNhomRepository,
-			WpFileRepository wpFileRepository
+			WpFileRepository wpFileRepository,
+			WpSmsFileRepository wpSmsFileRepository
 		)
 		{
 			_wpSmsRepository = wpSmsRepository;
@@ -49,6 +51,7 @@ namespace SMS_TYNB.Service.Implement
 			_wpNhomCanboRepository = wpNhomCanboRepository;
 			_wpNhomRepository = wpNhomRepository;
 			_wpFileRepository = wpFileRepository;
+			_wpSmsFileRepository = wpSmsFileRepository;
 		}
 
 		public async Task<WpSmsViewModel> SendMessage(WpSmsViewModel model, List<IFormFile> fileDinhKem, List<long> selectedFileIds, WpUsers user)
@@ -141,7 +144,7 @@ namespace SMS_TYNB.Service.Implement
 					{
 						if (file.Length > 0)
 						{
-							var savedFile = await _wpFileService.SaveFile(file, user, "wp_sms", smsId);
+							var savedFile = await _wpFileService.SaveFile(file, user, smsId);
 							if (savedFile != null)
 							{
 								fileUrls.Add(savedFile.FileUrl);
@@ -153,7 +156,7 @@ namespace SMS_TYNB.Service.Implement
 				// Xử lý files đã chọn từ selectedFileIds
 				if (selectedFileIds != null && selectedFileIds.Count > 0)
 				{
-					var createdFiles = await _wpFileService.CreateFromFileExisted(selectedFileIds, user, "wp_sms", smsId);
+					var createdFiles = await _wpFileService.CreateFromFileExisted(selectedFileIds, user, smsId);
 					fileUrls.AddRange(createdFiles.Select(f => f.FileUrl));
 				}
 
@@ -218,11 +221,12 @@ namespace SMS_TYNB.Service.Implement
 
 			if (model.IdFile.HasValue)
 			{
-				var fileQuery = _wpFileRepository.Query().Where(wpf =>
-					wpf.BangLuuFile == "wp_sms" && wpf.IdFile == model.IdFile);
+				var fileQuery = _wpFileRepository.Query().Where(wpf => wpf.IdFile == model.IdFile);
+				var smsFileQuery = _wpSmsFileRepository.Query().Where(wpsf => wpsf.IdFile == model.IdFile);
 
 				baseQuery = from wps in baseQuery
-							join wpf in fileQuery on wps.IdSms equals wpf.BangLuuFileId
+							join wpsf in smsFileQuery on wps.IdSms equals wpsf.IdSms
+							join wpf in fileQuery on wpsf.IdFile equals wpf.IdFile
 							select wps;
 			}
 
@@ -238,8 +242,9 @@ namespace SMS_TYNB.Service.Implement
 				};
 			}
 
+			var wpFileList = await _wpFileRepository.GetAll();
+			var wpSmsFileList = await _wpSmsFileRepository.GetAll();
 			var wpUserList = await _wpUsersRepository.GetAll();
-			var wpFileList = await _wpFileService.GetByBangLuuFile("wp_sms");
 			var wpSmsCanboList = await _wpSmsCanboRepository.GetAll();
 			var wpCanboList = await _wpCanboRepository.GetAll();
 			var wpNhomList = await _wpNhomRepository.GetAll();
@@ -256,7 +261,11 @@ namespace SMS_TYNB.Service.Implement
 									 SoTn = wps.SoTn,
 									 SoTnLoi = wps.SoTnLoi,
 									 // sub query cho file
-									 FileDinhKem = wpFileList.Where(f => f.BangLuuFileId == wps.IdSms && (f.IdFile == model.IdFile || model.IdFile == null)).ToList(),
+									 //FileDinhKem = wpFileList.Where(f => f.BangLuuFileId == wps.IdSms && (f.IdFile == model.IdFile || model.IdFile == null)).ToList(),
+									 FileDinhKem = (from wpsf in wpSmsFileList
+													join wpf in wpFileList on wpsf.IdFile equals wpf.IdFile
+													where wpsf.IdSms == wps.IdSms && (wpf.IdFile == model.IdFile || model.IdFile == null)
+													select wpf).ToList(),
 									 // sub query cho cán bộ
 									 WpCanbos = (from wpsc in wpSmsCanboList.Where(sc => sc.IdSms == wps.IdSms)
 												 join wpc in wpCanboList on wpsc.IdCanbo equals wpc.IdCanbo

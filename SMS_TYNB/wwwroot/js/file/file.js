@@ -98,7 +98,7 @@ function displayFiles(items) {
                     $("<label>")
                         .addClass("form-check-label")
 						.attr("for", `check-${item.IdFile}`)
-						.html(`${item.IdFile}-${item.TenFile}`)
+						.html(`${item.TenFile}`)
                 )
             );
             $("#fileInputList").append(row);
@@ -137,7 +137,7 @@ function displaySelectedFiles() {
                 <div class="selected-file-item d-flex align-items-center justify-content-between mb-2 p-2 border rounded bg-white">
                     <div class="d-flex align-items-center">
                         <i class="bi bi-folder me-2"></i>
-                        <span class="file-name">${file.IdFile}-${file.TenFile}</span>
+                        <span class="file-name">${file.TenFile}</span>
                     </div>
                 </div>
             `;

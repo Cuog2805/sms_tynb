@@ -298,55 +298,6 @@ function loadCanBoPage(pageNumber) {
     canBoPagination.pageNumber = pageNumber;
     displayCanBoList();
 }
-//function showCanBoDetail(smsId) {
-//    // Tìm dữ liệu SMS theo ID
-//    const smsData = paginationData.data.find(item => item.IdSms === Number(smsId));
-
-//    if (!smsData) {
-//        alertify.error("Không tìm thấy dữ liệu");
-//        return;
-//    }
-
-//    let tableBodyHtml = '';
-
-//    if (smsData.WpCanbosView && Array.isArray(smsData.WpCanbosView) && smsData.WpCanbosView.length > 0) {
-//        smsData.WpCanbosView.forEach((canbo, index) => {
-//            if (canbo) {
-//                let trangThaiHtml = '';
-//                if (canbo.ERROR == "0") {
-//                    trangThaiHtml = '<span class="badge bg-success">Thành công</span>';
-//                } else {
-//                    trangThaiHtml = `<span class="badge bg-danger">Lỗi: ${canbo.ERROR_DESC}</span>`;
-//                }
-
-//                tableBodyHtml += `
-//                    <tr>
-//                        <td class="text-center">${index + 1}</td>
-//                        <td>${canbo.TenCanbo}</td>
-//                        <td>${canbo.SoDt}</td>
-//                        <td>${canbo.TenNhom}</td>
-//                        <td class="text-center">${trangThaiHtml}</td>
-//                    </tr>
-//                `;
-//            }
-//        });
-//    } else {
-//        tableBodyHtml = `
-//            <tr>
-//                <td colspan="5" class="text-center text-muted">
-//                    <i class="fas fa-info-circle"></i>
-//                    Không có cán bộ nào
-//                </td>
-//            </tr>
-//        `;
-//    }
-
-//    // Cập nhật nội dung modal
-//    $('#detailMessaegStatisticalTableBody').html(tableBodyHtml);
-//    $('#detailMessaegStatisticalLabel').text(`Danh sách cán bộ - ${smsData.Noidung}`);
-
-//    $('#detailMessaegStatistical').modal('show');
-//}
 
 function toggleFileActions(element) {
     const actions = element.nextElementSibling;

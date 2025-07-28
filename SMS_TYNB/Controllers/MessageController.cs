@@ -167,8 +167,7 @@ namespace SMS_TYNB.Controllers
 			SelectList wpNhomSelectList = new SelectList(await _wpNhomService.GetAllWpNhom(), "IdNhom", "TenNhom");
 			SelectList wpCanboSelectList = new SelectList(await _wpCanboService.GetAllWpCanbo(), "IdCanbo", "TenCanbo");
 			SelectList wpFileSelectList = new SelectList(await _wpFileService.GetAllWpFile(), "IdFile", "TenFile");
-			SelectList wpTrangThaiSelectList = new SelectList(await _wpDanhmucService.GetWpDanhmucByType("TRANGTHAI_TN"), "MaDanhmuc", "TenDanhmuc");
-            //SelectList wpTrangThaiSelectList = new SelectList(await _wpDanhmucService.GetWpDanhmucByType("TRANGTHAI"), "MaDanhmuc", "TenDanhmuc");
+			SelectList wpTrangThaiSelectList = new SelectList(await _wpDanhmucService.GetWpDanhmucByType("TRANGTHAI_TN"), "Value", "TenDanhmuc");
 
 			var selectLists = new Dictionary<string, SelectList>
 			{

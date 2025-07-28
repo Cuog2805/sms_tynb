@@ -34,6 +34,17 @@ namespace SMS_TYNB.Repository
 
 			return Task.FromResult(query);
 		}
+		/// <summary>
+		/// tìm kiếm wpcanbo có sđt tồn tại danh sách sđt truyền vào
+		/// </summary>
+		/// <param name="phonenumbers"></param>
+		/// <returns></returns>
+		public Task<IQueryable<WpCanbo>> FindBySoDts(List<string> phonenumbers)
+		{
+			var query = context.Set<WpCanbo>() .Where(item => phonenumbers.Contains(item.SoDt));
+
+			return Task.FromResult(query);
+		}
 
 		public override async Task<WpCanbo> Create(WpCanbo entity)
 		{
@@ -66,9 +77,9 @@ namespace SMS_TYNB.Repository
 			if (existingEntity == null)
 				return null;
 
-			existingEntity.SoDTGui = !string.IsNullOrWhiteSpace(existingEntity.SoDt) && existingEntity.SoDt.StartsWith("0")
-								? string.Concat("84", existingEntity.SoDt.Trim().AsSpan(1))
-								: existingEntity.SoDt?.Trim() ?? "";
+			entityUpdate.SoDTGui = !string.IsNullOrWhiteSpace(entityUpdate.SoDt) && entityUpdate.SoDt.StartsWith("0")
+								? string.Concat("84", entityUpdate.SoDt.Trim().AsSpan(1))
+								: entityUpdate.SoDt?.Trim() ?? "";
 
 			context.Entry(existingEntity).CurrentValues.SetValues(entityUpdate);
 			await context.SaveChangesAsync();

@@ -30,9 +30,10 @@ public partial class SmsTynContext : DbContext
 
     public virtual DbSet<WpSmsCanbo> WpSmsCanbo { get; set; }
     public virtual DbSet<SmsConfig?> SmsConfig { get; set; }
+    public virtual DbSet<WpSmsFile> WpSmsFile { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        => optionsBuilder.UseMySql("server=10.30.29.14;port=3306;database=vnpt_sms_dubinhmy;user=sms_dubinhmy_usr;password=#$2346ATed%^rede$52w;Persist Security Info=False;Connect Timeout=300;", ServerVersion.Parse("9.3.0-mysql"));
+        => optionsBuilder.UseMySql("Server=localhost;Port=3306;Database=sms_tunb;Uid=root;Pwd=280503;CharSet=utf8mb4;", ServerVersion.Parse("9.3.0-mysql"));
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

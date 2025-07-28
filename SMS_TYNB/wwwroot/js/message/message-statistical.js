@@ -1,4 +1,29 @@
 ﻿$(document).ready(function () {
+    // Khởi tạo Select2 cho dropdown IdNhom
+    $('#IdNhom').select2({
+        theme: 'bootstrap-5',
+        placeholder: '--Chọn nhóm--',
+        allowClear: true,
+        width: '100%',
+        dropdownParent: $('#IdNhom').parent()
+    });
+    $('#IdCanBo').select2({
+        theme: 'bootstrap-5',
+        placeholder: '--Chọn cán bộ--',
+        allowClear: true,
+        width: '100%',
+        dropdownParent: $('#IdCanBo').parent()
+    });
+    $('#IdFile').select2({
+        theme: 'bootstrap-5',
+        placeholder: '--Chọn file đính kèm--',
+        allowClear: true,
+        width: '100%',
+        dropdownParent: $('#IdFile').parent()
+    });
+
+
+    //load dữ liệu
     loadData();
 
     let debounceTimer;
@@ -57,16 +82,20 @@ let currentEditingFile = {
 };
 
 function loadData() {
+    // tham số tìm kiếm
     // xử lý input date
     const dateFromStr = $("#dateFrom").val();
     const dateToStr = $("#dateTo").val();
     const dateFrom = formatDateTime(new Date(dateFromStr + 'T00:00:00'));
     const dateTo = formatDateTime(new Date(dateToStr + 'T23:59:59'));
 
-    //const dateFrom = $("#dateFrom").val();
-    //const dateTo = $("#dateTo").val();
 
     let searchInput = $('#searchInput').val();
+    let IdNhom = $('#IdNhom').val();
+    let IdCanBo = $('#IdCanBo').val();
+    let IdFile = $('#IdFile').val();
+    let Trangthai = $('#Trangthai').val();
+
     let pageable = {
         pageNumber: currentPagination.pageNumber,
         pageSize: currentPagination.pageSize,
@@ -78,6 +107,10 @@ function loadData() {
         type: 'GET',
         data: $.param({
             'model.searchInput': searchInput,
+            'model.IdNhom': IdNhom,
+            'model.IdCanBo': IdCanBo,
+            'model.IdFile': IdFile,
+            'model.Trangthai': Trangthai,
             'model.dateFrom': dateFrom,
             'model.dateTo': dateTo,
             'pageable.PageNumber': pageable.pageNumber,
@@ -113,6 +146,7 @@ function displayItems(items, pageNumber, pageSize) {
 
     if (items && items.length > 0) {
         items.forEach((item, index) => {
+            //danh sách file
             let fileHtml = '';
             if (item.FileDinhKem && Array.isArray(item.FileDinhKem)) {
                 fileHtml = item.FileDinhKem.map(file => {
@@ -142,10 +176,31 @@ function displayItems(items, pageNumber, pageSize) {
             } else {
                 fileHtml = 'Không có file';
             }
+
+            //danh sách cán bộ
+            let canboHtml = '<div class="overflow-auto" style="max-height: 200px; overflow-y: auto;">';
+            if (item.WpCanbos && Array.isArray(item.WpCanbos)) {
+                item.WpCanbos.forEach(canbo => {
+                    if (canbo) {
+                        canboHtml += `
+                            <div class="selected-file-item d-flex mb-2 p-2 border rounded bg-white">
+                                <div class="d-flex align-items-center">
+                                    <span class="file-name">${canbo.TenCanbo} - ${canbo.SoDt} - ${canbo.TenNhom}</span>
+                                </div>
+                            </div>
+                        `;
+                    }
+                });
+                canboHtml += '</div>';
+            } else {
+                canboHtml = '<div>Không có cán bộ</div>';
+            }
+
             tableHtml += `
                 <tr id="row-${item.IdSms}">
                     <td class="text-center">${startIndex + index + 1}</td>
                     <td>${item.Noidung}</td>
+                    <td>${canboHtml}</td>
                     <td>${fileHtml}</td>
                     <td>${item.TenNguoigui}</td>
                     <td>${item.Ngaygui.replace("T", " ")}</td>

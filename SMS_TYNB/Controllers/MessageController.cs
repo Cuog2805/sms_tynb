@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using SMS_TYNB.Common;
@@ -23,13 +24,32 @@ namespace SMS_TYNB.Controllers
         private readonly IWpSmsService _wpSmsService;
         private readonly ISmsConfigService _smsConfigService;
         private readonly UserManager<WpUsers> _userManager;
-        public MessageController(IWpSmsService wpSmsService, ISmsConfigService smsConfigService, UserManager<WpUsers> userManager, ILogger<MessageController> logger)
+        private readonly IWpNhomService _wpNhomService;
+        private readonly IWpCanboService _wpCanboService;
+        private readonly IWpFileService _wpFileService;
+        private readonly IWpDanhmucService _wpDanhmucService;
+
+		public MessageController
+        (
+            IWpSmsService wpSmsService, 
+            ISmsConfigService smsConfigService, 
+            UserManager<WpUsers> userManager, 
+            ILogger<MessageController> logger,
+			IWpNhomService wpNhomService, 
+            IWpCanboService wpCanboService, 
+            IWpFileService wpFileService,
+			IWpDanhmucService wpDanhmucService
+		)
         {
             _wpSmsService = wpSmsService;
             _smsConfigService = smsConfigService;
             _userManager = userManager;
             _logger = logger;
-        }
+            _wpNhomService = wpNhomService;
+            _wpCanboService = wpCanboService;
+            _wpFileService = wpFileService;
+            _wpDanhmucService = wpDanhmucService;
+		}
         public IActionResult SendMessage()
         {
             BaseFormViewModel<WpSms> formViewModel = new BaseFormViewModel<WpSms>();
@@ -79,14 +99,24 @@ namespace SMS_TYNB.Controllers
                     WpCanbos = cb
                 };
 
-                if (user != null) await _wpSmsService.SendMessage(model, fileDinhKem, selectedFileIds, user);
-                _logger.LogInformation("SendMessage succeed");
+                if (user == null)
+				{
+					return Json(new
+					{
+						state = "error",
+						msg = "Lỗi khi thông tin người dùng!",
+						data = new {},
+					});
+				}
+
+				var data = await _wpSmsService.SendMessage(model, fileDinhKem, selectedFileIds, user);
+				_logger.LogInformation("SendMessage succeed");
 
                 return Json(new
                 {
                     state = "success",
                     msg = "Gửi tin nhắn thành công!",
-                    data = new { },
+                    data = data,
                 });
             }
             catch (Exception ex)
@@ -95,14 +125,19 @@ namespace SMS_TYNB.Controllers
                 return Json(new
                 {
                     state = "error",
-                    msg = "Đã xảy ra lỗi khi gửi tin nhắn!",
+                    msg = "Đã xảy ra lỗi khi gửi tin nhắn!" + ex.Message,
                     data = new { },
                 });
             }
         }
         public async Task<IActionResult> MessageStatistical()
         {
-            return View();
+			BaseFormViewModel<WpSmsSearchViewModel> formViewModel = new BaseFormViewModel<WpSmsSearchViewModel>()
+			{
+				Data = new WpSmsSearchViewModel(),
+				SelectLists = await CreateSelectList()
+			};
+			return View(formViewModel);
         }
         [HttpGet]
         public async Task<IActionResult> LoadData(WpSmsSearchViewModel model, Pageable pageable)
@@ -127,6 +162,22 @@ namespace SMS_TYNB.Controllers
                 content = new { },
             });
         }
+		private async Task<Dictionary<string, SelectList>> CreateSelectList()
+		{
+			SelectList wpNhomSelectList = new SelectList(await _wpNhomService.GetAllWpNhom(), "IdNhom", "TenNhom");
+			SelectList wpCanboSelectList = new SelectList(await _wpCanboService.GetAllWpCanbo(), "IdCanbo", "TenCanbo");
+			SelectList wpFileSelectList = new SelectList(await _wpFileService.GetAllWpFile(), "IdFile", "TenFile");
+			SelectList wpTrangThaiSelectList = new SelectList(await _wpDanhmucService.GetWpDanhmucByType("TRANGTHAI_TN"), "MaDanhmuc", "TenDanhmuc");
+            //SelectList wpTrangThaiSelectList = new SelectList(await _wpDanhmucService.GetWpDanhmucByType("TRANGTHAI"), "MaDanhmuc", "TenDanhmuc");
 
-    }
+			var selectLists = new Dictionary<string, SelectList>
+			{
+				{ "wpNhomSelectList", wpNhomSelectList },
+				{ "wpCanboSelectList", wpCanboSelectList },
+				{ "wpFileSelectList", wpFileSelectList },
+				{ "wpTrangThaiSelectList", wpTrangThaiSelectList }
+			};
+			return selectLists;
+		}
+	}
 }

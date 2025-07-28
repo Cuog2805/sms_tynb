@@ -17,6 +17,10 @@
     {
       "library": "xlsx@0.18.5",
       "destination": "wwwroot/lib/xlsx/"
+    },
+    {
+      "library": "select2@4.0.13",
+      "destination": "wwwroot/lib/select2/"
     }
   ]
 }

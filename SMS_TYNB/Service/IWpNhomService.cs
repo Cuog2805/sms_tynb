@@ -7,6 +7,7 @@ namespace SMS_TYNB.Service
 	public interface IWpNhomService
 	{
 		Task<IEnumerable<WpNhom>> GetAllWpNhom();
+		Task<IEnumerable<WpNhom>> GetAllWpNhomById(int id);
 		Task<PageResult<WpNhomViewModel>> SearchWpNhom(WpNhomSearchViewModel model, Pageable pageable);
 		Task<WpNhomViewModel> GetWpNhomCanbosById(int id);
 		Task<WpNhom?> GetById(int id);

@@ -46,6 +46,13 @@ namespace TodoApi.Repository
 			return entityNew.Entity;
 		}
 
+		public virtual async Task<List<T>> CreateRange(List<T> entities)
+		{
+			context.Set<T>().AddRange(entities);
+			await context.SaveChangesAsync();
+			return entities;
+		}
+
 		public virtual async Task<T?> Update(TKey id, T entityUpdate)
 		{
 			var existingEntity = await context.Set<T>().FindAsync(id);

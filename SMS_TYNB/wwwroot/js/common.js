@@ -183,7 +183,12 @@ function CreatePaginationMinimal(totalItems, currentPage, itemsPerPage, paginati
 	}
 }
 
-
+/**
+ * 
+ * @param {string} date - new Date() js
+ * @returns {string} Chuỗi ngày đã định dạng theo dạng 'YYYY-MM-DD HH:mm:ss'
+ * 
+ */
 function formatDateTime(date) {
 	const year = date.getFullYear();
 	const month = String(date.getMonth() + 1).padStart(2, '0');

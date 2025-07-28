@@ -28,6 +28,13 @@ namespace SMS_TYNB.Repository
 			return Task.FromResult(query);
 		}
 
+		public Task<IQueryable<WpCanbo>> FilterById(int id)
+		{
+			var query = context.Set<WpCanbo>().AsQueryable().Where(item => item.IdCanbo == id);
+
+			return Task.FromResult(query);
+		}
+
 		public override async Task<WpCanbo> Create(WpCanbo entity)
 		{
 			entity.SoDTGui = !string.IsNullOrWhiteSpace(entity.SoDt) && entity.SoDt.StartsWith("0")
@@ -37,6 +44,20 @@ namespace SMS_TYNB.Repository
 			await context.SaveChangesAsync();
 
 			return entityNew.Entity;
+		}
+
+		public override async Task<List<WpCanbo>> CreateRange(List<WpCanbo> entities)
+		{
+			foreach (var entity in entities)
+			{
+				entity.SoDTGui = !string.IsNullOrWhiteSpace(entity.SoDt) && entity.SoDt.StartsWith("0")
+					? string.Concat("84", entity.SoDt.Trim().AsSpan(1))
+					: entity.SoDt?.Trim() ?? "";
+			}
+
+			context.Set<WpCanbo>().AddRange(entities);
+			await context.SaveChangesAsync();
+			return entities;
 		}
 
 		public override async Task<WpCanbo?> Update(int id, WpCanbo entityUpdate)

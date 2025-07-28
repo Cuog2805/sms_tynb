@@ -12,32 +12,36 @@
 				</h5>
 			</div>
 			<div class="card-body">
-				<div class="row align-items-center">
-					<div class="col-md-8 mb-3 mb-md-0">
-						<div class="btn-group me-2" role="group">
-							<button type="button" id="btnAdd" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#data-form">
-								<i class="bi bi-plus-circle me-1"></i>
-								Thêm cán bộ
-							</button>
-						</div>
-						<div class="btn-group me-2" role="group">
-							<a class="btn btn-outline-primary" type="button" asp-area="" asp-controller="Group" asp-action="Index">
-								<i class="bi bi-collection me-1"></i>
-								Thêm nhóm
-							</a>
-							<a class="btn btn-outline-primary" type="button" asp-area="" asp-controller="Group" asp-action="Assign">
-								<i class="bi bi-diagram-3 me-1"></i>
-								Phân nhóm
-							</a>
-						</div>
-						<div class="btn-group me-2" role="group">
-							<button type="button" id="btnImportTemplate" class="btn btn-outline-success">
-								<i class="bi bi-box-arrow-in-down me-1"></i>
-								Import dữ liệu
-							</button>
+				<div class="row">
+					<div class="col-12 col-md-8 mb-3 mb-md-0">
+						<div class="d-flex flex-wrap gap-2">
+							<div class="btn-group" role="group">
+								<button type="button" id="btnAdd" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#data-form">
+									<i class="bi bi-plus-circle me-1"></i> Thêm cán bộ
+								</button>
+							</div>
+
+							<div class="btn-group" role="group">
+								<a class="btn btn-outline-primary" asp-area="" asp-controller="Group" asp-action="Index">
+									<i class="bi bi-collection me-1"></i> Thêm nhóm
+								</a>
+								<a class="btn btn-outline-primary" asp-area="" asp-controller="Group" asp-action="Assign">
+									<i class="bi bi-diagram-3 me-1"></i> Phân nhóm
+								</a>
+							</div>
+
+							<div class="btn-group" role="group">
+								<button type="button" id="btnImportTemplate" class="btn btn-outline-success">
+									<i class="bi bi-box-arrow-in-down me-1"></i> Import dữ liệu
+								</button>
+								<button type="button" id="btnExportTemplate" class="btn btn-outline-success">
+									<i class="bi bi-box-arrow-in-up me-1"></i> Export dữ liệu
+								</button>
+							</div>
 						</div>
 					</div>
-					<div class="col-md-4">
+
+					<div class="col-12 col-md-4">
 						<div class="input-group">
 							<span class="input-group-text">
 								<i class="bi bi-search"></i>
@@ -47,6 +51,7 @@
 					</div>
 				</div>
 			</div>
+
 		</div>
 		@* danh sách *@
 		<table class="table table-bordered" id="contactTable">

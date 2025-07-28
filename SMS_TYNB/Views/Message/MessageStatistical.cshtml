@@ -1,4 +1,4 @@
-﻿@model SMS_TYNB.ViewModel.WpSmsSearchViewModel
+﻿@model SMS_TYNB.ViewModel.BaseFormViewModel<SMS_TYNB.ViewModel.WpSmsSearchViewModel>
 @{
 	ViewBag.Title = "Thống kê tin nhắn";
 	Layout = "~/Views/Shared/_Layout.cshtml";
@@ -8,24 +8,90 @@
 	<div class="container-fluid">
 		<form id="searchByDateForm">
 			<div class="row justify-content-center">
-				<div class="col-md-4">
-					<div class="form-group mb-3">
-						<label for="dateFrom" class="form-label">Từ ngày <span class="text-danger">*</span></label>
-						<input type="date"
-							   class="form-control form-control-sm"
-							   name="dateFrom"
-							   id="dateFrom"
-							   value="@DateTime.Now.ToString("yyyy-MM-dd")" />
+				<div class="row justify-content-center">
+					<div class="col-md-4">
+						<div class="form-group mb-3">
+							<label for="dateFrom" class="form-label">Từ ngày <span class="text-danger">*</span></label>
+							<input type="date"
+								   class="form-control form-control-sm"
+								   name="dateFrom"
+								   id="dateFrom"
+								   value="@DateTime.Now.ToString("yyyy-MM-dd")" />
+						</div>
+					</div>
+					<div class="col-md-4">
+						<div class="form-group mb-3">
+							<label for="dateTo" class="form-label">Đến ngày <span class="text-danger">*</span></label>
+							<input type="date"
+								   class="form-control form-control-sm"
+								   name="dateTo"
+								   id="dateTo"
+								   value="@DateTime.Now.ToString("yyyy-MM-dd")" />
+						</div>
 					</div>
 				</div>
-				<div class="col-md-4">
-					<div class="form-group mb-3">
-						<label for="dateTo" class="form-label">Đến ngày <span class="text-danger">*</span></label>
-						<input type="date"
-							   class="form-control form-control-sm"
-							   name="dateTo"
-							   id="dateTo"
-							   value="@DateTime.Now.ToString("yyyy-MM-dd")" />
+				<div class="row justify-content-center">
+					<div class="col-md-4">
+						<div class="form-group mb-3">
+							<label for="IdNhom" class="form-label">Nhóm </label>
+							@Html.DropDownListFor(
+								model => model.Data.IdNhom,
+								Model.SelectLists["wpNhomSelectList"],
+								"--Chọn nhóm--",
+								htmlAttributes: new {
+									@class = "form-select",
+									@name = "Data.IdNhom", 
+									@id = "IdNhom",
+								}
+							 )
+						</div>
+					</div>
+					<div class="col-md-4">
+						<div class="form-group mb-3">
+							<label for="IdCanBo" class="form-label">Cán bộ </label>
+							@Html.DropDownListFor(
+								model => model.Data.IdCanBo,
+								Model.SelectLists["wpCanboSelectList"],
+								"--Chọn cán bộ--",
+								htmlAttributes: new {
+									@class = "form-select",
+									@name = "Data.IdCanBo",
+									@id = "IdCanBo",
+								}
+							 )
+						</div>
+					</div>
+				</div>
+				<div class="row justify-content-center">
+					<div class="col-md-4">
+						<div class="form-group mb-3">
+							<label for="IdFile" class="form-label">File đính kèm </label>
+							@Html.DropDownListFor(
+								model => model.Data.IdFile,
+								Model.SelectLists["wpFileSelectList"],
+								"--Chọn file--",
+								htmlAttributes: new {
+									@class = "form-select",
+									@name = "Data.IdFile",
+									@id = "IdFile",
+								}
+							 )
+						</div>
+					</div>
+					<div class="col-md-4">
+						<div class="form-group mb-3">
+							<label for="Trangthai" class="form-label">Trạng thái </label>
+							@Html.DropDownListFor(
+								model => model.Data.Trangthai,
+								Model.SelectLists["wpTrangThaiSelectList"],
+								"--Chọn trạng thái--",
+								htmlAttributes: new {
+									@class = "form-select",
+									@name = "Data.Trangthai",
+									@id = "Trangthai",
+								}
+							 )
+						</div>
 					</div>
 				</div>
 			</div>
@@ -53,8 +119,9 @@
 			<thead class="table-primary text-white">
 				<tr>
 					<th class="text-center">STT</th>
-					<th width="30%">Nội dung</th>
-					<th>File đính kèm</th>
+					<th width="20%">Nội dung</th>
+					<th width="15%">Danh sách cán bộ</th>
+					<th width="20%">File đính kèm</th>
 					<th>Người gửi</th>
 					<th>Ngày gửi</th>
 					<th>Số tin nhắn đã gửi</th>

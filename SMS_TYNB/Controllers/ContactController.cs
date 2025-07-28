@@ -21,8 +21,8 @@ namespace SMS_TYNB.Controllers
 		}
 		private async Task<BaseFormViewModel<WpCanbo>> CreateFormViewModel(WpCanbo? model = null)
 		{
-			SelectList wpTrangThaiSelectList = new SelectList(await _wpDanhmucService.GetWpDanhmucByType("TRANGTHAI"), "MaDanhmuc", "TenDanhmuc");
-			SelectList wpGioiTinhSelectList = new SelectList(await _wpDanhmucService.GetWpDanhmucByType("GIOITINH"), "MaDanhmuc", "TenDanhmuc");
+			SelectList wpTrangThaiSelectList = new SelectList(await _wpDanhmucService.GetWpDanhmucByType("TRANGTHAI"), "Value", "TenDanhmuc");
+			SelectList wpGioiTinhSelectList = new SelectList(await _wpDanhmucService.GetWpDanhmucByType("GIOITINH"), "Value", "TenDanhmuc");
 			var selectLists = new Dictionary<string, SelectList>
 			{
 				{ "wpTrangThaiSelectList", wpTrangThaiSelectList },
@@ -78,6 +78,17 @@ namespace SMS_TYNB.Controllers
 				state = "success",
 				msg = "Cập nhật thành công!",
 				data = model
+			});
+		}
+		[HttpPost]
+		public async Task<JsonResult> Import(List<WpCanbo> model)
+		{
+			List<WpCanbo> data = await _wpCanboService.CreateMulti(model);
+			return Json(new
+			{
+				state = "success",
+				msg = "Import thành công!",
+				data = data
 			});
 		}
 	}

@@ -12,195 +12,278 @@ using static SMS_TYNB.ViewModel.ApiModel.SmsApiViewModel;
 
 namespace SMS_TYNB.Service.Implement
 {
-    public class WpSmsService : IWpSmsService
-    {
-        private readonly WpSmsRepository _wpSmsRepository;
-        private readonly WpSmsCanboRepository _wpSmsCanboRepository;
-        private readonly WpUsersRepository _wpUsersRepository;
-        private readonly WpCanboRepository _wpCanboRepository;
-        private readonly IWpFileService _wpFileService;
-        private readonly ISmsConfigService _smsConfigService;
-        private readonly ILogger<WpSmsService> _logger;
-        private readonly IWebHostEnvironment _environment;
-        public WpSmsService
-        (
-            WpSmsRepository wpSmsRepository,
-            WpSmsCanboRepository wpSmsCanboRepository,
-            IWpFileService wpFileService,
-            WpUsersRepository wpUsersRepository,
-            ILogger<WpSmsService> logger,
-            ISmsConfigService smsConfigService,
-            WpCanboRepository wpCanboRepository,
-            IWebHostEnvironment environment
-        )
-        {
-            _wpSmsRepository = wpSmsRepository;
-            _wpSmsCanboRepository = wpSmsCanboRepository;
-            _wpFileService = wpFileService;
-            _wpUsersRepository = wpUsersRepository;
-            _logger = logger;
-            _smsConfigService = smsConfigService;
-            _wpCanboRepository = wpCanboRepository;
-            _environment = environment;
+	public class WpSmsService : IWpSmsService
+	{
+		private readonly WpSmsRepository _wpSmsRepository;
+		private readonly WpSmsCanboRepository _wpSmsCanboRepository;
+		private readonly WpUsersRepository _wpUsersRepository;
+		private readonly WpCanboRepository _wpCanboRepository;
+		private readonly WpNhomCanboRepository _wpNhomCanboRepository;
+		private readonly WpNhomRepository _wpNhomRepository;
+		private readonly WpFileRepository _wpFileRepository;
+		private readonly IWpFileService _wpFileService;
+		private readonly ISmsConfigService _smsConfigService;
+		private readonly ILogger<WpSmsService> _logger;
 
-        }
-        public async Task SendMessage(WpSmsViewModel model, List<IFormFile> fileDinhKem, List<long> selectedFileIds, WpUsers user)
-        {
-            if (model == null || user == null)
-                return;
+		public WpSmsService
+		(
+			WpSmsRepository wpSmsRepository,
+			WpSmsCanboRepository wpSmsCanboRepository,
+			IWpFileService wpFileService,
+			WpUsersRepository wpUsersRepository,
+			ILogger<WpSmsService> logger,
+			ISmsConfigService smsConfigService,
+			WpCanboRepository wpCanboRepository,
+			WpNhomCanboRepository wpNhomCanboRepository,
+			WpNhomRepository wpNhomRepository,
+			WpFileRepository wpFileRepository
+		)
+		{
+			_wpSmsRepository = wpSmsRepository;
+			_wpSmsCanboRepository = wpSmsCanboRepository;
+			_wpFileService = wpFileService;
+			_wpUsersRepository = wpUsersRepository;
+			_logger = logger;
+			_smsConfigService = smsConfigService;
+			_wpCanboRepository = wpCanboRepository;
+			_wpNhomCanboRepository = wpNhomCanboRepository;
+			_wpNhomRepository = wpNhomRepository;
+			_wpFileRepository = wpFileRepository;
+		}
 
-            WpSms wpSms = new WpSms()
-            {
-                Noidung = model.Noidung,
-                Ngaygui = DateTime.Now,
-                IdNguoigui = user.Id,
-                SoTn = model.WpCanbos.Count,
-                SoTnLoi = 0
-            };
-            wpSms = await _wpSmsRepository.Create(wpSms);
+		public async Task<WpSmsViewModel> SendMessage(WpSmsViewModel model, List<IFormFile> fileDinhKem, List<long> selectedFileIds, WpUsers user)
+		{
+			if (model == null || user == null)
+				throw new Exception("Lỗi khi xử lý SendMessage");
 
-            int errorCount = 0;
-            int successCount = 0;
+			WpSms wpSms = new WpSms()
+			{
+				Noidung = model.Noidung,
+				Ngaygui = DateTime.Now,
+				IdNguoigui = user.Id,
+				SoTn = model.WpCanbos.Count,
+				SoTnLoi = 0
+			};
+			wpSms = await _wpSmsRepository.Create(wpSms);
 
-            // Xử lý file đính kèm
-            var smsConfig = _smsConfigService.GetSmsConfigActive(true);
-            var fileUrls = await HandleFileAttachments(fileDinhKem, selectedFileIds, user, wpSms.IdSms, smsConfig.Domain);
-            if (smsConfig?.Id > 0 && model.WpCanbos.Any())
-            {
-                foreach (var canbo in model.WpCanbos)
-                {
-                    try
-                    {
-                        var cb = _wpCanboRepository.FindById(canbo.IdCanbo ?? 0).Result;
-                        if (cb != null && cb.IdCanbo > 0)
-                        {
-                            var msgContent = string.Empty;
-                            msgContent = !string.IsNullOrEmpty(fileUrls) ? $"{model.Noidung} {fileUrls}" : model.Noidung;
-                            var res = SmsHelper.SendSms(smsConfig, msgContent, cb.SoDTGui);
-                            await SendMessageToCanbo(canbo, wpSms.IdSms, res);
+			int errorCount = 0;
 
-                            if (res?.RPLY?.ERROR == "0")
-                                successCount++;
-                            else
-                                errorCount++;
-                        }
-                    }
-                    catch (Exception)
-                    {
-                        errorCount++;
-                    }
-                }
-            }
-            else
-            {
-                errorCount = model.WpCanbos?.Count ?? 0;
-                successCount = 0;
-            }
-            wpSms.SoTn = successCount;
-            wpSms.SoTnLoi = errorCount;
-            await _wpSmsRepository.Update(wpSms.IdSms, wpSms);
-        }
-        private async Task<string> HandleFileAttachments(List<IFormFile> fileDinhKem, List<long> selectedFileIds, WpUsers user, long smsId, string domain)
-        {
-            var res = string.Empty;
-            try
-            {
-                List<string> fileUrls = new List<string>();
-                // Xử lý file đính kèm mới
-                if (fileDinhKem != null && fileDinhKem.Count > 0)
-                {
-                    foreach (var file in fileDinhKem)
-                    {
-                        if (file.Length > 0)
-                        {
-                            var savedFile = await _wpFileService.SaveFile(file, user, "wp_sms", smsId);
-                            if (savedFile != null)
-                            {
-                                fileUrls.Add(savedFile.FileUrl);
-                            }
-                        }
-                    }
-                }
+			// Gửi tin nhắn
+			var smsConfig = _smsConfigService.GetSmsConfigActive(true);
 
-                // Xử lý files đã chọn từ selectedFileIds
-                if (selectedFileIds != null && selectedFileIds.Count > 0)
-                {
-                    var createdFiles = await _wpFileService.CreateFromFileExisted(selectedFileIds, user, "wp_sms", smsId);
-                    fileUrls.AddRange(createdFiles.Select(f => f.FileUrl));
-                }
-                if (fileUrls != null && fileUrls.Count > 0)
-                {
-                    res = string.Join(" ", fileUrls.Select(f => (domain + f).Replace("\\", "/")));
-                }
-            }
-            catch (Exception ex)
-            {
-                throw new Exception("Lỗi khi xử lý file đính kèm: " + ex.Message);
-            }
-            return res;
-        }
+			// Xử lý file đính kèm
+			try
+			{
+				var fileUrls = await HandleFileAttachments(fileDinhKem, selectedFileIds, user, wpSms.IdSms, smsConfig.Domain);
+				var noidungGui = model.Noidung + " " + fileUrls;
 
-        private async Task SendMessageToCanbo(WpCanboViewModel canbo, long smsId, SmsRes res)
-        {
-            if (canbo != null && canbo.IdCanbo.HasValue && canbo.IdNhom.HasValue)
-            {
-                WpSmsCanbo wpSmsCanbo = new WpSmsCanbo()
-                {
-                    IdSms = smsId,
-                    IdCanbo = canbo.IdCanbo.Value,
-                    IdNhom = canbo.IdNhom.Value,
-                    REQID = res.RPLY.REQID,
-                    name = res.RPLY.name,
-                    ERROR = res.RPLY.ERROR,
-                    ERROR_DESC = res.RPLY.ERROR_DESC
-                };
-                await _wpSmsCanboRepository.Create(wpSmsCanbo);
-            }
-        }
-        public async Task<PageResult<WpSmsViewModel>> SearchMessage(WpSmsSearchViewModel model, Pageable pageable)
-        {
-            IQueryable<WpSms> wpSms = await _wpSmsRepository.Search(model.searchInput);
+				if (smsConfig?.Id > 0 && model.WpCanbos.Any())
+				{
+					foreach (var canbo in model.WpCanbos)
+					{
+						try
+						{
+							var cb = _wpCanboRepository.FindById(canbo.IdCanbo ?? 0).Result;
+							if (cb != null && cb.IdCanbo > 0)
+							{
+								var res = SmsHelper.SendSms(smsConfig, noidungGui, cb.SoDTGui);
+								await SendMessageToCanbo(canbo, wpSms.IdSms, res);
 
-            if (model.dateFrom.HasValue && model.dateTo.HasValue)
-            {
-                wpSms = wpSms.Where(wps => wps.Ngaygui >= model.dateFrom && wps.Ngaygui <= model.dateTo);
-            }
+								if (!(res?.RPLY?.ERROR == "0"))
+									errorCount++;
+							}
+						}
+						catch (Exception)
+						{
+							errorCount++;
+						}
+					}
+				}
+				else
+				{
+					errorCount = model.WpCanbos?.Count ?? 0;
+				}
+				wpSms.SoTnLoi = errorCount;
+				wpSms = await _wpSmsRepository.Update(wpSms.IdSms, wpSms);
 
-            int total = await wpSms.CountAsync();
+				return new WpSmsViewModel()
+				{
+					IdSms = wpSms.IdSms,
+					Noidung = wpSms.Noidung,
+					NoidungGui = noidungGui,
+					IdNguoigui = wpSms.IdNguoigui,
+					TenNguoigui = user.UserName,
+					Ngaygui = wpSms.Ngaygui,
+					SoTn = wpSms.SoTn,
+					SoTnLoi = wpSms.SoTnLoi
+				};
+			}
+			catch (Exception ex)
+			{
+				wpSms.SoTnLoi = model.WpCanbos?.Count ?? 0;
+				wpSms = await _wpSmsRepository.Update(wpSms.IdSms, wpSms);
 
-            IEnumerable<WpSms> wpSmsPage = await _wpSmsRepository.GetPagination(wpSms, pageable);
+				throw new Exception("Lỗi khi send message: " + ex.Message);
+			}
 
-            var wpFileList = await _wpFileService.GetByBangLuuFile("wp_sms");
-            var wpUserList = await _wpUsersRepository.GetAll();
+		}
 
-            var wpSmsViewModel = from wps in wpSmsPage
-                                 join wpf in wpFileList on wps.IdSms equals wpf.BangLuuFileId into wpsWithFileGroup
-                                 from gwpf in wpsWithFileGroup.DefaultIfEmpty()
-                                 join wpu in wpUserList on wps.IdNguoigui equals wpu.Id
-                                 group new { wps, gwpf, wpu } by new { wps, wpu } into wpsGroup
-                                 select new WpSmsViewModel
-                                 {
-                                     IdSms = wpsGroup.Key.wps.IdSms,
-                                     Noidung = wpsGroup.Key.wps.Noidung,
-                                     FileDinhKem = wpsGroup.Where(x => x.gwpf != null).Select(x => x.gwpf).ToList(),
-                                     IdNguoigui = wpsGroup.Key.wps.IdNguoigui,
-                                     TenNguoigui = wpsGroup.Key.wpu.UserName,
-                                     Ngaygui = wpsGroup.Key.wps.Ngaygui,
-                                     SoTn = wpsGroup.Key.wps.SoTn,
-                                     SoTnLoi = wpsGroup.Key.wps.SoTnLoi
-                                 };
+		private async Task<string> HandleFileAttachments(List<IFormFile> fileDinhKem, List<long> selectedFileIds, WpUsers user, long smsId, string domain)
+		{
+			try
+			{
+				List<string> fileUrls = new List<string>();
 
-            return new PageResult<WpSmsViewModel>
-            {
-                Data = wpSmsViewModel,
-                Total = total,
-            };
-        }
+				// Xử lý file đính kèm mới
+				if (fileDinhKem != null && fileDinhKem.Count > 0)
+				{
+					foreach (var file in fileDinhKem)
+					{
+						if (file.Length > 0)
+						{
+							var savedFile = await _wpFileService.SaveFile(file, user, "wp_sms", smsId);
+							if (savedFile != null)
+							{
+								fileUrls.Add(savedFile.FileUrl);
+							}
+						}
+					}
+				}
 
-        public async Task UpdateFile(WpFile oldFile, IFormFile fileDinhKem)
-        {
-            await _wpFileService.UpdateContentFile(fileDinhKem, oldFile, new WpUsers());
-        }
+				// Xử lý files đã chọn từ selectedFileIds
+				if (selectedFileIds != null && selectedFileIds.Count > 0)
+				{
+					var createdFiles = await _wpFileService.CreateFromFileExisted(selectedFileIds, user, "wp_sms", smsId);
+					fileUrls.AddRange(createdFiles.Select(f => f.FileUrl));
+				}
 
-    }
+				return string.Join(" ", fileUrls.Select(f => (domain + f).Replace("\\", "/").Replace("//", "/")));
+			}
+			catch (Exception ex)
+			{
+				throw new Exception("Lỗi khi xử lý file đính kèm: " + ex.Message);
+			}
+		}
+
+		private async Task SendMessageToCanbo(WpCanboViewModel canbo, long smsId, SmsRes res)
+		{
+			if (canbo != null && canbo.IdCanbo.HasValue && canbo.IdNhom.HasValue)
+			{
+				WpSmsCanbo wpSmsCanbo = new WpSmsCanbo()
+				{
+					IdSms = smsId,
+					IdCanbo = canbo.IdCanbo.Value,
+					IdNhom = canbo.IdNhom.Value,
+					REQID = res.RPLY.REQID,
+					name = res.RPLY.name,
+					ERROR = res.RPLY.ERROR,
+					ERROR_DESC = res.RPLY.ERROR_DESC
+				};
+				await _wpSmsCanboRepository.Create(wpSmsCanbo);
+			}
+		}
+
+		public async Task<PageResult<WpSmsViewModel>> SearchMessage(WpSmsSearchViewModel model, Pageable pageable)
+		{
+			IQueryable<WpSms> baseQuery = await _wpSmsRepository.Search(model.searchInput);
+
+			if (model.Trangthai.HasValue)
+			{
+				if(model.Trangthai.Value == 1)
+				{
+					baseQuery = baseQuery.Where(wps => wps.SoTnLoi == 0);
+				}
+				else if (model.Trangthai.Value == 0)
+				{
+					baseQuery = baseQuery.Where(wps => wps.SoTnLoi > 0);
+				}
+			}
+
+			if (model.IdCanBo.HasValue || model.IdNhom.HasValue)
+			{
+				var smsCanboQuery = _wpSmsCanboRepository.Query();
+				if (model.IdCanBo.HasValue)
+				{
+					smsCanboQuery = smsCanboQuery.Where(wpsc => wpsc.IdCanbo == model.IdCanBo);
+				}
+				if (model.IdNhom.HasValue)
+				{
+					smsCanboQuery = smsCanboQuery.Where(wpsc => wpsc.IdNhom == model.IdNhom).Distinct();
+				}
+
+				baseQuery = (from wps in baseQuery
+							 join wpsc in smsCanboQuery on wps.IdSms equals wpsc.IdSms
+							 select wps).Distinct();
+			}
+
+			if (model.IdFile.HasValue)
+			{
+				var fileQuery = _wpFileRepository.Query().Where(wpf =>
+					wpf.BangLuuFile == "wp_sms" && wpf.IdFile == model.IdFile);
+
+				baseQuery = from wps in baseQuery
+							join wpf in fileQuery on wps.IdSms equals wpf.BangLuuFileId
+							select wps;
+			}
+
+			var total = await baseQuery.CountAsync();
+			var wpSmsPage = await _wpSmsRepository.GetPagination(baseQuery, pageable);
+
+			if (!wpSmsPage.Any())
+			{
+				return new PageResult<WpSmsViewModel>
+				{
+					Data = new List<WpSmsViewModel>(),
+					Total = 0
+				};
+			}
+
+			var wpUserList = await _wpUsersRepository.GetAll();
+			var wpFileList = await _wpFileService.GetByBangLuuFile("wp_sms");
+			var wpSmsCanboList = await _wpSmsCanboRepository.GetAll();
+			var wpCanboList = await _wpCanboRepository.GetAll();
+			var wpNhomList = await _wpNhomRepository.GetAll();
+
+			var wpSmsViewModel = from wps in wpSmsPage
+								 join wpu in wpUserList on wps.IdNguoigui equals wpu.Id
+								 select new WpSmsViewModel
+								 {
+									 IdSms = wps.IdSms,
+									 Noidung = wps.Noidung,
+									 IdNguoigui = wps.IdNguoigui,
+									 TenNguoigui = wpu.UserName,
+									 Ngaygui = wps.Ngaygui,
+									 SoTn = wps.SoTn,
+									 SoTnLoi = wps.SoTnLoi,
+									 // sub query cho file
+									 FileDinhKem = wpFileList.Where(f => f.BangLuuFileId == wps.IdSms && (f.IdFile == model.IdFile || model.IdFile == null)).ToList(),
+									 // sub query cho cán bộ
+									 WpCanbos = (from wpsc in wpSmsCanboList.Where(sc => sc.IdSms == wps.IdSms)
+												 join wpc in wpCanboList on wpsc.IdCanbo equals wpc.IdCanbo
+												 join wpn in wpNhomList on wpsc.IdNhom equals wpn.IdNhom
+												 where (wpsc.IdCanbo == model.IdCanBo || model.IdCanBo == null)
+												 && (wpsc.IdNhom == model.IdNhom || model.IdNhom == null)
+												 select new WpCanboViewModel
+												 {
+													 IdCanbo = wpc.IdCanbo,
+													 TenCanbo = wpc.TenCanbo,
+													 SoDt = wpc.SoDt,
+													 SoDTGui = wpc.SoDTGui,
+													 IdNhom = wpn.IdNhom,
+													 TenNhom = wpn.TenNhom
+												 }).ToList()
+								 };
+
+			return new PageResult<WpSmsViewModel>
+			{
+				Data = wpSmsViewModel,
+				Total = total
+			};
+		}
+
+		public async Task UpdateFile(WpFile oldFile, IFormFile fileDinhKem)
+		{
+			await _wpFileService.UpdateContentFile(fileDinhKem, oldFile, new WpUsers());
+		}
+	}
 }

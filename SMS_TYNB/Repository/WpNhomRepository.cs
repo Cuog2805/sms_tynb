@@ -10,6 +10,12 @@ namespace SMS_TYNB.Repository
 		public WpNhomRepository(SmsTynContext _context) : base(_context)
 		{
 		}
+		public Task<IQueryable<WpNhom>> FilterById(int id)
+		{
+			var query = context.Set<WpNhom>().AsQueryable().Where(item => item.IdNhom == id);
+
+			return Task.FromResult(query);
+		}
 		public Task<IQueryable<WpNhom>> Search(string? searchInput)
 		{
 			var query = context.Set<WpNhom>().AsQueryable();

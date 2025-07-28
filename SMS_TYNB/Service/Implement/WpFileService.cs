@@ -24,7 +24,13 @@ namespace SMS_TYNB.Service.Implement
 			return wpFiles;
 		}
 
-		public async Task<PageResult<WpFile>> GetAllWpFile(string searchInput, Pageable pageable)
+		public async Task<IEnumerable<WpFile>> GetAllWpFile()
+		{
+			IEnumerable<WpFile> wpFiles = await _wpFileRepository.GetAll();
+			return wpFiles;
+		}
+
+		public async Task<PageResult<WpFile>> SearchWpFile(string searchInput, Pageable pageable)
 		{
 			IQueryable<WpFile> wpFiles = await _wpFileRepository.Search(searchInput);
 

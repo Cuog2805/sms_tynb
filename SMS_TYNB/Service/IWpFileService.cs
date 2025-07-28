@@ -10,7 +10,8 @@ namespace SMS_TYNB.Service
 		Task<WpFile> Create(WpFile model);
 		Task<WpFile?> Update(WpFile model);
 		Task Delete(WpFile model);
-		Task<PageResult<WpFile>> GetAllWpFile(string searchInput, Pageable pageable);
+		Task<IEnumerable<WpFile>> GetAllWpFile();
+		Task<PageResult<WpFile>> SearchWpFile(string searchInput, Pageable pageable);
 		Task<IEnumerable<WpFile>> GetByBangLuuFile(string tableName);
 		Task<WpFile> SaveFile(IFormFile file, WpUsers creator, string tableName, long tableId, string subFolder = "upload");
 		Task<IEnumerable<WpFile>> CreateFromFileExisted(List<long> selectedFileIds, WpUsers creator, string tableName, long tableId);

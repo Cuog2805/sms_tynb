@@ -24,7 +24,7 @@ namespace SMS_TYNB.Controllers
 		private async Task<Dictionary<string, SelectList>> CreateSelectList()
 		{
 			SelectList wpNhomSelectList = new SelectList(await _wpNhomService.GetAllWpNhom(), "IdNhom", "TenNhom");
-			SelectList wpTrangThaiSelectList = new SelectList(await _wpDanhmucService.GetWpDanhmucByType("TRANGTHAI"), "MaDanhmuc", "TenDanhmuc");
+			SelectList wpTrangThaiSelectList = new SelectList(await _wpDanhmucService.GetWpDanhmucByType("TRANGTHAI"), "Value", "TenDanhmuc");
 			var selectLists = new Dictionary<string, SelectList>
 			{
 				{ "wpNhomSelectList", wpNhomSelectList },

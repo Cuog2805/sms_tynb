@@ -11,5 +11,6 @@ namespace SMS_TYNB.Service
 		Task<WpSmsViewModel> SendMessage(WpSmsViewModel model, List<IFormFile> fileDinhKem, List<long> selectedFileIds, WpUsers user);
 		Task<PageResult<WpSmsViewModel>> SearchMessage(WpSmsSearchViewModel model, Pageable pageable);
 		Task UpdateFile(WpFile oldFile, IFormFile fileDinhKem);
+		Task<WpSmsViewModel?> GetMessageCanbosById(WpSmsSearchViewModel id);
 	}
 }

@@ -164,9 +164,6 @@ function initJsTree(treeData) {
     }).on('ready.jstree', function () {
         const searchInput = $('#searchInput').val();
         // Mở cây
-        //if () {
-
-        //}
         if (searchInput && searchInput.trim() !== '') {
             $('#messageCheckBoxTree').jstree('open_all');
         }
@@ -264,7 +261,7 @@ function handleTreeNodeChange(node, isChecked) {
     // Xử lý node nhóm
     if (node.id.startsWith("nhom_")) {
         // Mở cây
-        treeRef.open_all();
+        openChildrenNode(treeRef, node.id);
         
         // Đợi cây mở xong rồi mới xử lý
         setTimeout(() => {
@@ -274,6 +271,21 @@ function handleTreeNodeChange(node, isChecked) {
     } else {
         syncSelectedItems();
     }
+}
+
+function openChildrenNode(treeRef, nodeId) {
+    treeRef.open_node(nodeId);
+
+    // lấy node con 
+    const children = treeRef.get_children_dom(nodeId);
+
+    // mở node con 
+    children.each(function () {
+        const childId = $(this).attr('id');
+        if (childId) {
+            treeRef.open_node(childId);
+        }
+    });
 }
 
 function processGroupChildren(nodeId, isChecked, treeRef) {
@@ -293,20 +305,6 @@ function processGroupChildren(nodeId, isChecked, treeRef) {
     });
 }
 
-//function syncSelectedItems() {
-//    const treeRef = $.jstree.reference('#messageCheckBoxTree');
-//    const checkedNodes = treeRef.get_checked(true);
-
-//    selectedItems = [];
-//    debugger;
-//    checkedNodes.forEach(node => {
-//        if (node.id.startsWith("canbo_") && node.data) {
-//            selectedItems.push(node.data);
-//        }
-//    });
-
-//    displaySelectedItems();
-//}
 function syncSelectedItems() {
     const treeRef = $.jstree.reference('#messageCheckBoxTree');
     if (!treeRef) return;

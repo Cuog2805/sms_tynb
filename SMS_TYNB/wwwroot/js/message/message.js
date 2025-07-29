@@ -245,7 +245,7 @@ function buildTreeDataFromGroups(items) {
 
                 node.children.push({
                     id: uniqueId,
-                    text: `${cb.TenCanbo} - ${cb.SoDt || ''}`,
+                    text: `${cb.TenCanbo} - ${cb.SoDt || ''}. Mô tả: ${cb.Mota || '___'}`,
                     data: canboWithGroup,
                     state: {
                         selected: isSelected

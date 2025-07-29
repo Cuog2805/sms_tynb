@@ -2,12 +2,30 @@
     $("#previewFileTemplateBtn").on("click", function () {
         readFile();
     });
+
+    //phân trang bảng preview
+    const previewDataImportPaginationId = $("#previewDataImportPagination").attr("id");
+    $("#pageSize-" + previewDataImportPaginationId).on("change", function () {
+        dataPreviewPagination.pageNumber = 1;
+        dataPreviewPagination.pageSize = parseInt($(this).val());
+        displayDataPreview();
+    });
+
+    $('#inputFileTemplateModal').on('hidden.bs.modal', function (e) {
+
+    });
 });
 
 var configFileTemplate = {
     headers: [],
     headersLabel: [],
     range: 1
+};
+
+
+let dataPreviewPagination = {
+    pageNumber: 1,
+    pageSize: 10
 };
 
 var dataPreview = [];
@@ -81,7 +99,6 @@ function readFile(callback) {
             alertify.error("Vui lòng chọn file");
             return;
         }
-
         const reader = new FileReader();
         reader.onload = function (event) {
             try {
@@ -89,69 +106,131 @@ function readFile(callback) {
                 const workbook = XLSX.read(data, { type: 'binary' });
                 const firstSheetName = workbook.SheetNames[0];
                 const worksheet = workbook.Sheets[firstSheetName];
-
                 const options = {
                     range: configFileTemplate.range,
                     defval: ""
                 };
-
                 if (configFileTemplate.headers && configFileTemplate.headers.length > 0) {
                     options.header = configFileTemplate.headers;
                 } else {
                     options.header = 1;
                 }
-
                 const jsonData = XLSX.utils.sheet_to_json(worksheet, options);
 
-                console.log(jsonData);
-
                 if (jsonData.length > 0) {
-                    dataPreview = jsonData;
-                    displayDataPreview(dataPreview);
+                    // Loại bỏ bản ghi trùng nhau
+                    let uniqueData = removeDuplicates(jsonData);
+                    uniqueData = removeDuplicatesByFields(uniqueData, ['SoDt']);
 
-                    // Gọi callback
+                    dataPreview = uniqueData;
+                    displayDataPreview();
+
+                    if (jsonData.length > uniqueData.length) {
+                        alertify.success(`Đã bỏ ${jsonData.length - uniqueData.length} bản ghi trùng.`);
+                    }
+
+                    // Gọi callback với dữ liệu đã loại bỏ trùng
                     if (typeof callback === 'function') {
-                        callback(jsonData);
+                        callback(uniqueData);
                     }
                 } else {
                     alertify.error("Không có dữ liệu trong file");
                 }
-
             } catch (error) {
                 console.error('Error reading Excel file:', error);
                 alertify.error("Có lỗi khi đọc file Excel");
             }
         };
-
         reader.onerror = function () {
             alertify.error("Có lỗi khi đọc file");
         };
-
         reader.readAsBinaryString(file);
     }
 }
 
-function displayDataPreview(items) {
-    const $thead = $('<thead></thead>');
-    const $theadRow = $('<tr></tr>');
-
-    // Tạo header
-    configFileTemplate.headersLabel.forEach(header => {
-        $theadRow.append($('<th></th>').text(header));
+function removeDuplicates(data) {
+    const seen = new Set();
+    return data.filter(item => {
+        const key = JSON.stringify(item);
+        if (seen.has(key)) {
+            return false;
+        }
+        seen.add(key);
+        return true;
     });
-    $thead.append($theadRow);
+}
 
-    // Tạo body
-    const $tbody = $('<tbody></tbody>');
-    items.forEach(row => {
-        const $tr = $('<tr></tr>');
-        configFileTemplate.headers.forEach(header => {
-            $tr.append($('<td></td>').text(row[header] || ''));
+/**
+ * 
+ * @param {list} data - Data
+ * @param {list} fields - danh sách tên trường
+ * @returns {list} Data đã loại bỏ trùng theo fields
+ */
+function removeDuplicatesByFields(data, fields) {
+    const seen = new Set();
+    return data.filter(item => {
+        const key = fields.map(field => item[field]).join(',');
+        if (seen.has(key)) {
+            return false;
+        }
+        seen.add(key);
+        return true;
+    });
+}
+
+function displayDataPreview() {
+    if (dataPreview && dataPreview.length > 0) {
+        const $thead = $('<thead></thead>');
+        const $theadRow = $('<tr></tr>');
+        // Tạo header
+        configFileTemplate.headersLabel.forEach(header => {
+            $theadRow.append($('<th></th>').text(header));
         });
-        $tbody.append($tr);
-    });
+        $thead.append($theadRow);
 
-    $('#previewDataImportTable').empty().append($thead).append($tbody);
+        // Tạo body
+        const $tbody = $('<tbody></tbody>');
+        const startIndex = (dataPreviewPagination.pageNumber - 1) * dataPreviewPagination.pageSize;
+        const endIndex = startIndex + dataPreviewPagination.pageSize;
+        const currentPageItems = dataPreview.slice(startIndex, endIndex);
+
+        currentPageItems.forEach(row => {
+            const $tr = $('<tr></tr>');
+            configFileTemplate.headers.forEach(header => {
+                $tr.append($('<td></td>').text(row[header] || ''));
+            });
+            $tbody.append($tr);
+        });
+
+        $('#previewDataImportTable').empty().append($thead).append($tbody);
+
+        // Tạo phân trang
+    }
+    else {
+        $('#previewDataImportTable').empty();
+    }
+    CreatePaginationMinimal(
+        dataPreview.length,
+        dataPreviewPagination.pageNumber,
+        dataPreviewPagination.pageSize,
+        $("#previewDataImportPagination"),
+        loadDataPreviewPage
+    );
+}
+
+function clearDataPreView() {
+    // Reset modal
+    $("#FileImport").val('');
+    dataPreview = [];
+    dataPreviewPagination.pageNumber = 1;
+    $("#pagination-info-previewDataImportPagination").empty();
+    displayDataPreview();
+    $('#inputFileTemplateModal').modal('hide');
+}
+
+function loadDataPreviewPage(pageNumber) {
+    dataPreviewPagination.pageNumber = pageNumber;
+    displayDataPreview();
 }
 
 function downloadTemplate(filename) {
@@ -183,12 +262,14 @@ function initImportFileFormValidate() {
     $('#inputFileTemplateModalForm').validate({
         rules: {
             'FileImport': {
-                required: true
+                required: true,
+                extension: "xls|xlsx",
             },
         },
         messages: {
             'FileImport': {
-                required: "Vui lòng chọn file"
+                required: "Vui lòng chọn file",
+                extension: "Chọn file định dạng .xls, .xlsx",
             },
         },
         errorClass: "text-danger",

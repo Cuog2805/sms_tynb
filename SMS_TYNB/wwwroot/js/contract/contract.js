@@ -16,7 +16,7 @@
 		loadData();
 	});
 
-	// Modal
+	// Modal form
 	$('#data-form').on('show.bs.modal', function (e) {
 		initFormValidate();
 	});
@@ -74,6 +74,21 @@
 		headersLabel: ["Tên cán bộ", "Số điện thoại", "Giới tính", "Mô tả"],
 		range: 1
 	});
+
+	//modal thông báo import thành công
+	const succeedImportWpCanboPaginationId = $("#succeedImportWpCanboPagination").attr("id");
+	$("#pageSize-" + succeedImportWpCanboPaginationId).on("change", function () {
+		succeedImportWpCanboPagination.pageNumber = 1;
+		succeedImportWpCanboPagination.pageSize = parseInt($(this).val());
+		displayResultImport();
+	});
+
+	const failImportWpCanboPaginationId = $("#failImportWpCanboPagination").attr("id");
+	$("#pageSize-" + failImportWpCanboPaginationId).on("change", function () {
+		failImportWpCanboPagination.pageNumber = 1;
+		failImportWpCanboPagination.pageSize = parseInt($(this).val());
+		displayResultImport();
+	});
 });
 
 let currentPagination = {
@@ -91,6 +106,21 @@ let formState = {
 	isEditing: false,
 	currentEditId: null
 };
+
+//modal thông báo import thành công
+let succeedImportWpCanboPagination = {
+	pageNumber: 1,
+	pageSize: 10
+};
+
+var succeedImportWpCanbo = [];
+
+let failImportWpCanboPagination = {
+	pageNumber: 1,
+	pageSize: 10
+};
+
+var failImportWpCanbo = [];
 
 function loadData() {
 	let model = {
@@ -223,9 +253,14 @@ function importWpCanbos(data) {
 		success: function (response) {
 			if (response.state === 'success') {
 				alertify.success(response.msg || 'Import thành công');
+				// clear modal import
+				clearDataPreView()
 
-				loadData();
-				$('#inputFileTemplateModal').modal('hide');
+				//hiển thị kết quả
+				$("#successImportModal").modal('show');
+				succeedImportWpCanbo = response.data.WpCanboNew;
+				failImportWpCanbo = response.data.WpCanboDupplicate;
+				displayResultImport(response.data);
 			} else {
 				alertify.error(response.msg || 'Đã có lỗi xảy ra');
 			}
@@ -234,6 +269,94 @@ function importWpCanbos(data) {
 			alertify.error('Có lỗi xảy ra khi Import dữ liệu');
 		}
 	});
+}
+
+function displayResultImport() {
+	// Hiển thị danh sách import thành công
+	if (succeedImportWpCanbo && succeedImportWpCanbo.length > 0) {
+		//phân trang
+		const startIndex = (succeedImportWpCanboPagination.pageNumber - 1) * succeedImportWpCanboPagination.pageSize;
+		const endIndex = startIndex + succeedImportWpCanboPagination.pageSize;
+		const currentPageItems = succeedImportWpCanbo.slice(startIndex, endIndex);
+
+		let succeedTableHtml = '';
+		currentPageItems.forEach((item, index) => {
+			succeedTableHtml += `
+                <tr>
+                    <td class="text-center">${index + 1}</td>
+                    <td>${item.TenCanbo}</td>
+                    <td>${item.SoDt}</td>
+                    <td>${item.Gioitinh}</td>
+                    <td>${item.Mota || ''}</td>
+                </tr>
+            `;
+		});
+		$('#succeedImportWpCanboTableBody').html(succeedTableHtml);
+		$('#succeedImportWpCanboTable').show();
+	} else {
+		$('#succeedImportWpCanboTable').hide();
+	}
+
+	// Hiển thị danh sách import không thành công
+	if (failImportWpCanbo && failImportWpCanbo.length > 0) {
+		//phân trang
+		const startIndex = (failImportWpCanboPagination.pageNumber - 1) * failImportWpCanboPagination.pageSize;
+		const endIndex = startIndex + failImportWpCanboPagination.pageSize;
+		const currentPageItems = failImportWpCanbo.slice(startIndex, endIndex);
+
+		let failTableHtml = '';
+		currentPageItems.forEach((item, index) => {
+			failTableHtml += `
+                <tr>
+                    <td class="text-center">${index + 1}</td>
+                    <td>${item.TenCanbo}</td>
+                    <td>${item.SoDt}</td>
+                    <td>${item.Gioitinh}</td>
+                    <td>${item.Mota}</td>
+                </tr>
+            `;
+		});
+		$('#failImportWpCanboTableBody').html(failTableHtml);
+		$('#failImportWpCanboTable').show();
+
+		// têm header cho danh sách không thành công
+		$('#failImportWpCanboTotal').text(`${failImportWpCanbo.length}`);
+	} else {
+		$('#failImportWpCanboTable').hide();
+	}
+
+	// Thêm header cho danh sách thành công
+	if (succeedImportWpCanbo && succeedImportWpCanbo.length > 0) {
+		$('#succeedImportWpCanboTotal').text(`${succeedImportWpCanbo.length}`);
+	}
+
+	// Tạo phân trang
+	CreatePaginationMinimal(
+		succeedImportWpCanbo.length,
+		succeedImportWpCanboPagination.pageNumber,
+		succeedImportWpCanboPagination.pageSize,
+		$("#succeedImportWpCanboPagination"),
+		loadSucceedImportWpCanboPage
+	);
+
+	// Tạo phân trang
+	CreatePaginationMinimal(
+		failImportWpCanbo.length,
+		failImportWpCanboPagination.pageNumber,
+		failImportWpCanboPagination.pageSize,
+		$("#failImportWpCanboPagination"),
+		loadFailImportWpCanboPage
+	);
+}
+
+function loadSucceedImportWpCanboPage(pageNumber) {
+	succeedImportWpCanboPagination.pageNumber = pageNumber;
+	displayResultImport();
+}
+
+function loadFailImportWpCanboPage(pageNumber) {
+	failImportWpCanboPagination.pageNumber = pageNumber;
+	displayResultImport();
 }
 
 function addWpCanbo(formData) {
@@ -282,7 +405,8 @@ function editWpCanbo(formData) {
 				alertify.error(response.msg || 'Đã có lỗi xảy ra');
 			}
 		},
-		error: function () {
+		error: function (xhr) {
+			console.log('xhr', xhr)
 			alertify.error('Có lỗi xảy ra khi cập nhật dữ liệu');
 		}
 	});

@@ -40,4 +40,5 @@ namespace SMS_TYNB.ViewModel
 		public long? IdFile { get; set; }
 		public long? Trangthai { get; set; }
 	}
+	
 }

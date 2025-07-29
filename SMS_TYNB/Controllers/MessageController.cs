@@ -55,82 +55,37 @@ namespace SMS_TYNB.Controllers
             BaseFormViewModel<WpSms> formViewModel = new BaseFormViewModel<WpSms>();
             return View(formViewModel);
         }
-        [HttpPost]
-        public async Task<JsonResult> SendMessage(string Noidung, string Canbos, List<IFormFile> fileDinhKem, List<long> selectedFileIds)
-        {
-            try
-            {
-                // gán người gửi
-                if (string.IsNullOrEmpty(Noidung))
-                {
-                    return Json(new
-                    {
-                        state = "error",
-                        msg = "Không có nội dung tin nhắn!",
-                        data = new { },
-                    });
-                }
-                var cb = new List<WpCanboViewModel>();
-                if (string.IsNullOrEmpty(Canbos))
-                {
-                    return Json(new
-                    {
-                        state = "error",
-                        msg = "Chưa chọn người nhận tin nhắn!",
-                        data = new { },
-                    });
-                }
-                else
-                {
-                    cb = JsonConvert.DeserializeObject<List<WpCanboViewModel>>(Canbos);
-                    if (cb == null || cb.Count == 0)
-                        return Json(new
-                        {
-                            state = "error",
-                            msg = "Chưa chọn người nhận tin nhắn!",
-                            data = new { },
-                        });
-                }
-                WpUsers? user = await _userManager.GetUserAsync(HttpContext.User);
+		
+		[HttpPost]
+		public async Task<IActionResult> SendMessage(string Noidung, string Canbos, List<IFormFile> fileDinhKem, List<long> selectedFileIds)
+		{
+			WpUsers? user = await _userManager.GetUserAsync(HttpContext.User);
+			var model = new WpSmsViewModel()
+			{
+				Noidung = Noidung,
+				WpCanbos = JsonConvert.DeserializeObject<List<WpCanboViewModel>>(Canbos) ?? new List<WpCanboViewModel>()
+			};
+			var result = await _wpSmsService.SendMessage(model, fileDinhKem, selectedFileIds, user);
 
-                var model = new WpSmsViewModel()
-                {
-                    Noidung = Noidung,
-                    WpCanbos = cb
-                };
-
-                if (user == null)
+			if (result.IsSuccess)
+			{
+				return Json(new
 				{
-					return Json(new
-					{
-						state = "error",
-						msg = "Lỗi khi thông tin người dùng!",
-						data = new {},
-					});
-				}
-
-				var data = await _wpSmsService.SendMessage(model, fileDinhKem, selectedFileIds, user);
-				_logger.LogInformation("SendMessage succeed");
-
-                return Json(new
-                {
-                    state = "success",
-                    msg = "Gửi tin nhắn thành công!",
-                    data = data,
-                });
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error occurred while SendMessage");
-                return Json(new
-                {
-                    state = "error",
-                    msg = "Đã xảy ra lỗi khi gửi tin nhắn!" + ex.Message,
-                    data = new { },
-                });
-            }
-        }
-        public async Task<IActionResult> MessageStatistical()
+					state = "success",
+					data = result.Data,
+					msg = "Gửi tin nhắn thành công"
+				});
+			}
+			else
+			{
+				return Json(new
+				{
+					state = "error",
+					msg = result.ErrorMessage
+				});
+			}
+		}
+		public async Task<IActionResult> MessageStatistical()
         {
 			BaseFormViewModel<WpSmsSearchViewModel> formViewModel = new BaseFormViewModel<WpSmsSearchViewModel>()
 			{

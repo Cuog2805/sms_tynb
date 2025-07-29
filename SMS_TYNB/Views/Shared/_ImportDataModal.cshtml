@@ -27,6 +27,9 @@
                 @* danh sách *@
                 <table class="table table-bordered mt-4" id="previewDataImportTable">
                 </table>
+                @{
+                    await Html.RenderPartialAsync("_PaginationMinimal", "previewDataImportPagination");
+                }
             </div>
 
             <div class="modal-footer">

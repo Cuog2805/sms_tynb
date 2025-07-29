@@ -85,6 +85,65 @@
 @{
 	await Html.RenderPartialAsync("_ImportDataModal");
 }
+<!-- Modal popup thông báo khi import thành công -->
+<div class="modal fade" id="successImportModal" tabindex="-1" aria-labelledby="successImportModalLabel" aria-hidden="true">
+	<div class="modal-dialog modal-lg">
+		<div class="modal-content">
+			<div class="modal-header bg-success text-white">
+				<h5 class="modal-title" id="successImportModalLabel">
+					Import thành công
+				</h5>
+				<button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+			</div>
+			<div class="modal-body">
+				<!-- danh sách import thành công -->
+				<h6 class="text-success mb-2">
+					Dữ liệu import thành công:&ensp;<span id="succeedImportWpCanboTotal">0</span>&ensp;bản ghi
+				</h6>
+				<table class="table table-bordered" id="succeedImportWpCanboTable">
+					<thead class="table-primary text-white">
+						<tr>
+							<th class="text-center">STT</th>
+							<th>Tên cán bộ</th>
+							<th>Số điện thoại</th>
+							<th>Giới tính</th>
+							<th>Mô tả</th>
+						</tr>
+					</thead>
+					<tbody id="succeedImportWpCanboTableBody">
+					</tbody>
+				</table>
+				@{
+					await Html.RenderPartialAsync("_PaginationMinimal", "succeedImportWpCanboPagination");
+				}
+
+				<h6 class="text-danger mt-3 mb-2">
+					Dữ liệu import không thành công:&ensp;<span id="failImportWpCanboTotal">0</span>&ensp;bản ghi (số điện thoại đã tồn tại)
+				</h6>
+				<!-- danh sách import không thành công -->
+				<table class="table table-bordered" id="failImportWpCanboTable">
+					<thead class="table-primary text-white">
+						<tr>
+							<th class="text-center">STT</th>
+							<th>Tên cán bộ</th>
+							<th>Số điện thoại</th>
+							<th>Giới tính</th>
+							<th>Mô tả</th>
+						</tr>
+					</thead>
+					<tbody id="failImportWpCanboTableBody">
+					</tbody>
+				</table>
+				@{
+					await Html.RenderPartialAsync("_PaginationMinimal", "failImportWpCanboPagination");
+				}
+			</div>
+			<div class="modal-footer justify-content-end">
+				<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+			</div>
+		</div>
+	</div>
+</div>
 
 
 @section Scripts {

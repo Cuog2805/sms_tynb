@@ -8,7 +8,7 @@ namespace SMS_TYNB.Service
 {
 	public interface IWpSmsService
 	{
-		Task<WpSmsViewModel> SendMessage(WpSmsViewModel model, List<IFormFile> fileDinhKem, List<long> selectedFileIds, WpUsers user);
+		Task<ServiceResult<WpSmsViewModel>> SendMessage(WpSmsViewModel model, List<IFormFile> fileDinhKem, List<long> selectedFileIds, WpUsers user);
 		Task<PageResult<WpSmsViewModel>> SearchMessage(WpSmsSearchViewModel model, Pageable pageable);
 		Task UpdateFile(WpFile oldFile, IFormFile fileDinhKem);
 		Task<WpSmsViewModel?> GetMessageCanbosById(WpSmsSearchViewModel id);

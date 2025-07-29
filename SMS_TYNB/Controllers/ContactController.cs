@@ -83,7 +83,7 @@ namespace SMS_TYNB.Controllers
 		[HttpPost]
 		public async Task<JsonResult> Import(List<WpCanbo> model)
 		{
-			List<WpCanbo> data = await _wpCanboService.CreateMulti(model);
+			WpSmsImportRespViewModel data = await _wpCanboService.CreateMulti(model);
 			return Json(new
 			{
 				state = "success",

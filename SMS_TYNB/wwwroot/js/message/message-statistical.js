@@ -61,6 +61,14 @@
     $('#updateFileModalFormBtn').on('click', function () {
         uploadNewFile();
     });
+
+    //phân trang bảng danh sách cán bộ
+    const detailMessaegStatisticalPaginationId = $("#detailMessaegStatisticalPagination").attr("id");
+    $("#pageSize-" + detailMessaegStatisticalPaginationId).on("change", function () {
+        canBoPagination.pageNumber = 1;
+        canBoPagination.pageSize = parseInt($(this).val());
+        displayCanBoList();
+    });
 });
 
 let currentPagination = {

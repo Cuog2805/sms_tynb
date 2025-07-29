@@ -71,10 +71,40 @@ namespace SMS_TYNB.Service.Implement
 		{
 			await _wpCanboRepository.Delete(wpCanbo.IdCanbo);
 		}
-		public async Task<List<WpCanbo>> CreateMulti(List<WpCanbo> wpCanbos)
+		public async Task<WpSmsImportRespViewModel> CreateMulti(List<WpCanbo> wpCanbos)
 		{
-			List<WpCanbo> wpCanboNew = await _wpCanboRepository.CreateRange(wpCanbos);
-			return wpCanboNew;
+			var phoneNumbers = wpCanbos.Select(item => item.SoDt).ToList();
+
+			var existedCanbos = await _wpCanboRepository.FindBySoDts(phoneNumbers);
+			var existedPhoneNumbers = existedCanbos.Select(cb => cb.SoDt).ToList();
+
+			var dmGioiTinh = await _wpDanhmucRepository.GetByType("GIOITINH");
+			var newCanbos = wpCanbos .Where(cb => !existedPhoneNumbers.Contains(cb.SoDt)) .ToList();
+			var duplicateCanbos = wpCanbos .Where(cb => existedPhoneNumbers.Contains(cb.SoDt)).ToList();
+
+			newCanbos = await _wpCanboRepository.CreateRange(newCanbos);
+
+			return new WpSmsImportRespViewModel()
+			{
+				WpCanboNew = newCanbos.Select(cb => new WpCanboViewModel()
+				{
+					MaCanbo = cb.MaCanbo,
+					TenCanbo = cb.TenCanbo,
+					SoDt = cb.SoDt,
+					Gioitinh = dmGioiTinh.FirstOrDefault(gt => gt.Value == cb.Gioitinh)?.TenDanhmuc,
+					Mota = cb.Mota,
+				})
+				.ToList(),
+				WpCanboDupplicate = duplicateCanbos.Select(cb => new WpCanboViewModel()
+				{
+					MaCanbo = cb.MaCanbo,
+					TenCanbo = cb.TenCanbo,
+					SoDt = cb.SoDt,
+					Gioitinh = dmGioiTinh.FirstOrDefault(gt => gt.Value == cb.Gioitinh)?.TenDanhmuc,
+					Mota = cb.Mota,
+				})
+				.ToList()
+			};
 		}
 	}
 }

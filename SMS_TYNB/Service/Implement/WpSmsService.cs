@@ -239,22 +239,6 @@ namespace SMS_TYNB.Service.Implement
 													join wpf in wpFileList on wpsf.IdFile equals wpf.IdFile
 													where wpsf.IdSms == wps.IdSms && (wpf.IdFile == model.IdFile || model.IdFile == null)
 													select wpf).ToList(),
-									 // sub query cho cán bộ
-									 WpCanbosView = (from wpsc in wpSmsCanboList.Where(sc => sc.IdSms == wps.IdSms)
-												 join wpc in wpCanboList on wpsc.IdCanbo equals wpc.IdCanbo
-												 join wpn in wpNhomList on wpsc.IdNhom equals wpn.IdNhom
-												 where (wpsc.IdCanbo == model.IdCanBo || model.IdCanBo == null)
-												 && (wpsc.IdNhom == model.IdNhom || model.IdNhom == null)
-												 select new WpCanboMessageStatisticalViewModel
-												 {
-													 IdCanbo = wpc.IdCanbo,
-													 TenCanbo = wpc.TenCanbo,
-													 SoDt = wpc.SoDt,
-													 IdNhom = wpn.IdNhom,
-													 TenNhom = wpn.TenNhom,
-													 ERROR = wpsc.ERROR,
-													 ERROR_DESC = wpsc.ERROR_DESC
-												 }).ToList()
 								 };
 
 			return new PageResult<WpSmsViewModel>
@@ -262,6 +246,40 @@ namespace SMS_TYNB.Service.Implement
 				Data = wpSmsViewModel,
 				Total = total
 			};
+		}
+
+		public async Task<WpSmsViewModel?> GetMessageCanbosById(WpSmsSearchViewModel model)
+		{
+			if(model == null || model.IdSms <= 0)
+				return null;	
+			var wpSms = await _wpSmsRepository.FindById(model.IdSms.Value);
+			if (wpSms == null)
+				return null;
+
+			var wpCanbos = _wpCanboRepository.Query().Where(item => item.IdCanbo == model.IdCanBo || model.IdCanBo == null);
+			var wpNhomList = _wpNhomRepository.Query().Where(item => item.IdNhom == model.IdNhom || model.IdNhom == null);
+			var wpSmsCanbos = _wpSmsCanboRepository.Query();
+
+			var wpSmsViewModel = new WpSmsViewModel
+			{
+				IdSms = wpSms.IdSms,
+				Noidung = wpSms.Noidung,
+				WpCanbosView = (from wpsc in wpSmsCanbos.Where(sc => sc.IdSms == wpSms.IdSms)
+								join wpc in wpCanbos on wpsc.IdCanbo equals wpc.IdCanbo
+								join wpn in wpNhomList on wpsc.IdNhom equals wpn.IdNhom
+								select new WpCanboMessageStatisticalViewModel
+								{
+									IdCanbo = wpc.IdCanbo,
+									TenCanbo = wpc.TenCanbo,
+									SoDt = wpc.SoDt,
+									IdNhom = wpn.IdNhom,
+									TenNhom = wpn.TenNhom,
+									ERROR = wpsc.ERROR,
+									ERROR_DESC = wpsc.ERROR_DESC
+								}).ToList()
+			};
+
+			return wpSmsViewModel;
 		}
 
 		public async Task UpdateFile(WpFile oldFile, IFormFile fileDinhKem)

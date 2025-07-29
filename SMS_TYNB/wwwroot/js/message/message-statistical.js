@@ -61,6 +61,18 @@
     $('#updateFileModalFormBtn').on('click', function () {
         uploadNewFile();
     });
+
+    //phân trang bảng danh sách cán bộ
+    const detailMessaegStatisticalPaginationId = $("#detailMessaegStatisticalPagination").attr("id");
+    $("#pageSize-" + detailMessaegStatisticalPaginationId).on("change", function () {
+        canBoPagination.pageNumber = 1;
+        canBoPagination.pageSize = parseInt($(this).val());
+        displayCanBoList();
+    });
+
+    $("#btnSearchCanbo").on("click", function () {
+        showCanBoDetail(smsSelected);
+    });
 });
 
 let currentPagination = {
@@ -87,6 +99,7 @@ let canBoPagination = {
 };
 
 let currentCanBoList = [];
+let smsSelected = 0;
 
 function loadData() {
     // tham số tìm kiếm
@@ -220,25 +233,48 @@ function displayItems(items, pageNumber, pageSize) {
 }
 
 function showCanBoDetail(smsId) {
-    // Tìm dữ liệu SMS theo ID
-    const smsData = paginationData.data.find(item => item.IdSms === Number(smsId));
+    if (Number(smsId) && Number(smsId) > 0) {
+        smsSelected = Number(smsId);
+        const IdNhom = $("#IdNhom").val();
+        const IdCanBo = $("#IdCanBo").val();
 
-    if (!smsData) {
-        alertify.error("Không tìm thấy dữ liệu");
-        return;
+        $.ajax({
+            url: '/Message/LoadDetail',
+            type: 'GET',
+            data: {
+                'model.IdSms': smsSelected,
+                'model.IdNhom': IdNhom,
+                'model.IdCanBo': IdCanBo,
+            },
+            success: function (response) {
+                if (response.state === "success") {
+                    // Tìm dữ liệu SMS theo ID
+                    const smsData = response.data;
+
+                    if (!smsData) {
+                        alertify.error("Không tìm thấy dữ liệu");
+                        return;
+                    }
+
+                    // Lưu danh sách cán bộ hiện tại và reset pagination
+                    currentCanBoList = (smsData.WpCanbosView && Array.isArray(smsData.WpCanbosView)) ? smsData.WpCanbosView : [];
+                    canBoPagination.pageNumber = 1;
+
+                    $('#detailMessaegStatisticalLabel').text(`Danh sách cán bộ - ${smsData.Noidung}`);
+
+                    // Hiển thị dữ liệu
+                    displayCanBoList();
+
+                    // Hiển thị modal
+                    $('#detailMessaegStatistical').modal('show');
+                }
+            },
+            error: function (xhr) {
+                console.log("xhr", xhr);
+                alertify.error("Lỗi khi load danh sách cán bộ");
+            }
+        });
     }
-
-    // Lưu danh sách cán bộ hiện tại và reset pagination
-    currentCanBoList = (smsData.WpCanbosView && Array.isArray(smsData.WpCanbosView)) ? smsData.WpCanbosView : [];
-    canBoPagination.pageNumber = 1;
-
-    $('#detailMessaegStatisticalLabel').text(`Danh sách cán bộ - ${smsData.Noidung}`);
-
-    // Hiển thị dữ liệu
-    displayCanBoList();
-
-    // Hiển thị modal
-    $('#detailMessaegStatistical').modal('show');
 }
 
 function displayCanBoList() {

@@ -31,6 +31,7 @@ namespace SMS_TYNB.ViewModel
 
 	public class WpSmsSearchViewModel
 	{
+		public long? IdSms { get; set; }
 		public string? searchInput { get; set; }
 		public DateTime? dateFrom { get; set; }
 		public DateTime? dateTo { get; set; }

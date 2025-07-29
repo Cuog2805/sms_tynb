@@ -150,8 +150,19 @@ namespace SMS_TYNB.Controllers
                 content = datas,
             });
         }
+		[HttpGet]
+		public async Task<IActionResult> LoadDetail(WpSmsSearchViewModel model)
+		{
+			var datas = await _wpSmsService.GetMessageCanbosById(model);
+			return Json(new
+			{
+				state = "success",
+				msg = "LoadDetail thành công!",
+				data = datas,
+			});
+		}
 
-        [HttpPost]
+		[HttpPost]
         public async Task<IActionResult> MessageUpdateFile([FromForm] WpFile oldFile, IFormFile fileDinhKem)
         {
             await _wpSmsService.UpdateFile(oldFile, fileDinhKem);

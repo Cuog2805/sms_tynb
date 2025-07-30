@@ -17,7 +17,7 @@ namespace SMS_TYNB
         public static void Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
-            var connectionString = "server=10.30.29.14;port=3306;database=vnpt_sms_tunb;user=sms_tunb_usr;password=#$546Awrc!re56;Persist Security Info=False;Connect Timeout=300";
+            var connectionString = "Server=localhost;Port=3306;Database=VnptSmsBrandName;Uid=root;Pwd=280503;CharSet=utf8mb4;";
             // Add services to the container.
             builder.Services.AddControllersWithViews()
                 .AddNewtonsoftJson(options =>

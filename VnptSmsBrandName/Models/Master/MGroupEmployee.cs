@@ -1,4 +1,4 @@
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace VnptSmsBrandName.Models.Master
@@ -12,7 +12,7 @@ namespace VnptSmsBrandName.Models.Master
 		public long IdGroup { get; set; }
 		public long IdEmployee { get; set; }
 		/// <summary>
-		/// id t? ch?c
+		/// id tổ chức
 		/// </summary>
 		public long IdOrganization { get; set; }
 	}

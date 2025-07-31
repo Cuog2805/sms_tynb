@@ -1,4 +1,4 @@
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace VnptSmsBrandName.Models.Master
@@ -13,25 +13,25 @@ namespace VnptSmsBrandName.Models.Master
 		public long IdEmployee { get; set; }
 		public long IdGroup { get; set; }
 		/// <summary>
-		/// id t? ch?c
+		/// id tổ chức
 		/// </summary>
 		public long IdOrganization { get; set; }
 
 		/// <summary>
-		/// id c?a req tr? v? khi g?i tin nh?n
+		/// id của req trả về khi gửi tin nhắn
 		/// </summary>
 		public string REQID { get; set; }
 
 		/// <summary>
-		/// t�n SmsResponse tr? v? khi g?i tin nh?n
+		/// tên SmsResponse trả về khi gửi tin nhắn
 		/// </summary>
 		public string name { get; set; }
 		/// <summary>
-		/// tr?ng th�i tr? v? khi g?i tin nh?n
+		/// trạng thái trả về khi gửi tin nhắn
 		/// </summary>
 		public string ERROR { get; set; }
 		/// <summary>
-		/// m� t? tr?ng th�i tr? v? khi g?i tin nh?n
+		/// mô tả trạng thái trả về khi gửi tin nhắn
 		/// </summary>
 		public string ERROR_DESC { get; set; }
 	}

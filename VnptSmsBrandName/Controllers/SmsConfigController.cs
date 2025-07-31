@@ -1,4 +1,4 @@
-using Microsoft.AspNetCore.Mvc;
+Ôªøusing Microsoft.AspNetCore.Mvc;
 using VnptSmsBrandName.Common;
 using VnptSmsBrandName.Models.Master;
 using VnptSmsBrandName.Service;
@@ -25,7 +25,7 @@ namespace VnptSmsBrandName.Controllers
 			return Json(new
 			{
 				state = "success",
-				msg = "LoadData th‡nh cÙng!",
+				msg = "LoadData th√†nh c√¥ng!",
 				content = datas
 			});
 		}
@@ -42,7 +42,7 @@ namespace VnptSmsBrandName.Controllers
 			return Json(new
 			{
 				state = "success",
-				msg = "ThÍm m?i th‡nh cÙng!",
+				msg = "Th√™m m·ªõi th√†nh c√¥ng!",
 				data = model
 			});
 		}
@@ -53,7 +53,7 @@ namespace VnptSmsBrandName.Controllers
 			return Json(new
 			{
 				state = "success",
-				msg = "C?p nh?t th‡nh cÙng!",
+				msg = "C·∫≠p nh·∫≠t th√†nh c√¥ng!",
 				data = model
 			});
 		}

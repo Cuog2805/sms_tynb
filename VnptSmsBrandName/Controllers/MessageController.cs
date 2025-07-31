@@ -1,4 +1,4 @@
-using Microsoft.AspNetCore.Authorization;
+锘縰sing Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -65,7 +65,7 @@ namespace VnptSmsBrandName.Controllers
 				{
 					state = "success",
 					data = result.Data,
-					msg = "G?i tin nh?n th鄋h c鬾g"
+					msg = "G峄璱 tin nh岷痭 th脿nh c么ng"
 				});
 			}
 			else
@@ -93,7 +93,7 @@ namespace VnptSmsBrandName.Controllers
             return Json(new
             {
                 state = "success",
-                msg = "LoadData th鄋h c鬾g!",
+                msg = "LoadData th脿nh c么ng!",
                 content = datas,
             });
         }
@@ -104,7 +104,7 @@ namespace VnptSmsBrandName.Controllers
 			return Json(new
 			{
 				state = "success",
-				msg = "LoadDetail th鄋h c鬾g!",
+				msg = "LoadDetail th脿nh c么ng!",
 				data = datas,
 			});
 		}
@@ -116,7 +116,7 @@ namespace VnptSmsBrandName.Controllers
             return Json(new
             {
                 state = "success",
-                msg = "C?p nh?t file th鄋h c鬾g!",
+                msg = "C岷璸 nh岷璽 file th脿nh c么ng!",
                 content = new { },
             });
         }

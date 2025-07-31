@@ -1,4 +1,4 @@
-using Microsoft.AspNetCore.Authorization;
+锘縰sing Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using VnptSmsBrandName.Common;
@@ -46,7 +46,7 @@ namespace VnptSmsBrandName.Controllers
 			return Json(new
 			{
 				state = "success",
-				msg = "LoadData th鄋h c鬾g!",
+				msg = "LoadData th脿nh c么ng!",
 				content = datas
 			});
 		}
@@ -64,7 +64,7 @@ namespace VnptSmsBrandName.Controllers
 			return Json(new
 			{
 				state = "success",
-				msg = "Th阭 m?i th鄋h c鬾g!",
+				msg = "Th锚m m峄沬 th脿nh c么ng!",
 				data = model
 			});
 		}
@@ -75,7 +75,7 @@ namespace VnptSmsBrandName.Controllers
 			return Json(new
 			{
 				state = "success",
-				msg = "C?p nh?t th鄋h c鬾g!",
+				msg = "C岷璸 nh岷璽 th脿nh c么ng!",
 				data = model
 			});
 		}
@@ -86,7 +86,7 @@ namespace VnptSmsBrandName.Controllers
 			return Json(new
 			{
 				state = "success",
-				msg = "Import th鄋h c鬾g!",
+				msg = "Import th脿nh c么ng!",
 				data = data
 			});
 		}

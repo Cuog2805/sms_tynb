@@ -1,4 +1,4 @@
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using VnptSmsBrandName.Common;
 using VnptSmsBrandName.Helper;
 using VnptSmsBrandName.Models.Identity;
@@ -75,9 +75,9 @@ namespace VnptSmsBrandName.Service
 		public async Task<MFile> SaveFile(IFormFile file, Users creator, long smsId, string subFolder = "upload")
 		{
 			if (file == null || file.Length == 0)
-				throw new Exception("File kh�ng h?p l?");
+				throw new Exception("File không hợp lệ");
 
-			// T?o thu m?c upload n?u chua t?n t?i
+			// Tạo thư mục upload nếu chưa tồn tại
 			var subFolderUser = Path.Combine(subFolder, DateTime.Now.ToString("ddMMyyyy"));
 			var uploadPath = Path.Combine(_environment.WebRootPath, subFolderUser);
 			if (!Directory.Exists(uploadPath))
@@ -91,22 +91,22 @@ namespace VnptSmsBrandName.Service
 
 			if (!allowedExtensions.Contains(fileExtension))
 			{
-				throw new Exception($"{fileExtension} kh�ng h?p l?");
+				throw new Exception($"{fileExtension} không hợp lệ");
 			}
 
-			// T?o t�n file
+			// Tạo tên file
 			var fileName = file.FileName.Replace(" ", "_");
 			fileName = CommonHelper.RemoveUnicodeMark(fileName);
 			fileName = CommonHelper.RemoveSign4VietnameseString(fileName);
 			var filePath = Path.Combine(uploadPath, fileName);
 
-			// Luu file
+			// Lưu file
 			using (var stream = new FileStream(filePath, FileMode.Create))
 			{
 				await file.CopyToAsync(stream);
 			}
 
-			// Luu th�ng tin file v�o DB
+			// Luu thông tin file vào DB
 			var fileSave = new MFile
 			{
 				Name = fileName,
@@ -116,11 +116,12 @@ namespace VnptSmsBrandName.Service
 
 			fileSave = await Create(fileSave);
 
-			// Luu th�ng tin SmsFile
+			// Luu thông tin SmsFile
 			var smsfile = new MSmsFile()
 			{
 				IdSms = smsId,
 				IdFile = fileSave.IdFile,
+				IdOrganization = creator.OrgId,
 			};
 			await _mSmsFileRepository.Create(smsfile);
 
@@ -134,14 +135,15 @@ namespace VnptSmsBrandName.Service
 				var existingFiles = await _mFileRepository.GetByIdFiles(selectedFileIds);
 				foreach (var existingFile in existingFiles)
 				{
-					// Ki?m tra xem li�n k?t d� t?n t?i chua d? tr�nh tr�ng l?p
-					var existingSmsFile = _mSmsFileRepository.GetBySmsIdAndFileId(smsId, existingFile.IdFile);
+					// kiểm tra xem file đã được liên kết với SMS chưa
+					var existingSmsFile = _mSmsFileRepository.GetBySmsIdAndFileIdAndOrgId(smsId, existingFile.IdFile, creator.OrgId);
 					if (existingSmsFile == null)
 					{
 						var smsFile = new MSmsFile
 						{
 							IdSms = smsId,
-							IdFile = existingFile.IdFile
+							IdFile = existingFile.IdFile,
+							IdOrganization = creator.OrgId
 						};
 
 						await _mSmsFileRepository.Create(smsFile);
@@ -156,19 +158,19 @@ namespace VnptSmsBrandName.Service
 		public async Task UpdateContentFile(IFormFile file, long oldFileId)
 		{
 			if (file == null || file.Length == 0)
-				throw new Exception("File kh�ng h?p l?");
+				throw new Exception("File không họp lệ");
 
 			var oldFile = await _mFileRepository.FindById(oldFileId);
 			if (oldFile == null)
-				throw new Exception("File kh�ng t?n t?i");
+				throw new Exception("File không tồn tại");
 
 			string fileExtension = Path.GetExtension(oldFile.Name);
-			// Validate file extension c?a file m?i
+			// Validate file extension của file mới
 			var allowedExtensions = new[] { fileExtension };
 			var newFileExtension = Path.GetExtension(file.FileName).ToLower();
 			if (!allowedExtensions.Contains(newFileExtension))
 			{
-				throw new Exception($"{newFileExtension} kh�ng h?p l?");
+				throw new Exception($"{newFileExtension} không hợp lệ");
 			}
 
 			try
@@ -194,7 +196,7 @@ namespace VnptSmsBrandName.Service
 					Directory.CreateDirectory(directory);
 				}
 
-				// Luu file m?i v?i t�n c?a file cu
+				// Luu file m?i v?i tên c?a file cu
 				using (var stream = new FileStream(oldFilePath, FileMode.Create))
 				{
 					await file.CopyToAsync(stream);
@@ -215,7 +217,7 @@ namespace VnptSmsBrandName.Service
 				};
 				await _mHistoryRepository.Create(history);
 
-				// X�a backup file
+				// Xóa backup file
 				if (!string.IsNullOrEmpty(backupFilePath) && File.Exists(backupFilePath))
 				{
 					File.Delete(backupFilePath);
@@ -236,7 +238,7 @@ namespace VnptSmsBrandName.Service
 					File.Move(backupFilePath, oldFilePath);
 				}
 
-				throw new Exception($"L?i khi c?p nh?t file: {ex.Message}");
+				throw new Exception($"Lỗi khi cập nhật file: {ex.Message}");
 			}
 		}
 

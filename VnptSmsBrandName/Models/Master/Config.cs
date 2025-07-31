@@ -11,5 +11,6 @@ namespace VnptSmsBrandName.Models.Master
         public string Key { get; set; }
         public string Value { get; set; }
         public int IsUsed {  get; set; }
-    }
+		public long IdOrganization { get; set; }
+	}
 }

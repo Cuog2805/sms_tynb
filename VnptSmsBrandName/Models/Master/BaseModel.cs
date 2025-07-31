@@ -1,4 +1,4 @@
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace VnptSmsBrandName.Models.Master
@@ -6,31 +6,31 @@ namespace VnptSmsBrandName.Models.Master
 	public class BaseModel
 	{
 		/// <summary>
-		/// nguoi tao
+		/// người tao
 		/// </summary>
 		[MaxLength(250)]
 		[Column(TypeName = "nvarchar(250)")]
 		public string CreateBy { get; set; }
 		/// <summary>
-		/// ngay tao
+		/// ngày tạo
 		/// </summary>
 		public DateTime CreateAt { get; set; }
 		/// <summary>
-		/// nguoi update
+		/// người update
 		/// </summary>
 		[MaxLength(250)]
 		[Column(TypeName = "nvarchar(250)")]
 		public string? UpdatedBy { get; set; }
 		/// <summary>
-		/// ngay update
+		/// ngày update
 		/// </summary>
 		public DateTime? UpdatedAt { get; set; }
 		/// <summary>
-		/// id t? ch?c
+		/// id tổ chức
 		/// </summary>
 		public long IdOrganization { get; set; }
 		/// <summary>
-		/// tr?ng th�i x�a, default value = 0
+		/// trạng thái xóa, default value = 0
 		/// </summary>
 		public int IsDeleted { get; set; } = 0;
 	}

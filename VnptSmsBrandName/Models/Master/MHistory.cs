@@ -1,4 +1,4 @@
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace VnptSmsBrandName.Models.Master
@@ -11,7 +11,7 @@ namespace VnptSmsBrandName.Models.Master
 		public long IdHistory { get; set; }
 		public long IdOrganization { get; set; }
 		/// <summary>
-		/// t�n b?ng luu l?ch s?
+		/// tên bảng lưu lịch sử
 		/// </summary>
 		[Required]
 		[MaxLength(500)]
@@ -19,7 +19,7 @@ namespace VnptSmsBrandName.Models.Master
 		public string TableName { get; set; }
 
 		/// <summary>
-		/// id c?a b?n ghi ? b?ng luu l?ch s?
+		/// id của bản ghi ở bảng lưu lịch sử
 		/// </summary>
 		public long IdRecord { get; set; }
 

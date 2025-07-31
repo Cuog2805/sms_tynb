@@ -1,4 +1,4 @@
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Diagnostics.CodeAnalysis;
 
@@ -22,7 +22,7 @@ namespace VnptSmsBrandName.Models.Master
 		public string PhoneNumber { get; set; }
 
 		/// <summary>
-		/// sdt g?i tin nh?n
+		/// sdt gửi tin nhắn
 		/// </summary>
 		[Required]
 		[MaxLength(15)]

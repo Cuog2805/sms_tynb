@@ -42,11 +42,6 @@ namespace VnptSmsBrandName.Service
 			return mGroup;
 		}
 
-		public async Task Delete(MGroup model)
-		{
-			await _mGroupRepository.Delete(model.IdGroup);
-		}
-
 		public async Task<IEnumerable<MGroup>> GetAllMGroup()
 		{
 			var user = await _currentUserService.GetCurrentUser();
@@ -94,7 +89,7 @@ namespace VnptSmsBrandName.Service
 
 			var employees = await employeeQuery.ToListAsync();
 			var mGroupList = await GetAllMGroup();
-			var groupEmployees = await _mGroupEmployeeRepository.Query().ToListAsync();
+			var groupEmployees = await _mGroupEmployeeRepository.GetAllByOrgId(user.OrgId).ToListAsync();
 
 			var res = (from mgroup in mGroupList
 					   join mgroup_emp in groupEmployees on mgroup.IdGroup equals mgroup_emp.IdGroup into mgroupGroup
@@ -131,7 +126,7 @@ namespace VnptSmsBrandName.Service
 			var mEmployeeList = await _mEmployeeService.GetAllMEmployee();
 			var mGroup = await _mGroupRepository.FindById(id);
 
-			var groupEmployees = await _mGroupEmployeeRepository.Query()
+			var groupEmployees = await _mGroupEmployeeRepository.GetAllByOrgId(user.OrgId)
 				.Where(ge => ge.IdGroup == mGroup.IdGroup)
 				.ToListAsync();
 
@@ -155,13 +150,15 @@ namespace VnptSmsBrandName.Service
 
 		public async Task<MGroupViewModel> Assign(MGroupViewModel model)
 		{
+			var user = await _currentUserService.GetCurrentUser();
 			await _mGroupEmployeeRepository.DeleteByGroupId(model.IdGroup);
 			foreach (var item in model.Employees)
 			{
 				var wpNhomCanbo = new MGroupEmployee
 				{
 					IdGroup = model.IdGroup,
-					IdEmployee = item.IdEmployee.Value
+					IdEmployee = item.IdEmployee.Value,
+					IdOrganization = user.OrgId,
 				};
 
 				await _mGroupEmployeeRepository.Create(wpNhomCanbo);
@@ -175,7 +172,6 @@ namespace VnptSmsBrandName.Service
 	{
 		Task<MGroup> Create(MGroup model);
 		Task<MGroup?> Update(MGroup model);
-		Task Delete(MGroup model);
 		Task<IEnumerable<MGroup>> GetAllMGroup();
 		Task<MGroup?> GetById(int id);
 		Task<PageResult<MGroupViewModel>> SearchMGroup(MGroupSearchViewModel model, Pageable pageable);

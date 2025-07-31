@@ -69,7 +69,12 @@ namespace VnptSmsBrandName.Repository
             return context.Set<T>().AsQueryable();
         }
 
-        public async Task Delete(TKey id)
+		public IQueryable<T> GetAllByOrgId(long orgId)
+		{
+			return context.Set<T>().Where(e => EF.Property<long>(e, "IdOrganization") == orgId);
+		}
+
+		public async Task Delete(TKey id)
 		{
 			T? entity = await FindById(id);
 

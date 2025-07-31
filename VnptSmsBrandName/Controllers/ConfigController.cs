@@ -1,4 +1,4 @@
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using VnptSmsBrandName.Common;
@@ -58,11 +58,11 @@ namespace VnptSmsBrandName.Controllers
                     await _configService.Update(existing);
                 }
 
-                TempData["SuccessMessage"] = "Luu c?u h�nh th�nh c�ng.";
+                TempData["SuccessMessage"] = "Lưu cấu hình thành công.";
             }
             catch (Exception ex)
             {
-                TempData["ErrorMessage"] = "C� l?i x?y ra khi luu c?u h�nh.";
+                TempData["ErrorMessage"] = "Có lỗi xảy ra khi lưu cấu hình.";
             }
             return RedirectToAction(nameof(Index));
         }

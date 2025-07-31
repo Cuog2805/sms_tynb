@@ -1,4 +1,4 @@
-using VnptSmsBrandName.Models;
+﻿using VnptSmsBrandName.Models;
 using VnptSmsBrandName.Models.Master;
 
 namespace VnptSmsBrandName.ViewModel
@@ -19,11 +19,11 @@ namespace VnptSmsBrandName.ViewModel
 		public DateTime? CreateAt { get; set; }
 
 		/// <summary>
-		/// d�ng cho truy?n danh s�ch c�n b? du?c tin nh?n g?i d?n
+		/// dùng cho truyền danh sách cán bộ được tin nhắn gửi đến
 		/// </summary>
 		public virtual ICollection<MEmployeeViewModel> Employees { get; set; } = new List<MEmployeeViewModel>();
 		/// <summary>
-		/// d�ng cho hi?n th? chi ti?t c�c c�n b? nh?n tin nh?n
+		/// dùng cho hiện thị chi tiết các cán bộ nhận tin nhắn
 		/// </summary>
 		public virtual ICollection<MEmployeeMessageStatisticalViewModel> EmployeesView { get; set; } = new List<MEmployeeMessageStatisticalViewModel>();
 	}

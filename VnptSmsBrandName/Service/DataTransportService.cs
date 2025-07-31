@@ -1,4 +1,4 @@
-namespace VnptSmsBrandName.Service
+﻿namespace VnptSmsBrandName.Service
 {
 	public class FileDownloadResult
 	{
@@ -19,7 +19,7 @@ namespace VnptSmsBrandName.Service
 			// Logic to download the Excel file
 			if (!File.Exists(filePath))
 			{
-				throw new FileNotFoundException($"File '{fileName}' not found in folder '{folderPath}'.");
+				throw new FileNotFoundException($"Không tìm thấy '{fileName}' trong thư mục '{folderPath}'.");
 			}
 
 			// Read file content

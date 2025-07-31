@@ -3,8 +3,9 @@
 ################################################################################
 
 /.vs
-/SMS_TYNB/.env
-/SMS_TYNB/bin
-/SMS_TYNB/Migrations
-/SMS_TYNB/obj
-/SMS_TYNB/wwwroot/upload
+/VnptSmsBrandName/.env
+/VnptSmsBrandName/bin
+/VnptSmsBrandName/Migrations
+/VnptSmsBrandName/obj
+/VnptSmsBrandName/wwwroot/upload
+/VnptSmsBrandName/obj

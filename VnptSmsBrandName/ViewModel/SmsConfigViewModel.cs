@@ -1,4 +1,4 @@
-﻿namespace SMS_TYNB.ViewModel
+namespace VnptSmsBrandName.ViewModel
 {
 	public class SmsConfigViewModel
 	{

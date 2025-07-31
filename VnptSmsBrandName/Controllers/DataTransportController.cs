@@ -1,8 +1,8 @@
-Ôªøusing Microsoft.AspNetCore.Mvc;
-using SMS_TYNB.Service;
+using Microsoft.AspNetCore.Mvc;
+using VnptSmsBrandName.Service;
 using System.Threading.Tasks;
 
-namespace SMS_TYNB.Controllers
+namespace VnptSmsBrandName.Controllers
 {
 	public class DataTransportController : Controller
 	{
@@ -18,7 +18,7 @@ namespace SMS_TYNB.Controllers
 			//return Json(new
 			//{
 			//	state = "success",
-			//	msg = "DownloadSample th√†nh c√¥ng!",
+			//	msg = "DownloadSample th‡nh cÙng!",
 			//	content = new
 			//	{
 			//		data.FileContent,

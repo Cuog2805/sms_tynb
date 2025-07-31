@@ -1,10 +1,10 @@
-Ôªøusing Microsoft.AspNetCore.Mvc;
-using SMS_TYNB.Common;
-using SMS_TYNB.Models.Master;
-using SMS_TYNB.Service;
-using SMS_TYNB.ViewModel;
+using Microsoft.AspNetCore.Mvc;
+using VnptSmsBrandName.Common;
+using VnptSmsBrandName.Models.Master;
+using VnptSmsBrandName.Service;
+using VnptSmsBrandName.ViewModel;
 
-namespace SMS_TYNB.Controllers
+namespace VnptSmsBrandName.Controllers
 {
 	public class SmsConfigController : Controller
 	{
@@ -25,7 +25,7 @@ namespace SMS_TYNB.Controllers
 			return Json(new
 			{
 				state = "success",
-				msg = "LoadData th√†nh c√¥ng!",
+				msg = "LoadData th‡nh cÙng!",
 				content = datas
 			});
 		}
@@ -42,7 +42,7 @@ namespace SMS_TYNB.Controllers
 			return Json(new
 			{
 				state = "success",
-				msg = "Th√™m m·ªõi th√†nh c√¥ng!",
+				msg = "ThÍm m?i th‡nh cÙng!",
 				data = model
 			});
 		}
@@ -53,7 +53,7 @@ namespace SMS_TYNB.Controllers
 			return Json(new
 			{
 				state = "success",
-				msg = "C·∫≠p nh·∫≠t th√†nh c√¥ng!",
+				msg = "C?p nh?t th‡nh cÙng!",
 				data = model
 			});
 		}

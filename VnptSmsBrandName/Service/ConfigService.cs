@@ -1,9 +1,9 @@
-﻿using Microsoft.EntityFrameworkCore;
-using SMS_TYNB.Models.Master;
-using SMS_TYNB.Repository;
+using Microsoft.EntityFrameworkCore;
+using VnptSmsBrandName.Models.Master;
+using VnptSmsBrandName.Repository;
 using System.Threading.Tasks;
 
-namespace SMS_TYNB.Service
+namespace VnptSmsBrandName.Service
 {
     public class ConfigService : IConfigService
     {

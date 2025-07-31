@@ -1,14 +1,14 @@
-锘縰sing Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using SMS_TYNB.Common;
-using SMS_TYNB.Common.Enum;
-using SMS_TYNB.Helper;
-using SMS_TYNB.Models.Master;
-using SMS_TYNB.Service;
-using SMS_TYNB.ViewModel;
+using VnptSmsBrandName.Common;
+using VnptSmsBrandName.Common.Enum;
+using VnptSmsBrandName.Helper;
+using VnptSmsBrandName.Models.Master;
+using VnptSmsBrandName.Service;
+using VnptSmsBrandName.ViewModel;
 
-namespace SMS_TYNB.Controllers
+namespace VnptSmsBrandName.Controllers
 {
 	[Authorize(Roles = "Admin")]
 	public class ContactController : Controller
@@ -46,7 +46,7 @@ namespace SMS_TYNB.Controllers
 			return Json(new
 			{
 				state = "success",
-				msg = "LoadData th脿nh c么ng!",
+				msg = "LoadData th鄋h c鬾g!",
 				content = datas
 			});
 		}
@@ -64,7 +64,7 @@ namespace SMS_TYNB.Controllers
 			return Json(new
 			{
 				state = "success",
-				msg = "Th锚m m峄沬 th脿nh c么ng!",
+				msg = "Th阭 m?i th鄋h c鬾g!",
 				data = model
 			});
 		}
@@ -75,7 +75,7 @@ namespace SMS_TYNB.Controllers
 			return Json(new
 			{
 				state = "success",
-				msg = "C岷璸 nh岷璽 th脿nh c么ng!",
+				msg = "C?p nh?t th鄋h c鬾g!",
 				data = model
 			});
 		}
@@ -86,7 +86,7 @@ namespace SMS_TYNB.Controllers
 			return Json(new
 			{
 				state = "success",
-				msg = "Import th脿nh c么ng!",
+				msg = "Import th鄋h c鬾g!",
 				data = data
 			});
 		}

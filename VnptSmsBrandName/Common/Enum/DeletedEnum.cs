@@ -1,15 +1,15 @@
-﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations;
 
-namespace SMS_TYNB.Common.Enum
+namespace VnptSmsBrandName.Common.Enum
 {
 	/// <summary>
-	/// enum trạng thái xóa
+	/// enum tr?ng th�i x�a
 	/// </summary>
 	public enum DeletedEnum
 	{
-		[Display(Name = "Sử dụng")]
+		[Display(Name = "S? d?ng")]
 		NotDeleted = 0,
-		[Display(Name = "Xóa")]
+		[Display(Name = "X�a")]
 		Deleted = 1,
 	}
 }

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.IO;
 using System.Linq;
 using System.Threading;
@@ -6,10 +6,10 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using SMS_TYNB.Models.Master;
-using SMS_TYNB.Service;
+using VnptSmsBrandName.Models.Master;
+using VnptSmsBrandName.Service;
 
-namespace SMS_TYNB.BackgoundSercvice
+namespace VnptSmsBrandName.BackgoundSercvice
 {
     public class FileCleanupService : BackgroundService
     {

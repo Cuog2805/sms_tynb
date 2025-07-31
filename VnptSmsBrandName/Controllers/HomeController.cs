@@ -1,12 +1,12 @@
-﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using SMS_TYNB.Models;
-using SMS_TYNB.Models.Identity;
-using SMS_TYNB.ViewModel;
+using VnptSmsBrandName.Models;
+using VnptSmsBrandName.Models.Identity;
+using VnptSmsBrandName.ViewModel;
 using System.Diagnostics;
 
-namespace SMS_TYNB.Controllers
+namespace VnptSmsBrandName.Controllers
 {
     [Authorize]
     public class HomeController : Controller

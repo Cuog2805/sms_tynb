@@ -1,7 +1,7 @@
-﻿using System.Xml.Serialization;
-using static SMS_TYNB.ViewModel.ApiModel.ContractApiViewModel;
+using System.Xml.Serialization;
+using static VnptSmsBrandName.ViewModel.ApiModel.ContractApiViewModel;
 
-namespace SMS_TYNB.ViewModel.ApiModel
+namespace VnptSmsBrandName.ViewModel.ApiModel
 {
     public class LabelApiViewModel
     {

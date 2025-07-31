@@ -1,21 +1,21 @@
-锘縰sing Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
-using SMS_TYNB.Common;
-using SMS_TYNB.Common.Enum;
-using SMS_TYNB.Helper;
-using SMS_TYNB.Models.Identity;
-using SMS_TYNB.Models.Master;
-using SMS_TYNB.Service;
-using SMS_TYNB.ViewModel;
+using VnptSmsBrandName.Common;
+using VnptSmsBrandName.Common.Enum;
+using VnptSmsBrandName.Helper;
+using VnptSmsBrandName.Models.Identity;
+using VnptSmsBrandName.Models.Master;
+using VnptSmsBrandName.Service;
+using VnptSmsBrandName.ViewModel;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using static SMS_TYNB.ViewModel.ApiModel.SmsApiViewModel;
+using static VnptSmsBrandName.ViewModel.ApiModel.SmsApiViewModel;
 
-namespace SMS_TYNB.Controllers
+namespace VnptSmsBrandName.Controllers
 {
     [Authorize(Roles = "Admin, User")]
     public class MessageController : Controller
@@ -65,7 +65,7 @@ namespace SMS_TYNB.Controllers
 				{
 					state = "success",
 					data = result.Data,
-					msg = "G峄璱 tin nh岷痭 th脿nh c么ng"
+					msg = "G?i tin nh?n th鄋h c鬾g"
 				});
 			}
 			else
@@ -93,7 +93,7 @@ namespace SMS_TYNB.Controllers
             return Json(new
             {
                 state = "success",
-                msg = "LoadData th脿nh c么ng!",
+                msg = "LoadData th鄋h c鬾g!",
                 content = datas,
             });
         }
@@ -104,7 +104,7 @@ namespace SMS_TYNB.Controllers
 			return Json(new
 			{
 				state = "success",
-				msg = "LoadDetail th脿nh c么ng!",
+				msg = "LoadDetail th鄋h c鬾g!",
 				data = datas,
 			});
 		}
@@ -116,7 +116,7 @@ namespace SMS_TYNB.Controllers
             return Json(new
             {
                 state = "success",
-                msg = "C岷璸 nh岷璽 file th脿nh c么ng!",
+                msg = "C?p nh?t file th鄋h c鬾g!",
                 content = new { },
             });
         }

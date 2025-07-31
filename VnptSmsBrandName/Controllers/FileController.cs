@@ -1,9 +1,9 @@
-Ôªøusing Microsoft.AspNetCore.Mvc;
-using SMS_TYNB.Service;
-using SMS_TYNB.Common;
+using Microsoft.AspNetCore.Mvc;
+using VnptSmsBrandName.Service;
+using VnptSmsBrandName.Common;
 using System.Threading.Tasks;
 
-namespace SMS_TYNB.Controllers
+namespace VnptSmsBrandName.Controllers
 {
 	public class FileController : Controller
 	{
@@ -19,7 +19,7 @@ namespace SMS_TYNB.Controllers
 			return Json(new
 			{
 				state = "success",
-				msg = "LoadData th√†nh c√¥ng!",
+				msg = "LoadData th‡nh cÙng!",
 				content = datas
 			});
 		}
@@ -30,7 +30,7 @@ namespace SMS_TYNB.Controllers
 			return Json(new
 			{
 				state = "success",
-				msg = "LoadFileChangeHistory th√†nh c√¥ng!",
+				msg = "LoadFileChangeHistory th‡nh cÙng!",
 				content = datas
 			});
 		}

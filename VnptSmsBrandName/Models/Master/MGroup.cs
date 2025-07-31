@@ -1,7 +1,7 @@
-﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace SMS_TYNB.Models.Master
+namespace VnptSmsBrandName.Models.Master
 {
 	[Table(name: "m_group")]
 	public class MGroup: BaseModel

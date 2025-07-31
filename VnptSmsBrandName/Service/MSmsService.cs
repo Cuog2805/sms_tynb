@@ -1,13 +1,13 @@
-﻿using Microsoft.EntityFrameworkCore;
-using SMS_TYNB.Common;
-using SMS_TYNB.Helper;
-using SMS_TYNB.Models.Identity;
-using SMS_TYNB.Models.Master;
-using SMS_TYNB.Repository;
-using SMS_TYNB.ViewModel;
-using static SMS_TYNB.ViewModel.ApiModel.SmsApiViewModel;
+using Microsoft.EntityFrameworkCore;
+using VnptSmsBrandName.Common;
+using VnptSmsBrandName.Helper;
+using VnptSmsBrandName.Models.Identity;
+using VnptSmsBrandName.Models.Master;
+using VnptSmsBrandName.Repository;
+using VnptSmsBrandName.ViewModel;
+using static VnptSmsBrandName.ViewModel.ApiModel.SmsApiViewModel;
 
-namespace SMS_TYNB.Service
+namespace VnptSmsBrandName.Service
 {
 	public class MSmsService: BaseService, IMSmsService
 	{
@@ -49,13 +49,13 @@ namespace SMS_TYNB.Service
 		{
 			// validate input
 			if (user == null)
-				return ServiceResult<MSmsViewModel>.Failure("Lỗi khi xử lý SendMessage: Lỗi khi thông tin người dùng!");
+				return ServiceResult<MSmsViewModel>.Failure("L?i khi x? l� SendMessage: L?i khi th�ng tin ngu?i d�ng!");
 
 			if (string.IsNullOrEmpty(model.Content))
-				return ServiceResult<MSmsViewModel>.Failure("Lỗi khi xử lý SendMessage: Không có nội dung tin nhắn!");
+				return ServiceResult<MSmsViewModel>.Failure("L?i khi x? l� SendMessage: Kh�ng c� n?i dung tin nh?n!");
 
 			if (model.Employees.Count == 0)
-				return ServiceResult<MSmsViewModel>.Failure("Lỗi khi xử lý SendMessage: Chưa chọn người nhận tin nhắn!");
+				return ServiceResult<MSmsViewModel>.Failure("L?i khi x? l� SendMessage: Chua ch?n ngu?i nh?n tin nh?n!");
 
 			MSms wpSms = null;
 			try
@@ -73,10 +73,10 @@ namespace SMS_TYNB.Service
 				wpSms = await _mSmsRepository.Create(wpSms);
 				int errorCount = 0;
 
-				// Gửi tin nhắn
+				// G?i tin nh?n
 				var smsConfig = _smsConfigService.GetSmsConfigActive(true);
 
-				// Xử lý file đính kèm
+				// X? l� file d�nh k�m
 				var fileUrls = await HandleFileAttachments(fileDinhKem, selectedFileIds, user, wpSms.IdSms, smsConfig.Domain);
 				var noidungGui = model.Content + " " + fileUrls;
 
@@ -125,7 +125,7 @@ namespace SMS_TYNB.Service
 			}
 			catch (Exception ex)
 			{
-				// Cập nhật lỗi nếu wpSms đã được tạo
+				// C?p nh?t l?i n?u wpSms d� du?c t?o
 				if (wpSms != null)
 				{
 					try
@@ -135,11 +135,11 @@ namespace SMS_TYNB.Service
 					}
 					catch
 					{
-						// bỏ qua lỗi cập nhật
+						// b? qua l?i c?p nh?t
 					}
 				}
 
-				return ServiceResult<MSmsViewModel>.Failure($"Lỗi khi send message: {ex.Message}");
+				return ServiceResult<MSmsViewModel>.Failure($"L?i khi send message: {ex.Message}");
 			}
 		}
 
@@ -147,7 +147,7 @@ namespace SMS_TYNB.Service
 		{
 			List<string> fileUrls = new List<string>();
 
-			// Xử lý file đính kèm mới
+			// X? l� file d�nh k�m m?i
 			if (fileDinhKem != null && fileDinhKem.Count > 0)
 			{
 				foreach (var file in fileDinhKem)
@@ -163,7 +163,7 @@ namespace SMS_TYNB.Service
 				}
 			}
 
-			// Xử lý files đã chọn từ selectedFileIds
+			// X? l� files d� ch?n t? selectedFileIds
 			if (selectedFileIds != null && selectedFileIds.Count > 0)
 			{
 				var createdFiles = await _mFileService.CreateFromFileExisted(selectedFileIds, user, smsId);

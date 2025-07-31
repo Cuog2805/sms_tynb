@@ -3,14 +3,14 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
-using SMS_TYNB.Common;
-using SMS_TYNB.Data;
-using SMS_TYNB.Helper;
-using SMS_TYNB.Models.Identity;
-using SMS_TYNB.Models.Master;
-using SMS_TYNB.BackgoundSercvice;
+using VnptSmsBrandName.Common;
+using VnptSmsBrandName.Data;
+using VnptSmsBrandName.Helper;
+using VnptSmsBrandName.Models.Identity;
+using VnptSmsBrandName.Models.Master;
+using VnptSmsBrandName.BackgoundSercvice;
 
-namespace SMS_TYNB
+namespace VnptSmsBrandName
 {
     public class Program
     {

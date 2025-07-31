@@ -1,9 +1,9 @@
-﻿using Microsoft.AspNetCore.Identity.UI.Services;
+using Microsoft.AspNetCore.Identity.UI.Services;
 using Newtonsoft.Json.Linq;
 using System.Net;
 using System.Net.Mail;
 
-namespace SMS_TYNB.Helper
+namespace VnptSmsBrandName.Helper
 {
 
 	public class EmailSender : IEmailSender

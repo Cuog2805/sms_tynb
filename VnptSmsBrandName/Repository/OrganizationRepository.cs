@@ -1,6 +1,6 @@
-﻿using SMS_TYNB.Models.Master;
+using VnptSmsBrandName.Models.Master;
 
-namespace SMS_TYNB.Repository
+namespace VnptSmsBrandName.Repository
 {
 	public class OrganizationRepository: BaseRepository<Organization, long>
 	{

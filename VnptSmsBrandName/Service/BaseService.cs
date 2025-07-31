@@ -1,6 +1,6 @@
-﻿using SMS_TYNB.Models.Master;
+using VnptSmsBrandName.Models.Master;
 
-namespace SMS_TYNB.Service
+namespace VnptSmsBrandName.Service
 {
 	public abstract class BaseService
 	{

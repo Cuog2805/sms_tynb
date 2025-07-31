@@ -1,7 +1,7 @@
-﻿using SMS_TYNB.Models;
-using SMS_TYNB.Models.Master;
+using VnptSmsBrandName.Models;
+using VnptSmsBrandName.Models.Master;
 
-namespace SMS_TYNB.ViewModel
+namespace VnptSmsBrandName.ViewModel
 {
 	public class MSmsViewModel
 	{
@@ -19,11 +19,11 @@ namespace SMS_TYNB.ViewModel
 		public DateTime? CreateAt { get; set; }
 
 		/// <summary>
-		/// dùng cho truyền danh sách cán bộ được tin nhắn gửi đến
+		/// d�ng cho truy?n danh s�ch c�n b? du?c tin nh?n g?i d?n
 		/// </summary>
 		public virtual ICollection<MEmployeeViewModel> Employees { get; set; } = new List<MEmployeeViewModel>();
 		/// <summary>
-		/// dùng cho hiển thị chi tiết các cán bộ nhận tin nhắn
+		/// d�ng cho hi?n th? chi ti?t c�c c�n b? nh?n tin nh?n
 		/// </summary>
 		public virtual ICollection<MEmployeeMessageStatisticalViewModel> EmployeesView { get; set; } = new List<MEmployeeMessageStatisticalViewModel>();
 	}

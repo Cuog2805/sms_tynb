@@ -1,7 +1,7 @@
-﻿namespace SMS_TYNB.Common
+namespace VnptSmsBrandName.Common
 {
 	/// <summary>
-	/// kết quả trả về từ service, service chỉ 1 loại dữ liệu
+	/// k?t qu? tr? v? t? service, service ch? 1 lo?i d? li?u
 	/// </summary>
 	public class ServiceResult<T> where T : class
 	{

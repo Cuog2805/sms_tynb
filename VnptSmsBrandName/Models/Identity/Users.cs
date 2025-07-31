@@ -1,8 +1,8 @@
-﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace SMS_TYNB.Models.Identity
+namespace VnptSmsBrandName.Models.Identity
 {
 	public class Users : IdentityUser
 	{

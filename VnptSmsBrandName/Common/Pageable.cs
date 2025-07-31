@@ -1,4 +1,4 @@
-﻿namespace SMS_TYNB.Common
+namespace VnptSmsBrandName.Common
 {
 	public class Pageable
 	{

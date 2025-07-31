@@ -1,12 +1,12 @@
-﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using SMS_TYNB.Common;
-using SMS_TYNB.Models.Master;
-using SMS_TYNB.Service;
-using SMS_TYNB.ViewModel;
+using VnptSmsBrandName.Common;
+using VnptSmsBrandName.Models.Master;
+using VnptSmsBrandName.Service;
+using VnptSmsBrandName.ViewModel;
 
-namespace SMS_TYNB.Controllers
+namespace VnptSmsBrandName.Controllers
 {
     [Authorize(Roles = "Admin")]
     public class ConfigController : Controller
@@ -58,11 +58,11 @@ namespace SMS_TYNB.Controllers
                     await _configService.Update(existing);
                 }
 
-                TempData["SuccessMessage"] = "Lưu cấu hình thành công.";
+                TempData["SuccessMessage"] = "Luu c?u h�nh th�nh c�ng.";
             }
             catch (Exception ex)
             {
-                TempData["ErrorMessage"] = "Có lỗi xảy ra khi lưu cấu hình.";
+                TempData["ErrorMessage"] = "C� l?i x?y ra khi luu c?u h�nh.";
             }
             return RedirectToAction(nameof(Index));
         }

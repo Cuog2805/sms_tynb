@@ -1,7 +1,7 @@
-﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace SMS_TYNB.Models.Master
+namespace VnptSmsBrandName.Models.Master
 {
 	public class BaseModel
 	{
@@ -26,11 +26,11 @@ namespace SMS_TYNB.Models.Master
 		/// </summary>
 		public DateTime? UpdatedAt { get; set; }
 		/// <summary>
-		/// id tổ chức
+		/// id t? ch?c
 		/// </summary>
 		public long IdOrganization { get; set; }
 		/// <summary>
-		/// trạng thái xóa, default value = 0
+		/// tr?ng th�i x�a, default value = 0
 		/// </summary>
 		public int IsDeleted { get; set; } = 0;
 	}

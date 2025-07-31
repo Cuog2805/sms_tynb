@@ -1,17 +1,17 @@
-﻿using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using RestSharp;
-using SMS_TYNB.Models.Master;
-using SMS_TYNB.ViewModel.ApiModel;
+using VnptSmsBrandName.Models.Master;
+using VnptSmsBrandName.ViewModel.ApiModel;
 using Sprache;
 using System.Text.Json.Nodes;
 using System.Text;
-using static SMS_TYNB.ViewModel.ApiModel.ContractApiViewModel;
-using static SMS_TYNB.ViewModel.ApiModel.SmsApiViewModel;
-using static SMS_TYNB.ViewModel.ApiModel.SmsStatusViewModel;
-using static SMS_TYNB.ViewModel.ApiModel.SmsTemplate;
+using static VnptSmsBrandName.ViewModel.ApiModel.ContractApiViewModel;
+using static VnptSmsBrandName.ViewModel.ApiModel.SmsApiViewModel;
+using static VnptSmsBrandName.ViewModel.ApiModel.SmsStatusViewModel;
+using static VnptSmsBrandName.ViewModel.ApiModel.SmsTemplate;
 
-namespace SMS_TYNB.Helper
+namespace VnptSmsBrandName.Helper
 {
     public static class SmsHelper
     {
@@ -80,7 +80,7 @@ namespace SMS_TYNB.Helper
                             REQID = reqId,
                             name = "send_sms_list",
                             ERROR = $"HTTP {response.StatusCode}",
-                            ERROR_DESC = "Gửi SMS thất bại"
+                            ERROR_DESC = "G?i SMS th?t b?i"
                         }
                     };
                     return res;

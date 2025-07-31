@@ -1,7 +1,7 @@
-﻿using Microsoft.EntityFrameworkCore;
-using SMS_TYNB.Models.Master;
+using Microsoft.EntityFrameworkCore;
+using VnptSmsBrandName.Models.Master;
 
-namespace SMS_TYNB.Repository
+namespace VnptSmsBrandName.Repository
 {
 	public class MFileRepository : BaseRepository<MFile, long>
 	{

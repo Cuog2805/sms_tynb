@@ -1,7 +1,7 @@
-﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace SMS_TYNB.Models.Master
+namespace VnptSmsBrandName.Models.Master
 {
 	[Table(name: "m_sms_employee")]
 	public class MSmsEmployee
@@ -12,22 +12,26 @@ namespace SMS_TYNB.Models.Master
 		public long IdSms { get; set; }
 		public long IdEmployee { get; set; }
 		public long IdGroup { get; set; }
+		/// <summary>
+		/// id t? ch?c
+		/// </summary>
+		public long IdOrganization { get; set; }
 
 		/// <summary>
-		/// id của req trả về khi gửi tin nhắn
+		/// id c?a req tr? v? khi g?i tin nh?n
 		/// </summary>
 		public string REQID { get; set; }
 
 		/// <summary>
-		/// tên SmsResponse trả về khi gửi tin nhắn
+		/// t�n SmsResponse tr? v? khi g?i tin nh?n
 		/// </summary>
 		public string name { get; set; }
 		/// <summary>
-		/// trạng thái trả về khi gửi tin nhắn
+		/// tr?ng th�i tr? v? khi g?i tin nh?n
 		/// </summary>
 		public string ERROR { get; set; }
 		/// <summary>
-		/// mô tả trạng thái trả về khi gửi tin nhắn
+		/// m� t? tr?ng th�i tr? v? khi g?i tin nh?n
 		/// </summary>
 		public string ERROR_DESC { get; set; }
 	}

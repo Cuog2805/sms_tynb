@@ -1,7 +1,7 @@
-﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace SMS_TYNB.Models.Master
+namespace VnptSmsBrandName.Models.Master
 {
 	[Table(name: "m_group_employee")]
 	public class MGroupEmployee
@@ -11,5 +11,9 @@ namespace SMS_TYNB.Models.Master
 		public long IdGroupEmployee { get; set; }
 		public long IdGroup { get; set; }
 		public long IdEmployee { get; set; }
+		/// <summary>
+		/// id t? ch?c
+		/// </summary>
+		public long IdOrganization { get; set; }
 	}
 }

@@ -1,15 +1,15 @@
-﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations;
 
-namespace SMS_TYNB.Common.Enum
+namespace VnptSmsBrandName.Common.Enum
 {
 	/// <summary>
-	/// enum trạng thái tin nhắn
+	/// enum tr?ng th�i tin nh?n
 	/// </summary>
 	public enum SmsStatusEnum
 	{
-		[Display(Name = "Lỗi gửi")]
+		[Display(Name = "L?i g?i")]
 		Error = 0,
-		[Display(Name = "Thành công")]
+		[Display(Name = "Th�nh c�ng")]
 		Sent = 1,
 	}
 }

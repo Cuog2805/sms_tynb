@@ -1,9 +1,9 @@
-﻿using Microsoft.EntityFrameworkCore;
-using SMS_TYNB.Common;
-using SMS_TYNB.Models.Master;
+using Microsoft.EntityFrameworkCore;
+using VnptSmsBrandName.Common;
+using VnptSmsBrandName.Models.Master;
 using System.Linq.Dynamic.Core;
 
-namespace SMS_TYNB.Repository
+namespace VnptSmsBrandName.Repository
 {
 	public class BaseRepository<T, TKey> where T : class where TKey : notnull
 	{
@@ -21,7 +21,7 @@ namespace SMS_TYNB.Repository
 
 		public virtual async Task<IEnumerable<T>> GetPagination(IQueryable<T> query, Pageable pageable)
 		{
-			//sắp xếp động
+			//s?p x?p d?ng
 			if (!string.IsNullOrEmpty(pageable.Sort))
 			{
 				query = query.OrderBy(pageable.Sort);

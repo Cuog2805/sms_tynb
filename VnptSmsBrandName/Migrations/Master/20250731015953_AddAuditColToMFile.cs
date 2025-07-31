@@ -1,9 +1,9 @@
-﻿using System;
+using System;
 using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-namespace SMS_TYNB.Migrations.Master
+namespace VnptSmsBrandName.Migrations.Master
 {
     public partial class AddAuditColToMFile : Migration
     {

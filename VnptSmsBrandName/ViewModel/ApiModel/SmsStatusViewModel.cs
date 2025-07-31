@@ -1,6 +1,6 @@
-﻿using System.Xml.Serialization;
+using System.Xml.Serialization;
 
-namespace SMS_TYNB.ViewModel.ApiModel
+namespace VnptSmsBrandName.ViewModel.ApiModel
 {
     public class SmsStatusViewModel
     {

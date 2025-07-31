@@ -1,7 +1,7 @@
-﻿using Microsoft.AspNetCore.Identity;
-using SMS_TYNB.Models.Identity;
+using Microsoft.AspNetCore.Identity;
+using VnptSmsBrandName.Models.Identity;
 
-namespace SMS_TYNB.Service
+namespace VnptSmsBrandName.Service
 {
 	public class CurrentUserService : ICurrentUserService
 	{

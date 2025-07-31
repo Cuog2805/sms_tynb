@@ -3,7 +3,7 @@ using Pomelo.EntityFrameworkCore.MySql.Scaffolding.Internal;
 using System;
 using System.Collections.Generic;
 
-namespace SMS_TYNB.Models.Master;
+namespace VnptSmsBrandName.Models.Master;
 
 public partial class VnptSmsBrandnameContext : DbContext
 {

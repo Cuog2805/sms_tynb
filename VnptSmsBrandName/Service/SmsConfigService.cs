@@ -1,11 +1,11 @@
-﻿using Microsoft.EntityFrameworkCore;
-using SMS_TYNB.Common;
-using SMS_TYNB.Models.Master;
-using SMS_TYNB.Repository;
-using SMS_TYNB.ViewModel;
+using Microsoft.EntityFrameworkCore;
+using VnptSmsBrandName.Common;
+using VnptSmsBrandName.Models.Master;
+using VnptSmsBrandName.Repository;
+using VnptSmsBrandName.ViewModel;
 using System.Threading.Tasks;
 
-namespace SMS_TYNB.Service
+namespace VnptSmsBrandName.Service
 {
     public class SmsConfigService : ISmsConfigService
     {

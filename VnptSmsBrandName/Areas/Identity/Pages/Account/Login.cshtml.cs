@@ -1,4 +1,4 @@
-﻿// Licensed to the .NET Foundation under one or more agreements.
+// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 #nullable disable
 
@@ -14,9 +14,9 @@ using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Logging;
-using SMS_TYNB.Models.Identity;
+using VnptSmsBrandName.Models.Identity;
 
-namespace SMS_TYNB.Areas.Identity.Pages.Account
+namespace VnptSmsBrandName.Areas.Identity.Pages.Account
 {
     public class LoginModel : PageModel
     {
@@ -128,7 +128,7 @@ namespace SMS_TYNB.Areas.Identity.Pages.Account
                 }
                 else
                 {
-                    ModelState.AddModelError(string.Empty, "Đăng nhập không thành công. Sai tài khoản hoặc mật khẩu.");
+                    ModelState.AddModelError(string.Empty, "�ang nh?p kh�ng th�nh c�ng. Sai t�i kho?n ho?c m?t kh?u.");
                     return Page();
                 }
             }

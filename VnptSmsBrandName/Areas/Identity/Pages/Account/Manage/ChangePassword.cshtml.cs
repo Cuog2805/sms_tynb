@@ -1,11 +1,11 @@
-﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using SMS_TYNB.Models.Identity;
+using VnptSmsBrandName.Models.Identity;
 using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Authorization;
 
-namespace SMS_TYNB.Areas.Identity.Pages.Account.Manage
+namespace VnptSmsBrandName.Areas.Identity.Pages.Account.Manage
 {
 	[Authorize]
 	public class ChangePasswordModel<TUser> : PageModel where TUser : class
@@ -32,20 +32,20 @@ namespace SMS_TYNB.Areas.Identity.Pages.Account.Manage
 
 		public class InputModel
 		{
-			[Required(ErrorMessage = "Mật khẩu hiện tại là bắt buộc")]
+			[Required(ErrorMessage = "M?t kh?u hi?n t?i l� b?t bu?c")]
 			[DataType(DataType.Password)]
-			[Display(Name = "Mật khẩu hiện tại")]
+			[Display(Name = "M?t kh?u hi?n t?i")]
 			public string OldPassword { get; set; }
 
-			[Required(ErrorMessage = "Mật khẩu mới là bắt buộc")]
-			[StringLength(100, ErrorMessage = "Mật khẩu phải có ít nhất {2} ký tự và tối đa {1} ký tự.", MinimumLength = 6)]
+			[Required(ErrorMessage = "M?t kh?u m?i l� b?t bu?c")]
+			[StringLength(100, ErrorMessage = "M?t kh?u ph?i c� �t nh?t {2} k� t? v� t?i da {1} k� t?.", MinimumLength = 6)]
 			[DataType(DataType.Password)]
-			[Display(Name = "Mật khẩu mới")]
+			[Display(Name = "M?t kh?u m?i")]
 			public string NewPassword { get; set; }
 
 			[DataType(DataType.Password)]
-			[Display(Name = "Xác nhận mật khẩu mới")]
-			[Compare("NewPassword", ErrorMessage = "Mật khẩu mới và xác nhận mật khẩu không khớp.")]
+			[Display(Name = "X�c nh?n m?t kh?u m?i")]
+			[Compare("NewPassword", ErrorMessage = "M?t kh?u m?i v� x�c nh?n m?t kh?u kh�ng kh?p.")]
 			public string ConfirmPassword { get; set; }
 		}
 
@@ -54,7 +54,7 @@ namespace SMS_TYNB.Areas.Identity.Pages.Account.Manage
 			var user = await _userManager.GetUserAsync(User);
 			if (user == null)
 			{
-				return NotFound($"Không thể tải người dùng có ID '{_userManager.GetUserId(User)}'.");
+				return NotFound($"Kh�ng th? t?i ngu?i d�ng c� ID '{_userManager.GetUserId(User)}'.");
 			}
 
 			var hasPassword = await _userManager.HasPasswordAsync(user);
@@ -76,7 +76,7 @@ namespace SMS_TYNB.Areas.Identity.Pages.Account.Manage
 			var user = await _userManager.GetUserAsync(User);
 			if (user == null)
 			{
-				return NotFound($"Không thể tải người dùng có ID '{_userManager.GetUserId(User)}'.");
+				return NotFound($"Kh�ng th? t?i ngu?i d�ng c� ID '{_userManager.GetUserId(User)}'.");
 			}
 
 			var changePasswordResult = await _userManager.ChangePasswordAsync(user, Input.OldPassword, Input.NewPassword);
@@ -90,8 +90,8 @@ namespace SMS_TYNB.Areas.Identity.Pages.Account.Manage
 			}
 
 			await _signInManager.RefreshSignInAsync(user);
-			_logger.LogInformation("Người dùng đã thay đổi mật khẩu thành công.");
-			StatusMessage = "Mật khẩu của bạn đã được thay đổi thành công.";
+			_logger.LogInformation("Ngu?i d�ng d� thay d?i m?t kh?u th�nh c�ng.");
+			StatusMessage = "M?t kh?u c?a b?n d� du?c thay d?i th�nh c�ng.";
 
 			return RedirectToPage();
 		}

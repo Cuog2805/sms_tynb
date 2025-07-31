@@ -1,4 +1,4 @@
-﻿// Licensed to the .NET Foundation under one or more agreements.
+// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 #nullable disable
 
@@ -13,9 +13,9 @@ using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.WebUtilities;
-using SMS_TYNB.Models.Identity;
+using VnptSmsBrandName.Models.Identity;
 
-namespace SMS_TYNB.Areas.Identity.Pages.Account
+namespace VnptSmsBrandName.Areas.Identity.Pages.Account
 {
     [Authorize]
     public class ForgotPasswordModel : PageModel
@@ -74,7 +74,7 @@ namespace SMS_TYNB.Areas.Identity.Pages.Account
 
                 await _emailSender.SendEmailAsync(
                     Input.Email,
-                    "SMS_TYNB Reset Password",
+                    "VnptSmsBrandName Reset Password",
                     $"Please reset your password by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here</a>.");
 
                 return RedirectToPage("./ForgotPasswordConfirmation");

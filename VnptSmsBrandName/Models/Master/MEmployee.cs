@@ -1,8 +1,8 @@
-﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Diagnostics.CodeAnalysis;
 
-namespace SMS_TYNB.Models.Master
+namespace VnptSmsBrandName.Models.Master
 {
 	[Table(name: "m_employee")]
 	public class MEmployee: BaseModel
@@ -22,7 +22,7 @@ namespace SMS_TYNB.Models.Master
 		public string PhoneNumber { get; set; }
 
 		/// <summary>
-		/// sđt gửi tin nhắn
+		/// sdt g?i tin nh?n
 		/// </summary>
 		[Required]
 		[MaxLength(15)]

@@ -1,12 +1,12 @@
-﻿using Microsoft.EntityFrameworkCore;
-using SMS_TYNB.Common;
-using SMS_TYNB.Common.Enum;
-using SMS_TYNB.Helper;
-using SMS_TYNB.Models.Master;
-using SMS_TYNB.Repository;
-using SMS_TYNB.ViewModel;
+using Microsoft.EntityFrameworkCore;
+using VnptSmsBrandName.Common;
+using VnptSmsBrandName.Common.Enum;
+using VnptSmsBrandName.Helper;
+using VnptSmsBrandName.Models.Master;
+using VnptSmsBrandName.Repository;
+using VnptSmsBrandName.ViewModel;
 
-namespace SMS_TYNB.Service
+namespace VnptSmsBrandName.Service
 {
 	public class MEmployeeService: BaseService, IMEmployeeService
 	{

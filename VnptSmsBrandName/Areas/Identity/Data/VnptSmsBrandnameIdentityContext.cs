@@ -1,9 +1,9 @@
-﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using SMS_TYNB.Models.Identity;
+using VnptSmsBrandName.Models.Identity;
 
-namespace SMS_TYNB.Data;
+namespace VnptSmsBrandName.Data;
 
 public class VnptSmsBrandnameIdentityContext : IdentityDbContext<Users>
 {

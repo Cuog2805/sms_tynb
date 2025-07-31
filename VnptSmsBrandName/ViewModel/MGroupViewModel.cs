@@ -1,6 +1,6 @@
-﻿using SMS_TYNB.Models;
+using VnptSmsBrandName.Models;
 
-namespace SMS_TYNB.ViewModel
+namespace VnptSmsBrandName.ViewModel
 {
 	public class MGroupViewModel
 	{

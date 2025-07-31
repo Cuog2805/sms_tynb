@@ -1,7 +1,7 @@
-﻿using Microsoft.AspNetCore.Mvc.Rendering;
-using SMS_TYNB.Models;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using VnptSmsBrandName.Models;
 
-namespace SMS_TYNB.ViewModel
+namespace VnptSmsBrandName.ViewModel
 {
 	public class BaseFormViewModel<T>
 	{

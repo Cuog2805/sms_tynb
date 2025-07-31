@@ -1,7 +1,7 @@
-﻿using SMS_TYNB.Models.Master;
-using SMS_TYNB.ViewModel;
+using VnptSmsBrandName.Models.Master;
+using VnptSmsBrandName.ViewModel;
 
-namespace SMS_TYNB.Repository
+namespace VnptSmsBrandName.Repository
 {
     public class SmsConfigRepository : BaseRepository<SmsConfig, long>
     {

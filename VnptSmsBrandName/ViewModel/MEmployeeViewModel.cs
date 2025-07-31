@@ -1,4 +1,4 @@
-﻿namespace SMS_TYNB.ViewModel
+namespace VnptSmsBrandName.ViewModel
 {
 	public class MEmployeeViewModel
 	{
@@ -30,26 +30,26 @@
 		public long? IdGroup { get; set; }
 		public string? GroupName { get; set; }
 		/// <summary>
-		/// trạng thái tin nhắn gửi đến cán bộ
+		/// tr?ng th�i tin nh?n g?i d?n c�n b?
 		/// </summary>
 		public string? ERROR { get; set; }
 		/// <summary>
-		/// mô tả lỗi của tin nhắn gửi đến cán bộ
+		/// m� t? l?i c?a tin nh?n g?i d?n c�n b?
 		/// </summary>
 		public string? ERROR_DESC { get; set; }
 	}
 
 	/// <summary>
-	/// ViewModel cho import danh sách cán bộ từ file excel
+	/// ViewModel cho import danh s�ch c�n b? t? file excel
 	/// </summary>
 	public class MEmployeeCreateRangeViewModel
 	{
 		/// <summary>
-		/// danh sách cán bộ đã được import thành công
+		/// danh s�ch c�n b? d� du?c import th�nh c�ng
 		/// </summary>
 		public List<MEmployeeViewModel>? MEmployeeNew { get; set; }
 		/// <summary>
-		/// danh sách cán bộ bị trùng số điện thoại
+		/// danh s�ch c�n b? b? tr�ng s? di?n tho?i
 		/// </summary>
 		public List<MEmployeeViewModel>? MEmployeeDupplicate { get; set; }
 	}

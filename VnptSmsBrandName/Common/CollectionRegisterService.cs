@@ -1,7 +1,7 @@
-﻿using SMS_TYNB.Repository;
-using SMS_TYNB.Service;
+using VnptSmsBrandName.Repository;
+using VnptSmsBrandName.Service;
 
-namespace SMS_TYNB.Common
+namespace VnptSmsBrandName.Common
 {
 	public static class CollectionRegisterService
 	{

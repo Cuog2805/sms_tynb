@@ -1,9 +1,9 @@
-﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using SMS_TYNB.Models.Identity;
-using SMS_TYNB.Models.Master;
+using VnptSmsBrandName.Models.Identity;
+using VnptSmsBrandName.Models.Master;
 
-namespace SMS_TYNB.Repository
+namespace VnptSmsBrandName.Repository
 {
 	public class WpUsersRepository
 	{

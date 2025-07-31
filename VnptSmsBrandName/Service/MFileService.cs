@@ -1,13 +1,13 @@
-﻿using Microsoft.EntityFrameworkCore;
-using SMS_TYNB.Common;
-using SMS_TYNB.Helper;
-using SMS_TYNB.Models.Identity;
-using SMS_TYNB.Models.Master;
-using SMS_TYNB.Repository;
-using SMS_TYNB.ViewModel;
+using Microsoft.EntityFrameworkCore;
+using VnptSmsBrandName.Common;
+using VnptSmsBrandName.Helper;
+using VnptSmsBrandName.Models.Identity;
+using VnptSmsBrandName.Models.Master;
+using VnptSmsBrandName.Repository;
+using VnptSmsBrandName.ViewModel;
 using System.Threading.Tasks;
 
-namespace SMS_TYNB.Service
+namespace VnptSmsBrandName.Service
 {
 	public class MFileService: BaseService, IMFileService
 	{
@@ -57,7 +57,7 @@ namespace SMS_TYNB.Service
 			await SetCreateAudit(model);
 			MFile file = await _mFileRepository.Create(model);
 
-			// Lưu lịch sử tạo file
+			// Luu l?ch s? t?o file
 			var history = new MHistory
 			{
 				IdOrganization = file.IdOrganization,
@@ -75,9 +75,9 @@ namespace SMS_TYNB.Service
 		public async Task<MFile> SaveFile(IFormFile file, Users creator, long smsId, string subFolder = "upload")
 		{
 			if (file == null || file.Length == 0)
-				throw new Exception("File không hợp lệ");
+				throw new Exception("File kh�ng h?p l?");
 
-			// Tạo thư mục upload nếu chưa tồn tại
+			// T?o thu m?c upload n?u chua t?n t?i
 			var subFolderUser = Path.Combine(subFolder, DateTime.Now.ToString("ddMMyyyy"));
 			var uploadPath = Path.Combine(_environment.WebRootPath, subFolderUser);
 			if (!Directory.Exists(uploadPath))
@@ -91,22 +91,22 @@ namespace SMS_TYNB.Service
 
 			if (!allowedExtensions.Contains(fileExtension))
 			{
-				throw new Exception($"{fileExtension} không hợp lệ");
+				throw new Exception($"{fileExtension} kh�ng h?p l?");
 			}
 
-			// Tạo tên file
+			// T?o t�n file
 			var fileName = file.FileName.Replace(" ", "_");
 			fileName = CommonHelper.RemoveUnicodeMark(fileName);
 			fileName = CommonHelper.RemoveSign4VietnameseString(fileName);
 			var filePath = Path.Combine(uploadPath, fileName);
 
-			// Lưu file
+			// Luu file
 			using (var stream = new FileStream(filePath, FileMode.Create))
 			{
 				await file.CopyToAsync(stream);
 			}
 
-			// Lưu thông tin file vào DB
+			// Luu th�ng tin file v�o DB
 			var fileSave = new MFile
 			{
 				Name = fileName,
@@ -116,7 +116,7 @@ namespace SMS_TYNB.Service
 
 			fileSave = await Create(fileSave);
 
-			// Lưu thông tin SmsFile
+			// Luu th�ng tin SmsFile
 			var smsfile = new MSmsFile()
 			{
 				IdSms = smsId,
@@ -134,7 +134,7 @@ namespace SMS_TYNB.Service
 				var existingFiles = await _mFileRepository.GetByIdFiles(selectedFileIds);
 				foreach (var existingFile in existingFiles)
 				{
-					// Kiểm tra xem liên kết đã tồn tại chưa để tránh trùng lặp
+					// Ki?m tra xem li�n k?t d� t?n t?i chua d? tr�nh tr�ng l?p
 					var existingSmsFile = _mSmsFileRepository.GetBySmsIdAndFileId(smsId, existingFile.IdFile);
 					if (existingSmsFile == null)
 					{
@@ -156,19 +156,19 @@ namespace SMS_TYNB.Service
 		public async Task UpdateContentFile(IFormFile file, long oldFileId)
 		{
 			if (file == null || file.Length == 0)
-				throw new Exception("File không hợp lệ");
+				throw new Exception("File kh�ng h?p l?");
 
 			var oldFile = await _mFileRepository.FindById(oldFileId);
 			if (oldFile == null)
-				throw new Exception("File không tồn tại");
+				throw new Exception("File kh�ng t?n t?i");
 
 			string fileExtension = Path.GetExtension(oldFile.Name);
-			// Validate file extension của file mới
+			// Validate file extension c?a file m?i
 			var allowedExtensions = new[] { fileExtension };
 			var newFileExtension = Path.GetExtension(file.FileName).ToLower();
 			if (!allowedExtensions.Contains(newFileExtension))
 			{
-				throw new Exception($"{newFileExtension} không hợp lệ");
+				throw new Exception($"{newFileExtension} kh�ng h?p l?");
 			}
 
 			try
@@ -176,7 +176,7 @@ namespace SMS_TYNB.Service
 				var oldFileRelativePath = oldFile.FileUrl.TrimStart('/');
 				var oldFilePath = Path.Combine(_environment.WebRootPath, oldFileRelativePath);
 
-				// Backup file cũ
+				// Backup file cu
 				string backupFilePath = null;
 				if (File.Exists(oldFilePath))
 				{
@@ -194,7 +194,7 @@ namespace SMS_TYNB.Service
 					Directory.CreateDirectory(directory);
 				}
 
-				// Lưu file mới với tên của file cũ
+				// Luu file m?i v?i t�n c?a file cu
 				using (var stream = new FileStream(oldFilePath, FileMode.Create))
 				{
 					await file.CopyToAsync(stream);
@@ -202,7 +202,7 @@ namespace SMS_TYNB.Service
 
 				await SetUpdateAudit(oldFile);
 				await _mFileRepository.Update(oldFile.IdFile, oldFile);
-				// Lưu lịch sử thay đổi file
+				// Luu l?ch s? thay d?i file
 				var user = await _currentUserService.GetCurrentUser();
 				var history = new MHistory
 				{
@@ -215,7 +215,7 @@ namespace SMS_TYNB.Service
 				};
 				await _mHistoryRepository.Create(history);
 
-				// Xóa backup file
+				// X�a backup file
 				if (!string.IsNullOrEmpty(backupFilePath) && File.Exists(backupFilePath))
 				{
 					File.Delete(backupFilePath);
@@ -236,7 +236,7 @@ namespace SMS_TYNB.Service
 					File.Move(backupFilePath, oldFilePath);
 				}
 
-				throw new Exception($"Lỗi khi cập nhật file: {ex.Message}");
+				throw new Exception($"L?i khi c?p nh?t file: {ex.Message}");
 			}
 		}
 

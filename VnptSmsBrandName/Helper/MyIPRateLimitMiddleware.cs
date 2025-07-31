@@ -1,8 +1,8 @@
-﻿using AspNetCoreRateLimit;
+using AspNetCoreRateLimit;
 using Microsoft.Extensions.Options;
 using System.Text;
 
-namespace SMS_TYNB.Helper;
+namespace VnptSmsBrandName.Helper;
 
 public class MyIPRateLimitMiddleware : IpRateLimitMiddleware
 {
@@ -25,16 +25,16 @@ public class MyIPRateLimitMiddleware : IpRateLimitMiddleware
     private static Task ReturnHtmlQuotaExceededResponse(HttpContext context, RateLimitRule rule, string retryAfter)
     {
         string message =
-            $"Bạn đã vượt quá giới hạn truy cập. Tối đa {rule.Limit} lần mỗi {rule.Period}. Vui lòng thử lại sau {retryAfter} giây.";
+            $"B?n d� vu?t qu� gi?i h?n truy c?p. T?i da {rule.Limit} l?n m?i {rule.Period}. Vui l�ng th? l?i sau {retryAfter} gi�y.";
         string html = $@"
             <!DOCTYPE html>
             <html lang=""vi"">
             <head>
                 <meta charset=""UTF-8"">
-                <title>Thông báo giới hạn truy cập</title>
+                <title>Th�ng b�o gi?i h?n truy c?p</title>
                 <script type=""text/javascript"">
                     alert(""{message}"");
-                    window.location.href = '/'; // Chuyển hướng về trang chủ hoặc trang mong muốn
+                    window.location.href = '/'; // Chuy?n hu?ng v? trang ch? ho?c trang mong mu?n
                 </script>
             </head>
             <body></body>

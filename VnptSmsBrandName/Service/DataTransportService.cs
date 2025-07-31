@@ -1,4 +1,4 @@
-﻿namespace SMS_TYNB.Service
+namespace VnptSmsBrandName.Service
 {
 	public class FileDownloadResult
 	{

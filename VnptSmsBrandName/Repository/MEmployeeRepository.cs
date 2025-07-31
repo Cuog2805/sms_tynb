@@ -1,7 +1,7 @@
-﻿using Microsoft.EntityFrameworkCore;
-using SMS_TYNB.Models.Master;
+using Microsoft.EntityFrameworkCore;
+using VnptSmsBrandName.Models.Master;
 
-namespace SMS_TYNB.Repository
+namespace VnptSmsBrandName.Repository
 {
 	public class MEmployeeRepository : BaseRepository<MEmployee, long>
 	{
@@ -27,7 +27,7 @@ namespace SMS_TYNB.Repository
 		}
 
 		/// <summary>
-		/// tìm kiếm MEmployee có sđt tồn tại danh sách sđt truyền vào
+		/// t�m ki?m MEmployee c� sdt t?n t?i danh s�ch sdt truy?n v�o
 		/// </summary>
 		/// <param name="phonenumbers"></param>
 		/// <returns></returns>

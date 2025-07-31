@@ -1,7 +1,7 @@
-﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace SMS_TYNB.Models.Master
+namespace VnptSmsBrandName.Models.Master
 {
 	[Table(name: "m_history")]
 	public class MHistory
@@ -11,7 +11,7 @@ namespace SMS_TYNB.Models.Master
 		public long IdHistory { get; set; }
 		public long IdOrganization { get; set; }
 		/// <summary>
-		/// tên bảng lưu lịch sử
+		/// t�n b?ng luu l?ch s?
 		/// </summary>
 		[Required]
 		[MaxLength(500)]
@@ -19,7 +19,7 @@ namespace SMS_TYNB.Models.Master
 		public string TableName { get; set; }
 
 		/// <summary>
-		/// id của bản ghi ở bảng lưu lịch sử
+		/// id c?a b?n ghi ? b?ng luu l?ch s?
 		/// </summary>
 		public long IdRecord { get; set; }
 

@@ -1,10 +1,10 @@
-﻿using System;
+using System;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-namespace SMS_TYNB.Migrations.Identity
+namespace VnptSmsBrandName.Migrations.Identity
 {
     public partial class InitIdentityVnptSmsBrandname : Migration
     {

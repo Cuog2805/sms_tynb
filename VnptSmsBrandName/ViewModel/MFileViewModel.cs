@@ -1,8 +1,8 @@
-﻿using SMS_TYNB.Models.Master;
+using VnptSmsBrandName.Models.Master;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace SMS_TYNB.ViewModel
+namespace VnptSmsBrandName.ViewModel
 {
 	public class MFileViewModel
 	{

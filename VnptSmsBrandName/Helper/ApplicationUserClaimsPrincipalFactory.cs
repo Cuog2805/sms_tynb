@@ -1,9 +1,9 @@
-﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Options;
-using SMS_TYNB.Models.Identity;
+using VnptSmsBrandName.Models.Identity;
 using System.Security.Claims;
 
-namespace SMS_TYNB.Helper
+namespace VnptSmsBrandName.Helper
 {
     public class ApplicationUserClaimsPrincipalFactory : UserClaimsPrincipalFactory<Users, IdentityRole>
     {

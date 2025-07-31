@@ -97,12 +97,12 @@ namespace SMS_TYNB.Areas.Identity.Pages.Account.Manage
 		}
 	}
 
-	public class ChangePasswordModel : ChangePasswordModel<WpUsers>
+	public class ChangePasswordModel : ChangePasswordModel<Users>
 	{
 		public ChangePasswordModel(
-			UserManager<WpUsers> userManager,
-			SignInManager<WpUsers> signInManager,
-			ILogger<ChangePasswordModel<WpUsers>> logger) : base(userManager, signInManager, logger)
+			UserManager<Users> userManager,
+			SignInManager<Users> signInManager,
+			ILogger<ChangePasswordModel<Users>> logger) : base(userManager, signInManager, logger)
 		{
 		}
 	}

@@ -12,10 +12,10 @@ namespace SMS_TYNB.Controllers
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
-        UserManager<WpUsers> _userManager;
+        UserManager<Users> _userManager;
 
 
-		public HomeController(ILogger<HomeController> logger, UserManager<WpUsers> userManager)
+		public HomeController(ILogger<HomeController> logger, UserManager<Users> userManager)
         {
             _logger = logger;
             _userManager = userManager;

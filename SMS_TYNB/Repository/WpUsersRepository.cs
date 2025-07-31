@@ -7,16 +7,16 @@ namespace SMS_TYNB.Repository
 {
 	public class WpUsersRepository
 	{
-		private readonly UserManager<WpUsers> _userManager;
+		private readonly UserManager<Users> _userManager;
 
-		public WpUsersRepository(UserManager<WpUsers> userManager)
+		public WpUsersRepository(UserManager<Users> userManager)
 		{
 			_userManager = userManager;
 		}
 
-		public async Task<IEnumerable<WpUsers>> GetAll()
+		public async Task<IEnumerable<Users>> GetAll()
 		{
-			return await _userManager.Users.Select(item => new WpUsers()
+			return await _userManager.Users.Select(item => new Users()
 			{
 				Id = item.Id,
 				UserName = item.UserName,

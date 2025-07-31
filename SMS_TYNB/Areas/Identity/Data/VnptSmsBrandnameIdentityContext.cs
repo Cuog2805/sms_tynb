@@ -5,7 +5,7 @@ using SMS_TYNB.Models.Identity;
 
 namespace SMS_TYNB.Data;
 
-public class VnptSmsBrandnameIdentityContext : IdentityDbContext<WpUsers>
+public class VnptSmsBrandnameIdentityContext : IdentityDbContext<Users>
 {
     public VnptSmsBrandnameIdentityContext(DbContextOptions<VnptSmsBrandnameIdentityContext> options)
         : base(options)
@@ -15,7 +15,7 @@ public class VnptSmsBrandnameIdentityContext : IdentityDbContext<WpUsers>
     protected override void OnModelCreating(ModelBuilder builder)
     {
         base.OnModelCreating(builder);
-		builder.Entity<WpUsers>().ToTable("users");
+		builder.Entity<Users>().ToTable("users");
 		builder.Entity<IdentityRole>().ToTable("roles");
 		builder.Entity<IdentityUserRole<string>>().ToTable("user_roles");
 		builder.Entity<IdentityUserClaim<string>>().ToTable("user_claims");

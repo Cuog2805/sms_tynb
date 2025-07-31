@@ -25,17 +25,17 @@ namespace SMS_TYNB.Areas.Identity.Pages.Account
     [Authorize]
     public class RegisterModel : PageModel
     {
-        private readonly SignInManager<WpUsers> _signInManager;
-        private readonly UserManager<WpUsers> _userManager;
-        private readonly IUserStore<WpUsers> _userStore;
-        private readonly IUserEmailStore<WpUsers> _emailStore;
+        private readonly SignInManager<Users> _signInManager;
+        private readonly UserManager<Users> _userManager;
+        private readonly IUserStore<Users> _userStore;
+        private readonly IUserEmailStore<Users> _emailStore;
         private readonly ILogger<RegisterModel> _logger;
         private readonly IEmailSender _emailSender;
 
         public RegisterModel(
-            UserManager<WpUsers> userManager,
-            IUserStore<WpUsers> userStore,
-            SignInManager<WpUsers> signInManager,
+            UserManager<Users> userManager,
+            IUserStore<Users> userStore,
+            SignInManager<Users> signInManager,
             ILogger<RegisterModel> logger,
             IEmailSender emailSender)
         {
@@ -125,7 +125,7 @@ namespace SMS_TYNB.Areas.Identity.Pages.Account
                 //
                 // await _userStore.SetUserNameAsync(user, Input.UserName, CancellationToken.None);
                 // await _emailStore.SetEmailAsync(user, Input.UserName, CancellationToken.None);
-                var user = new WpUsers { UserName = Input.UserName, FullName = Input.FullName, Email = Input.Email, PhoneNumber = Input.PhoneNumber, UserRole ="4fe2fb87-b228-4131-97b6-aad71d0ae3e9",  OrgId = 1, UserId = 1, State = 1 };
+                var user = new Users { UserName = Input.UserName, FullName = Input.FullName, Email = Input.Email, PhoneNumber = Input.PhoneNumber, UserRole ="4fe2fb87-b228-4131-97b6-aad71d0ae3e9",  OrgId = 1, UserId = 1, State = 1 };
                 var result = await _userManager.CreateAsync(user, Input.Password);
 
                 if (result.Succeeded)
@@ -164,27 +164,27 @@ namespace SMS_TYNB.Areas.Identity.Pages.Account
             return Page();
         }
 
-        private WpUsers CreateUser()
+        private Users CreateUser()
         {
             try
             {
-                return Activator.CreateInstance<WpUsers>();
+                return Activator.CreateInstance<Users>();
             }
             catch
             {
-                throw new InvalidOperationException($"Can't create an instance of '{nameof(WpUsers)}'. " +
-                    $"Ensure that '{nameof(WpUsers)}' is not an abstract class and has a parameterless constructor, or alternatively " +
+                throw new InvalidOperationException($"Can't create an instance of '{nameof(Users)}'. " +
+                    $"Ensure that '{nameof(Users)}' is not an abstract class and has a parameterless constructor, or alternatively " +
                     $"override the register page in /Areas/Identity/Pages/Account/Register.cshtml");
             }
         }
 
-        private IUserEmailStore<WpUsers> GetEmailStore()
+        private IUserEmailStore<Users> GetEmailStore()
         {
             if (!_userManager.SupportsUserEmail)
             {
                 throw new NotSupportedException("The default UI requires a user store with email support.");
             }
-            return (IUserEmailStore<WpUsers>)_userStore;
+            return (IUserEmailStore<Users>)_userStore;
         }
     }
 }

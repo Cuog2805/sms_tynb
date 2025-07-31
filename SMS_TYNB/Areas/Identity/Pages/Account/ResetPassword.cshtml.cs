@@ -18,9 +18,9 @@ namespace SMS_TYNB.Areas.Identity.Pages.Account
     [Authorize]
     public class ResetPasswordModel : PageModel
     {
-        private readonly UserManager<WpUsers> _userManager;
+        private readonly UserManager<Users> _userManager;
 
-        public ResetPasswordModel(UserManager<WpUsers> userManager)
+        public ResetPasswordModel(UserManager<Users> userManager)
         {
             _userManager = userManager;
         }

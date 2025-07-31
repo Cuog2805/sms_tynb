@@ -1,8 +1,8 @@
 ﻿@using Microsoft.AspNetCore.Identity
 @using SMS_TYNB.Models.Identity
 
-@inject SignInManager<WpUsers> SignInManager
-@inject UserManager<WpUsers> UserManager
+@inject SignInManager<Users> SignInManager
+@inject UserManager<Users> UserManager
 
 <ul class="navbar-nav">
 @if (SignInManager.IsSignedIn(User))

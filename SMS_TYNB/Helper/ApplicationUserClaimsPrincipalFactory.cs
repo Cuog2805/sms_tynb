@@ -5,14 +5,14 @@ using System.Security.Claims;
 
 namespace SMS_TYNB.Helper
 {
-    public class ApplicationUserClaimsPrincipalFactory : UserClaimsPrincipalFactory<WpUsers, IdentityRole>
+    public class ApplicationUserClaimsPrincipalFactory : UserClaimsPrincipalFactory<Users, IdentityRole>
     {
         public ApplicationUserClaimsPrincipalFactory(
-            UserManager<WpUsers> userManager,
+            UserManager<Users> userManager,
             RoleManager<IdentityRole> roleManager,
             IOptions<IdentityOptions> options
             ) : base(userManager, roleManager, options) { }
-        protected override async Task<ClaimsIdentity> GenerateClaimsAsync(WpUsers user)
+        protected override async Task<ClaimsIdentity> GenerateClaimsAsync(Users user)
         {
             var identity = await base.GenerateClaimsAsync(user);
             identity.AddClaim(new Claim("FullName",

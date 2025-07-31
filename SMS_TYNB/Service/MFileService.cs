@@ -72,7 +72,7 @@ namespace SMS_TYNB.Service
 			return file;
 		}
 
-		public async Task<MFile> SaveFile(IFormFile file, WpUsers creator, long smsId, string subFolder = "upload")
+		public async Task<MFile> SaveFile(IFormFile file, Users creator, long smsId, string subFolder = "upload")
 		{
 			if (file == null || file.Length == 0)
 				throw new Exception("File không hợp lệ");
@@ -126,7 +126,7 @@ namespace SMS_TYNB.Service
 
 			return fileSave;
 		}
-		public async Task<IEnumerable<MFile>> CreateFromFileExisted(List<long> selectedFileIds, WpUsers creator, long smsId)
+		public async Task<IEnumerable<MFile>> CreateFromFileExisted(List<long> selectedFileIds, Users creator, long smsId)
 		{
 			var linkedFiles = new List<MFile>();
 			if (selectedFileIds != null && selectedFileIds.Any())
@@ -280,8 +280,8 @@ namespace SMS_TYNB.Service
 		Task<MFile> Create(MFile model);
 		Task<IEnumerable<MFile>> GetAllFile();
 		Task<PageResult<MFile>> SearchFile(string searchInput, Pageable pageable);
-		Task<MFile> SaveFile(IFormFile file, WpUsers creator, long smsId, string subFolder = "upload");
-		Task<IEnumerable<MFile>> CreateFromFileExisted(List<long> selectedFileIds, WpUsers creator, long smsId);
+		Task<MFile> SaveFile(IFormFile file, Users creator, long smsId, string subFolder = "upload");
+		Task<IEnumerable<MFile>> CreateFromFileExisted(List<long> selectedFileIds, Users creator, long smsId);
 		Task UpdateContentFile(IFormFile file, long oldFileId);
 		Task<MFileViewModel> GetAllFileHistory(long id);
 	}

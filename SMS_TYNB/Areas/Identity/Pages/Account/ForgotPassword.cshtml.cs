@@ -20,10 +20,10 @@ namespace SMS_TYNB.Areas.Identity.Pages.Account
     [Authorize]
     public class ForgotPasswordModel : PageModel
     {
-        private readonly UserManager<WpUsers> _userManager;
+        private readonly UserManager<Users> _userManager;
         private readonly IEmailSender _emailSender;
 
-        public ForgotPasswordModel(UserManager<WpUsers> userManager, IEmailSender emailSender)
+        public ForgotPasswordModel(UserManager<Users> userManager, IEmailSender emailSender)
         {
             _userManager = userManager;
             _emailSender = emailSender;

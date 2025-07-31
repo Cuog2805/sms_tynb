@@ -20,7 +20,7 @@ namespace SMS_TYNB.Controllers
     [Authorize(Roles = "Admin, User")]
     public class MessageController : Controller
     {
-        private readonly UserManager<WpUsers> _userManager;
+        private readonly UserManager<Users> _userManager;
         private readonly IMSmsService _mSmsService;
         private readonly IMGroupService _mGroupService;
         private readonly IMEmployeeService _mEmployeeService;
@@ -28,7 +28,7 @@ namespace SMS_TYNB.Controllers
 
 		public MessageController
         (
-            UserManager<WpUsers> userManager, 
+            UserManager<Users> userManager, 
             IMSmsService mSmsService, 
 			IMGroupService mGroupService, 
             IMEmployeeService mEmployeeService, 
@@ -51,7 +51,7 @@ namespace SMS_TYNB.Controllers
 		[HttpPost]
 		public async Task<IActionResult> SendMessage(string content, string canbos, List<IFormFile> fileDinhKem, List<long> selectedFileIds)
 		{
-			WpUsers? user = await _userManager.GetUserAsync(HttpContext.User);
+			Users? user = await _userManager.GetUserAsync(HttpContext.User);
 			var model = new MSmsViewModel()
 			{
 				Content = content,

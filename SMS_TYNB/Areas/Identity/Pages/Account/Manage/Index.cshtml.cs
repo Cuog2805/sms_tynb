@@ -15,12 +15,12 @@ namespace SMS_TYNB.Areas.Identity.Pages.Account.Manage
 {
     public class IndexModel : PageModel
     {
-        private readonly UserManager<WpUsers> _userManager;
-        private readonly SignInManager<WpUsers> _signInManager;
+        private readonly UserManager<Users> _userManager;
+        private readonly SignInManager<Users> _signInManager;
 
         public IndexModel(
-            UserManager<WpUsers> userManager,
-            SignInManager<WpUsers> signInManager)
+            UserManager<Users> userManager,
+            SignInManager<Users> signInManager)
         {
             _userManager = userManager;
             _signInManager = signInManager;
@@ -61,7 +61,7 @@ namespace SMS_TYNB.Areas.Identity.Pages.Account.Manage
             public string PhoneNumber { get; set; }
         }
 
-        private async Task LoadAsync(WpUsers user)
+        private async Task LoadAsync(Users user)
         {
             var userName = await _userManager.GetUserNameAsync(user);
             var phoneNumber = await _userManager.GetPhoneNumberAsync(user);

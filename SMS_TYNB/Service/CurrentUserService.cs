@@ -5,18 +5,18 @@ namespace SMS_TYNB.Service
 {
 	public class CurrentUserService : ICurrentUserService
 	{
-		private readonly UserManager<WpUsers> _userManager;
+		private readonly UserManager<Users> _userManager;
 		private readonly IHttpContextAccessor _httpContextAccessor;
 
 		public CurrentUserService(
-			UserManager<WpUsers> userManager,
+			UserManager<Users> userManager,
 			IHttpContextAccessor httpContextAccessor)
 		{
 			_userManager = userManager;
 			_httpContextAccessor = httpContextAccessor;
 		}
 
-		public async Task<WpUsers?> GetCurrentUser()
+		public async Task<Users?> GetCurrentUser()
 		{
 			var httpContext = _httpContextAccessor.HttpContext;
 			if (httpContext?.User?.Identity?.IsAuthenticated == true)
@@ -29,6 +29,6 @@ namespace SMS_TYNB.Service
 
 	public interface ICurrentUserService
 	{
-		Task<WpUsers?> GetCurrentUser();
+		Task<Users?> GetCurrentUser();
 	}
 }

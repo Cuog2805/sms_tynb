@@ -33,7 +33,7 @@ namespace SMS_TYNB
 
             builder.Services.AddRazorPages();
 
-            builder.Services.AddIdentity<WpUsers, IdentityRole>(options => options.SignIn.RequireConfirmedAccount = true)
+            builder.Services.AddIdentity<Users, IdentityRole>(options => options.SignIn.RequireConfirmedAccount = true)
                 .AddDefaultUI()
                 .AddEntityFrameworkStores<VnptSmsBrandnameIdentityContext>()
                 .AddDefaultTokenProviders();

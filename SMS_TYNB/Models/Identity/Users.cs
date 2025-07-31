@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace SMS_TYNB.Models.Identity
 {
-	public class WpUsers : IdentityUser
+	public class Users : IdentityUser
 	{
 		public long OrgId { get; set; }
 		public long UserId { get; set; } 

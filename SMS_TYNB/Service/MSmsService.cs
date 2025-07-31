@@ -45,7 +45,7 @@ namespace SMS_TYNB.Service
 			_mFileService = mFileService;
 			_smsConfigService = smsConfigService;
 		}
-		public async Task<ServiceResult<MSmsViewModel>> SendMessage(MSmsViewModel model, List<IFormFile> fileDinhKem, List<long> selectedFileIds, WpUsers user)
+		public async Task<ServiceResult<MSmsViewModel>> SendMessage(MSmsViewModel model, List<IFormFile> fileDinhKem, List<long> selectedFileIds, Users user)
 		{
 			// validate input
 			if (user == null)
@@ -143,7 +143,7 @@ namespace SMS_TYNB.Service
 			}
 		}
 
-		private async Task<string> HandleFileAttachments(List<IFormFile> fileDinhKem, List<long> selectedFileIds, WpUsers user, long smsId, string domain)
+		private async Task<string> HandleFileAttachments(List<IFormFile> fileDinhKem, List<long> selectedFileIds, Users user, long smsId, string domain)
 		{
 			List<string> fileUrls = new List<string>();
 
@@ -296,7 +296,7 @@ namespace SMS_TYNB.Service
 
 	public interface IMSmsService
 	{
-		Task<ServiceResult<MSmsViewModel>> SendMessage(MSmsViewModel model, List<IFormFile> fileDinhKem, List<long> selectedFileIds, WpUsers user);
+		Task<ServiceResult<MSmsViewModel>> SendMessage(MSmsViewModel model, List<IFormFile> fileDinhKem, List<long> selectedFileIds, Users user);
 		Task<PageResult<MSmsViewModel>> SearchMessage(MSmsSearchViewModel model, Pageable pageable);
 		Task<MSmsViewModel?> GetSmsEmployeesById(MSmsSearchViewModel id);
 	}

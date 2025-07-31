@@ -1,4 +1,4 @@
-﻿@model SMS_TYNB.ViewModel.BaseFormViewModel<SMS_TYNB.Models.Master.WpNhom>
+﻿@model SMS_TYNB.ViewModel.BaseFormViewModel<SMS_TYNB.Models.Master.MGroup>
 @{
 	ViewBag.Title = "Phân nhóm";
 	Layout = "~/Views/Shared/_Layout.cshtml";
@@ -11,18 +11,18 @@
 			<div class="row justify-content-center">
 				<div class="col-md-6">
 					<div class="form-group mb-3">
-						<label for="IdNhom" class="form-label">Tên nhóm <span class="text-danger">*</span></label>
+						<label for="IdGroup" class="form-label">Tên nhóm <span class="text-danger">*</span></label>
 						@Html.DropDownListFor(
-							model => model.Data.IdNhom,
-							Model.SelectLists["wpNhomSelectList"],
+							model => model.Data.IdGroup,
+							Model.SelectLists["mGroupSelectList"],
 							"--Chọn nhóm--",
 							htmlAttributes: new {
 								@class = "form-select",
-								@name = "Data.IdNhom", 
-								@id = "IdNhom",
+								@name = "Data.IdGroup", 
+								@id = "IdGroup",
 							}
 						 )
-						@Html.ValidationMessageFor(model => model.Data.IdNhom, "", new { @class = "text-danger" })
+						@Html.ValidationMessageFor(model => model.Data.IdGroup, "", new { @class = "text-danger" })
 					</div>
 				</div>
 			</div>

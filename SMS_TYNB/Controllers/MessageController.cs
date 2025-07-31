@@ -5,11 +5,11 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using SMS_TYNB.Common;
+using SMS_TYNB.Common.Enum;
 using SMS_TYNB.Helper;
 using SMS_TYNB.Models.Identity;
 using SMS_TYNB.Models.Master;
 using SMS_TYNB.Service;
-using SMS_TYNB.Service.Implement;
 using SMS_TYNB.ViewModel;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -20,52 +20,44 @@ namespace SMS_TYNB.Controllers
     [Authorize(Roles = "Admin, User")]
     public class MessageController : Controller
     {
-        private readonly ILogger<MessageController> _logger;
-        private readonly IWpSmsService _wpSmsService;
-        private readonly ISmsConfigService _smsConfigService;
         private readonly UserManager<WpUsers> _userManager;
-        private readonly IWpNhomService _wpNhomService;
-        private readonly IWpCanboService _wpCanboService;
-        private readonly IWpFileService _wpFileService;
-        private readonly IWpDanhmucService _wpDanhmucService;
+        private readonly IMSmsService _mSmsService;
+        private readonly IMGroupService _mGroupService;
+        private readonly IMEmployeeService _mEmployeeService;
+        private readonly IMFileService _mFileService;
 
 		public MessageController
         (
-            IWpSmsService wpSmsService, 
-            ISmsConfigService smsConfigService, 
             UserManager<WpUsers> userManager, 
-            ILogger<MessageController> logger,
-			IWpNhomService wpNhomService, 
-            IWpCanboService wpCanboService, 
-            IWpFileService wpFileService,
-			IWpDanhmucService wpDanhmucService
+            IMSmsService mSmsService, 
+			IMGroupService mGroupService, 
+            IMEmployeeService mEmployeeService, 
+            IMFileService mFileService
 		)
         {
-            _wpSmsService = wpSmsService;
-            _smsConfigService = smsConfigService;
-            _userManager = userManager;
-            _logger = logger;
-            _wpNhomService = wpNhomService;
-            _wpCanboService = wpCanboService;
-            _wpFileService = wpFileService;
-            _wpDanhmucService = wpDanhmucService;
+			_userManager = userManager;
+			_mSmsService = mSmsService;
+			_mGroupService = mGroupService;
+			_mEmployeeService = mEmployeeService;
+			_mFileService = mFileService;
 		}
+
         public IActionResult SendMessage()
         {
-            BaseFormViewModel<WpSms> formViewModel = new BaseFormViewModel<WpSms>();
+            BaseFormViewModel<MSms> formViewModel = new BaseFormViewModel<MSms>();
             return View(formViewModel);
         }
 		
 		[HttpPost]
-		public async Task<IActionResult> SendMessage(string Noidung, string Canbos, List<IFormFile> fileDinhKem, List<long> selectedFileIds)
+		public async Task<IActionResult> SendMessage(string content, string canbos, List<IFormFile> fileDinhKem, List<long> selectedFileIds)
 		{
 			WpUsers? user = await _userManager.GetUserAsync(HttpContext.User);
-			var model = new WpSmsViewModel()
+			var model = new MSmsViewModel()
 			{
-				Noidung = Noidung,
-				WpCanbos = JsonConvert.DeserializeObject<List<WpCanboViewModel>>(Canbos) ?? new List<WpCanboViewModel>()
+				Content = content,
+				Employees = JsonConvert.DeserializeObject<List<MEmployeeViewModel>>(canbos) ?? new List<MEmployeeViewModel>()
 			};
-			var result = await _wpSmsService.SendMessage(model, fileDinhKem, selectedFileIds, user);
+			var result = await _mSmsService.SendMessage(model, fileDinhKem, selectedFileIds, user);
 
 			if (result.IsSuccess)
 			{
@@ -87,17 +79,17 @@ namespace SMS_TYNB.Controllers
 		}
 		public async Task<IActionResult> MessageStatistical()
         {
-			BaseFormViewModel<WpSmsSearchViewModel> formViewModel = new BaseFormViewModel<WpSmsSearchViewModel>()
+			BaseFormViewModel<MSmsSearchViewModel> formViewModel = new BaseFormViewModel<MSmsSearchViewModel>()
 			{
-				Data = new WpSmsSearchViewModel(),
+				Data = new MSmsSearchViewModel(),
 				SelectLists = await CreateSelectList()
 			};
 			return View(formViewModel);
         }
         [HttpGet]
-        public async Task<IActionResult> LoadData(WpSmsSearchViewModel model, Pageable pageable)
+        public async Task<IActionResult> LoadData(MSmsSearchViewModel model, Pageable pageable)
         {
-            var datas = await _wpSmsService.SearchMessage(model, pageable);
+            var datas = await _mSmsService.SearchMessage(model, pageable);
             return Json(new
             {
                 state = "success",
@@ -106,9 +98,9 @@ namespace SMS_TYNB.Controllers
             });
         }
 		[HttpGet]
-		public async Task<IActionResult> LoadDetail(WpSmsSearchViewModel model)
+		public async Task<IActionResult> LoadDetail(MSmsSearchViewModel model)
 		{
-			var datas = await _wpSmsService.GetMessageCanbosById(model);
+			var datas = await _mSmsService.GetSmsEmployeesById(model);
 			return Json(new
 			{
 				state = "success",
@@ -118,9 +110,9 @@ namespace SMS_TYNB.Controllers
 		}
 
 		[HttpPost]
-        public async Task<IActionResult> MessageUpdateFile([FromForm] WpFile oldFile, IFormFile fileDinhKem)
+        public async Task<IActionResult> MessageUpdateFile([FromForm] long oldFileId, IFormFile fileDinhKem)
         {
-            await _wpSmsService.UpdateFile(oldFile, fileDinhKem);
+            await _mFileService.UpdateContentFile(fileDinhKem, oldFileId);
             return Json(new
             {
                 state = "success",
@@ -130,17 +122,17 @@ namespace SMS_TYNB.Controllers
         }
 		private async Task<Dictionary<string, SelectList>> CreateSelectList()
 		{
-			SelectList wpNhomSelectList = new SelectList(await _wpNhomService.GetAllWpNhom(), "IdNhom", "TenNhom");
-			SelectList wpCanboSelectList = new SelectList(await _wpCanboService.GetAllWpCanbo(), "IdCanbo", "TenCanbo");
-			SelectList wpFileSelectList = new SelectList(await _wpFileService.GetAllWpFile(), "IdFile", "TenFile");
-			SelectList wpTrangThaiSelectList = new SelectList(await _wpDanhmucService.GetWpDanhmucByType("TRANGTHAI_TN"), "Value", "TenDanhmuc");
+			SelectList mGroupSelectList = new SelectList(await _mGroupService.GetAllMGroup(), "IdGroup", "Name");
+			SelectList mEmployeeSelectList = new SelectList(await _mEmployeeService.GetAllMEmployee(), "IdEmployee", "Name");
+			SelectList mFileSelectList = new SelectList(await _mFileService.GetAllFile(), "IdFile", "Name");
+			SelectList statusSelectList = new SelectList(EnumHelper.ToSelectListItem<SmsStatusEnum>(), "Value", "Text");
 
 			var selectLists = new Dictionary<string, SelectList>
 			{
-				{ "wpNhomSelectList", wpNhomSelectList },
-				{ "wpCanboSelectList", wpCanboSelectList },
-				{ "wpFileSelectList", wpFileSelectList },
-				{ "wpTrangThaiSelectList", wpTrangThaiSelectList }
+				{ "mGroupSelectList", mGroupSelectList },
+				{ "mEmployeeSelectList", mEmployeeSelectList },
+				{ "mFileSelectList", mFileSelectList },
+				{ "statusSelectList", statusSelectList }
 			};
 			return selectLists;
 		}

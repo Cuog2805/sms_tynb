@@ -102,16 +102,16 @@ function displayItems(items, pageNumber, pageSize) {
             tableHtml += `
                 <tr>
                     <td class="text-center">${startIndex + index + 1}</td>
-                    <td>${item.TenNhom}</td>
-                    <td>${item.TenNhomCha || ''}</td>
-                    <td>${item.TrangThai}</td>
+                    <td>${item.Name}</td>
+                    <td>${item.ParentName || ''}</td>
+                    <td>${item.IsDeleted}</td>
                     <td class="text-center">
                         <button
                             class="btn btn-sm btn-primary"
                             type="button"
                             data-bs-toggle="modal"
                             data-bs-target="#data-form"
-                            onclick="startEdit(${item.IdNhom})"
+                            onclick="startEdit(${item.IdGroup})"
                             title="Sửa">
                             <i class="bi bi-pencil-square"></i>
                         </button>
@@ -151,7 +151,7 @@ function loadDetail(id) {
     }
 }
 
-function addWpNhom(formData) {
+function addGroup(formData) {
     $.ajax({
         url: '/Group/Create',
         type: 'POST',
@@ -178,7 +178,7 @@ function addWpNhom(formData) {
     });
 }
 
-function editWpNhom(formData) {
+function editGroup(formData) {
     $.ajax({
         url: '/Group/Update',
         type: 'POST',
@@ -209,18 +209,18 @@ function editWpNhom(formData) {
 function initFormValidate() {
     $('#groupForm').validate({
         rules: {
-            'Data.TenNhom': {
+            'Data.Name': {
                 required: true
             },
-            'Data.TrangThai': {
+            'Data.IsDeleted': {
                 required: true
             }
         },
         messages: {
-            'Data.TenNhom': {
+            'Data.Name': {
                 required: "Vui lòng nhập tên nhóm"
             },
-            'Data.TrangThai': {
+            'Data.IsDeleted': {
                 required: "Vui lòng chọn trạng thái"
             }
         },
@@ -245,9 +245,12 @@ function beforeAdd() {
 }
 
 function clearForm() {
-    $('#IdNhom').val('');
-    $('#TenNhom').val('');
-    $('#IdNhomCha').val('');
+    $('#IdGroup').val('');
+    $('#IdOrganization').val('');
+    $('#CreateBy').val('');
+    $('#CreateAt').val('');
+    $('#Name').val('');
+    $('#IdGroupParent').val('');
 
     // Reset validation
     if ($('#groupForm').data('validator')) {
@@ -264,16 +267,19 @@ function submitForm() {
 
     if ($('#groupForm').valid()) {
         const formData = {
-            IdNhom: $('#IdNhom').val(),
-            TenNhom: $('#TenNhom').val(),
-            IdNhomCha: $('#IdNhomCha').val(),
-            TrangThai: $('#TrangThai').val(),
+            IdGroup: $('#IdGroup').val(),
+            IdOrganization: $('#IdOrganization').val(),
+            CreateBy: $('#CreateBy').val(),
+            CreateAt: $('#CreateAt').val(),
+            Name: $('#Name').val(),
+            IdGroupParent: $('#IdGroupParent').val(),
+            IsDeleted: $('#IsDeleted').val(),
         };
 
         if (formState.isEditing && formState.currentEditId) {
-            editWpNhom(formData);
+            editGroup(formData);
         } else {
-            addWpNhom(formData);
+            addGroup(formData);
         }
     }
 }

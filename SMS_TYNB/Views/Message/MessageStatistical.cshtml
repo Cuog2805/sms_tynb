@@ -1,4 +1,4 @@
-﻿@model SMS_TYNB.ViewModel.BaseFormViewModel<SMS_TYNB.ViewModel.WpSmsSearchViewModel>
+﻿@model SMS_TYNB.ViewModel.BaseFormViewModel<SMS_TYNB.ViewModel.MSmsSearchViewModel>
 @{
 	ViewBag.Title = "Thống kê tin nhắn";
 	Layout = "~/Views/Shared/_Layout.cshtml";
@@ -33,15 +33,15 @@
 				<div class="row justify-content-center">
 					<div class="col-md-4">
 						<div class="form-group mb-3">
-							<label for="Trangthai" class="form-label">Trạng thái </label>
+							<label for="Status" class="form-label">Trạng thái </label>
 							@Html.DropDownListFor(
-								model => model.Data.Trangthai,
-								Model.SelectLists["wpTrangThaiSelectList"],
+								model => model.Data.Status,
+								Model.SelectLists["statusSelectList"],
 								"--Chọn trạng thái--",
 								htmlAttributes: new {
 									@class = "form-select",
-									@name = "Data.Trangthai",
-									@id = "Trangthai",
+									@name = "Data.Status",
+									@id = "Status",
 								}
 							 )
 						</div>
@@ -89,6 +89,12 @@
 		await Html.RenderPartialAsync("_Pagination");
 	}
 </div>
+
+@* file changed history *@
+@{
+	await Html.RenderPartialAsync("_HistoryModal");
+}
+
 @* file upload modal *@
 <div class="modal fade" id="editFileModal" tabindex="-1" aria-labelledby="editFileModalLabel" aria-hidden="true">
 	<div class="modal-dialog modal-lg">
@@ -133,30 +139,30 @@
 				<div class="row justify-content-start">
 					<div class="col-md-4">
 						<div class="form-group mb-3">
-							<label for="IdNhom" class="form-label">Nhóm </label>
+							<label for="IdGroup" class="form-label">Nhóm </label>
 							@Html.DropDownListFor(
-								model => model.Data.IdNhom,
-								Model.SelectLists["wpNhomSelectList"],
+								model => model.Data.IdGroup,
+								Model.SelectLists["mGroupSelectList"],
 								"--Chọn nhóm--",
 								htmlAttributes: new {
 									@class = "form-select",
-									@name = "Data.IdNhom",
-									@id = "IdNhom",
+									@name = "Data.IdGroup",
+									@id = "IdGroup",
 								}
 							 )
 						</div>
 					</div>
 					<div class="col-md-4">
 						<div class="form-group mb-3">
-							<label for="IdCanBo" class="form-label">Cán bộ </label>
+							<label for="IdEmployee" class="form-label">Cán bộ </label>
 							@Html.DropDownListFor(
-								model => model.Data.IdCanBo,
-								Model.SelectLists["wpCanboSelectList"],
+								model => model.Data.IdEmployee,
+								Model.SelectLists["mEmployeeSelectList"],
 								"--Chọn cán bộ--",
 								htmlAttributes: new {
 									@class = "form-select",
-									@name = "Data.IdCanBo",
-									@id = "IdCanBo",
+									@name = "Data.IdEmployee",
+									@id = "IdEmployee",
 								}
 							 )
 						</div>

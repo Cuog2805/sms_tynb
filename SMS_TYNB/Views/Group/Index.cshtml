@@ -1,4 +1,4 @@
-﻿@model SMS_TYNB.ViewModel.BaseFormViewModel<SMS_TYNB.Models.Master.WpNhom>
+﻿@model SMS_TYNB.ViewModel.BaseFormViewModel<SMS_TYNB.Models.Master.MGroup>
 @{
 	ViewBag.Title = "Quản lý nhóm";
 	Layout = "~/Views/Shared/_Layout.cshtml";
@@ -64,5 +64,5 @@
 </div>
 
 @section Scripts {
-	<script src="~/js/group/group.js"></script>
+	<script src="~/js/group/group.js?v=@DateTime.Now.Ticks"></script>
 }

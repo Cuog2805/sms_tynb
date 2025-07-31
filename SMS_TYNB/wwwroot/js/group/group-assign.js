@@ -36,7 +36,7 @@
         displaySelectedItems();
     })
 
-    $("#IdNhom").on("change", function () {
+    $("#IdGroup").on("change", function () {
         var selectedValue = $(this).val();
 
         if (!selectedValue || selectedValue === "" || selectedValue === null) {
@@ -69,12 +69,12 @@ let selectedItems = [];
 function loadData() {
     let model = {
         searchInput: $('#searchInput').val(),
-        Trangthai: 1
+        IsDeleted: 1
     };
     let pageable = {
         pageNumber: currentPagination.pageNumber,
         pageSize: currentPagination.pageSize,
-        sort: 'TenCanbo'
+        sort: 'Name'
     };
 
     $.ajax({
@@ -82,7 +82,7 @@ function loadData() {
         type: 'GET',
         data: $.param({
             'model.searchInput': model.searchInput,
-            'model.Trangthai': model.Trangthai,
+            'model.IsDeleted': model.IsDeleted,
             'pageable.PageNumber': pageable.pageNumber,
             'pageable.PageSize': pageable.pageSize,
             'pageable.Sort': pageable.sort
@@ -118,11 +118,11 @@ function loadSelectedItemsPage(pageNumber) {
 
 function loadDetail(id) {
     $.ajax({
-        url: '/Group/LoadDetailWpNhomCanbos',
+        url: '/Group/LoadDetailGroupEmployee',
         type: 'GET',
         data: { id: id },
         success: function (response) {
-            selectedItems = response.data.WpCanbos;
+            selectedItems = response.data.Employees;
 
             // Reset về trang đầu khi load detail mới
             selectedItemsPagination.pageNumber = 1;
@@ -138,25 +138,24 @@ function loadDetail(id) {
 }
 
 function submitGroupAssign() {
-    const selectedGroupId = $("#IdNhom").val();
+    const selectedGroupId = $("#IdGroup").val();
 
-    const wpCanbos = selectedItems.map(item => ({
-        IdCanbo: item.IdCanbo,
-        TenCanbo: item.TenCanbo,
-        SoDt: item.SoDt,
-        Mota: item.Mota,
+    const canbos = selectedItems.map(item => ({
+        IdEmployee: item.IdEmployee,
+        Name: item.Name,
+        PhoneNumber: item.PhoneNumber,
+        Description: item.Description,
     }));
 
-    // Tạo WpNhomViewModel
-    const wpNhomViewModel = {
-        IdNhom: parseInt(selectedGroupId) || 0,
-        WpCanbos: wpCanbos
+    const groupViewModel = {
+        IdGroup: parseInt(selectedGroupId) || 0,
+        Employees: canbos
     };
 
     $.ajax({
         url: '/Group/Assign',
         type: 'POST',
-        data: { model: wpNhomViewModel },
+        data: { model: groupViewModel },
         dataType: "json",
         success: function (response) {
             if (response.state === 'success') {
@@ -176,7 +175,7 @@ function displayItems(items) {
     $("#groupCheckBoxTableBody").empty();
     if (items && items.length > 0) {
         items.forEach((item, index) => {
-            const isSelected = selectedItems.some(selected => selected.IdCanbo === item.IdCanbo);
+            const isSelected = selectedItems.some(selected => selected.IdEmployee === item.IdEmployee);
             const row = $("<tr>").css("cursor", "pointer")
                 .append(
                     $("<td>").append(
@@ -184,7 +183,7 @@ function displayItems(items) {
                             .css("cursor", "pointer")
                             .addClass("form-check-input")
                             .attr("type", "checkbox")
-                            .attr("id", `check-${item.IdCanbo}-${item.MaCanbo}`)
+                            .attr("id", `check-${item.IdEmployee}`)
                             .prop("checked", isSelected)
                             .data("item", item)
                             .on("change", function (e) {
@@ -195,9 +194,9 @@ function displayItems(items) {
                                 e.stopPropagation();
                             })
                     ),
-                    $("<td>").text(item.TenCanbo),
-                    $("<td>").text(item.SoDt),
-                    $("<td>").text(item.Mota)
+                    $("<td>").text(item.Name),
+                    $("<td>").text(item.PhoneNumber),
+                    $("<td>").text(item.Description)
                 ).on("click", function () {
                     const checkbox = $(this).find(".form-check-input");
                     const isChecked = checkbox.prop("checked");
@@ -231,9 +230,9 @@ function displaySelectedItems() {
                                 removeSelectedItem(item);
                             })
                     ),
-                    $("<td>").text(item.TenCanbo),
-                    $("<td>").text(item.SoDt),
-                    $("<td>").text(item.Mota)
+                    $("<td>").text(item.Name),
+                    $("<td>").text(item.PhoneNumber),
+                    $("<td>").text(item.Description)
                 );
             $("#groupAssignTableBody").append(row);
         });
@@ -265,12 +264,12 @@ function handleItemSelect(checkbox) {
 
     if (isChecked) {
         // Thêm vào danh sách đã chọn nếu chưa có
-        if (!selectedItems.some(selected => selected.IdCanbo === item.IdCanbo)) {
+        if (!selectedItems.some(selected => selected.IdEmployee === item.IdEmployee)) {
             selectedItems.push(item);
         }
     } else {
         // Bỏ khỏi danh sách đã chọn
-        selectedItems = selectedItems.filter(selected => selected.IdCanbo !== item.IdCanbo);
+        selectedItems = selectedItems.filter(selected => selected.IdEmployee !== item.IdEmployee);
     }
 
     // Kiểm tra và điều chỉnh trang hiện tại nếu cần
@@ -320,7 +319,7 @@ function selectAll() {
 
     // Thêm vào danh sách đã chọn - tránh trùng
     visibleItems.forEach(item => {
-        if (!selectedItems.some(selected => selected.IdCanbo === item.IdCanbo)) {
+        if (!selectedItems.some(selected => selected.IdEmployee === item.IdEmployee)) {
             selectedItems.push(item);
         }
     });

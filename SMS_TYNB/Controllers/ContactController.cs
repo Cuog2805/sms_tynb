@@ -2,9 +2,10 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using SMS_TYNB.Common;
+using SMS_TYNB.Common.Enum;
+using SMS_TYNB.Helper;
 using SMS_TYNB.Models.Master;
 using SMS_TYNB.Service;
-using SMS_TYNB.Service.Implement;
 using SMS_TYNB.ViewModel;
 
 namespace SMS_TYNB.Controllers
@@ -12,38 +13,36 @@ namespace SMS_TYNB.Controllers
 	[Authorize(Roles = "Admin")]
 	public class ContactController : Controller
 	{
-		private readonly IWpCanboService _wpCanboService;
-		private readonly IWpDanhmucService _wpDanhmucService;
-		public ContactController(IWpCanboService wpCanboService, IWpDanhmucService wpDanhmucService) 
+		private readonly IMEmployeeService _employeeService;
+		public ContactController(IMEmployeeService employeeService) 
 		{
-			_wpCanboService = wpCanboService;
-			_wpDanhmucService = wpDanhmucService;
+			_employeeService = employeeService;
 		}
-		private async Task<BaseFormViewModel<WpCanbo>> CreateFormViewModel(WpCanbo? model = null)
+		private async Task<BaseFormViewModel<MEmployee>> CreateFormViewModel(MEmployee? model = null)
 		{
-			SelectList wpTrangThaiSelectList = new SelectList(await _wpDanhmucService.GetWpDanhmucByType("TRANGTHAI"), "Value", "TenDanhmuc");
-			SelectList wpGioiTinhSelectList = new SelectList(await _wpDanhmucService.GetWpDanhmucByType("GIOITINH"), "Value", "TenDanhmuc");
+			SelectList statusSelectList = new SelectList(EnumHelper.ToSelectListItem<DeletedEnum>(), "Value", "Text");
+			SelectList genderSelectList = new SelectList(EnumHelper.ToSelectListItem<GenderEnum>(), "Value", "Text");
 			var selectLists = new Dictionary<string, SelectList>
 			{
-				{ "wpTrangThaiSelectList", wpTrangThaiSelectList },
-				{ "wpGioiTinhSelectList", wpGioiTinhSelectList }
+				{ "statusSelectList", statusSelectList },
+				{ "genderSelectList", genderSelectList }
 			};
-			BaseFormViewModel<WpCanbo> formViewModel = new BaseFormViewModel<WpCanbo>()
+			BaseFormViewModel<MEmployee> formViewModel = new BaseFormViewModel<MEmployee>()
 			{
-				Data = model ??= new WpCanbo(),
+				Data = model ??= new MEmployee(),
 				SelectLists = selectLists
 			};
 			return formViewModel;
 		}
 		public async Task<IActionResult> Index() 
 		{
-			BaseFormViewModel<WpCanbo> formViewModel = await CreateFormViewModel();
+			BaseFormViewModel<MEmployee> formViewModel = await CreateFormViewModel();
 			return View(formViewModel);
 		}
 		[HttpGet]
-		public async Task<IActionResult> LoadData(WpCanboSearchViewModel model, Pageable pageable)
+		public async Task<IActionResult> LoadData(MEmployeeSearchViewModel model, Pageable pageable)
 		{
-			var datas = await _wpCanboService.SearchWpCanbo(model, pageable);
+			var datas = await _employeeService.SearchMEmployee(model, pageable);
 			return Json(new
 			{
 				state = "success",
@@ -54,14 +53,14 @@ namespace SMS_TYNB.Controllers
 		[HttpGet]
 		public async Task<IActionResult> LoadDetail(int id)
 		{
-			var data = await _wpCanboService.GetById(id);
-			BaseFormViewModel<WpCanbo> formViewModel = await CreateFormViewModel(data);
+			var data = await _employeeService.GetById(id);
+			BaseFormViewModel<MEmployee> formViewModel = await CreateFormViewModel(data);
 			return PartialView("_Form", formViewModel);
 		}
 		[HttpPost]
-		public async Task<JsonResult> Create(WpCanbo model)
+		public async Task<JsonResult> Create(MEmployee model)
 		{
-			WpCanbo result = await _wpCanboService.Create(model);
+			MEmployee result = await _employeeService.Create(model);
 			return Json(new
 			{
 				state = "success",
@@ -70,9 +69,9 @@ namespace SMS_TYNB.Controllers
 			});
 		}
 		[HttpPost]
-		public async Task<JsonResult> Update(WpCanbo model)
+		public async Task<JsonResult> Update(MEmployee model)
 		{
-			WpCanbo result = await _wpCanboService.Update(model);
+			MEmployee? result = await _employeeService.Update(model);
 			return Json(new
 			{
 				state = "success",
@@ -81,9 +80,9 @@ namespace SMS_TYNB.Controllers
 			});
 		}
 		[HttpPost]
-		public async Task<JsonResult> Import(List<WpCanbo> model)
+		public async Task<JsonResult> Import(List<MEmployee> model)
 		{
-			WpSmsImportRespViewModel data = await _wpCanboService.CreateMulti(model);
+			MEmployeeCreateRangeViewModel data = await _employeeService.CreateMulti(model);
 			return Json(new
 			{
 				state = "success",

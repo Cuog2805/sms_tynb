@@ -22,15 +22,15 @@ let selectedItems = [];
 function loadData() {
     let model = {
         searchInput: $('#searchInput').val(),
-        TrangThai: 1
+        IsDeleted: 0
     };
 
     $.ajax({
-        url: '/Group/LoadDataWpNhomCanbos',
+        url: '/Group/LoadDataGroupEmployee',
         type: 'GET',
         data: $.param({
             'model.searchInput': model.searchInput,
-            'model.TrangThai': model.TrangThai
+            'model.IsDeleted': model.IsDeleted
         }),
         success: function (response) {
             if (response.state === "success") {
@@ -54,11 +54,11 @@ function sendMessage() {
 
     if ($('#messageForm').valid()) {
         const formData = new FormData();
-        const messageContent = $("#Noidung").val();
+        const messageContent = $("#Content").val();
 
-        formData.append('Noidung', messageContent);
+        formData.append('content', messageContent);
 
-        formData.append('Canbos', JSON.stringify(selectedItems));
+        formData.append('canbos', JSON.stringify(selectedItems));
 
         // File
         const fileInput = $("#FileDinhKem")[0];
@@ -128,12 +128,12 @@ function sendMessage() {
 
 function showSuccessModal(data) {
     // nội dung tin nhắn
-    $('#smsContent').text(data.NoidungGui);
-    $('#smsInfo').text(data.TenNguoigui + " - " + formatDateTime(new Date(data.Ngaygui)));
+    $('#smsContent').text(data.ContentSend);
+    $('#smsInfo').text(data.CreateBy + " - " + formatDateTime(new Date(data.CreateAt)));
 
     // số lượng người nhận
-    $('#smsSucceedNumber').html(data.SoTn);
-    $('#smsErrorNumber').html(data.SoTnLoi);
+    $('#smsSucceedNumber').html(data.NumberMessages);
+    $('#smsErrorNumber').html(data.ErrorMessages);
 
     $('#successMessageModal').modal('show');
 }
@@ -185,8 +185,8 @@ function displaySelectedItems() {
                         }),
                     $("<label>")
                         .addClass("form-check-label")
-                        .attr("for", `selected-${item.IdCanbo}`)
-                        .html(`${item.TenCanbo} ${item.SoDt ? '- ' + item.SoDt : ''} ${item.Mota ? '- ' + item.Mota : ''} - ${item.TenNhom}`)
+                        .attr("for", `selected-${item.IdEmployee}`)
+                        .html(`${item.Name} ${item.PhoneNumber ? '- ' + item.PhoneNumber : ''} ${item.Description ? '- ' + item.Description : ''} - ${item.GroupName}`)
                 )
             );
             $("#messageAssignList").append(row);
@@ -207,42 +207,41 @@ function buildTreeDataFromGroups(items) {
 
     // Tạo node nhóm
     items.forEach(item => {
-        idToNodeMap[item.IdNhom] = {
-            id: "nhom_" + item.IdNhom,
-            text: item.TenNhom,
+        idToNodeMap[item.IdGroup] = {
+            id: "nhom_" + item.IdGroup,
+            text: item.Name,
             children: [],
         };
     });
 
     // Gắn vào cha hoặc root
     items.forEach(item => {
-        const node = idToNodeMap[item.IdNhom];
-        if (item.IdNhomCha && idToNodeMap[item.IdNhomCha]) {
-            idToNodeMap[item.IdNhomCha].children.push(node);
+        const node = idToNodeMap[item.IdGroup];
+        if (item.IdGroupParent && idToNodeMap[item.IdGroupParent]) {
+            idToNodeMap[item.IdGroupParent].children.push(node);
         } else {
             roots.push(node);
         }
 
         // Thêm danh sách cán bộ
-        if (Array.isArray(item.WpCanbos) && item.WpCanbos.length > 0) {
-            item.WpCanbos.forEach(cb => {
+        if (Array.isArray(item.Employees) && item.Employees.length > 0) {
+            item.Employees.forEach(cb => {
                 // Kiểm tra cán bộ này từ nhóm này đã được chọn chưa
                 const isSelected = selectedItems.some(selected =>
-                    selected.IdCanbo === cb.IdCanbo && selected.IdNhom === item.IdNhom
+                    selected.IdEmployee === cb.IdEmployee && selected.IdGroup === item.IdGroup
                 );
 
-                const uniqueId = `canbo_${cb.IdCanbo}_nhom_${item.IdNhom}`;
+                const uniqueId = `canbo_${cb.IdEmployee}_nhom_${item.IdGroup}`;
 
-                // Thêm IdNhom vào data của cán bộ
+                // Thêm IdGroup vào data của cán bộ
                 const canboWithGroup = {
                     ...cb,
-                    IdNhom: item.IdNhom,
-                    TenNhom: item.TenNhom
+                    IdGroup: item.IdGroup
                 };
 
                 node.children.push({
                     id: uniqueId,
-                    text: `${cb.TenCanbo} - ${cb.SoDt || ''}. Mô tả: ${cb.Mota || '___'}`,
+                    text: `${cb.Name} - ${cb.PhoneNumber || ''}. Mô tả: ${cb.Description || '___'}`,
                     data: canboWithGroup,
                     state: {
                         selected: isSelected
@@ -324,12 +323,12 @@ function syncSelectedItems() {
 
 function removeSelectedItem(item) {
     selectedItems = selectedItems.filter(selected => 
-        !(selected.IdCanbo === item.IdCanbo && selected.IdNhom === item.IdNhom)
+        !(selected.IdEmployee === item.IdEmployee && selected.IdGroup === item.IdGroup)
     );
 
     const treeRef = $.jstree.reference('#messageCheckBoxTree');
     if (treeRef) {
-        const uniqueId = `canbo_${item.IdCanbo}_nhom_${item.IdNhom}`;
+        const uniqueId = `canbo_${item.IdEmployee}_nhom_${item.IdGroup}`;
         treeRef.uncheck_node(uniqueId);
     }
 
@@ -362,31 +361,6 @@ function selectAll() {
         }, 0);
     }
 }
-//function selectAll() {
-//    const treeRef = $.jstree.reference('#messageCheckBoxTree');
-//    if (!treeRef) return;
-
-//    treeRef.open_all();
-
-//    // Chỉ thực hiện sau khi cây mở hoàn tất
-//    $('#messageCheckBoxTree').on('after_open.jstree', function () {
-//        const allNodes = treeRef.get_json('#', { flat: true });
-
-//        // Sử dụng setTimeout để tránh block UI khi có nhiều node
-//        setTimeout(() => {
-//            for (const node of allNodes) {
-//                if (node.id.startsWith("canbo_")) {
-//                    treeRef.check_node(node.id);
-//                }
-//            }
-
-//            syncSelectedItems();
-
-//            // Gỡ bỏ listener sau khi chạy xong
-//            $('#messageCheckBoxTree').off('after_open.jstree');
-//        }, 0);
-//    });
-//}
 
 function searchInTree(searchText) {
     const treeRef = $.jstree.reference('#messageCheckBoxTree');
@@ -399,7 +373,7 @@ function searchInTree(searchText) {
 function initFormValidate() {
     $('#messageForm').validate({
         rules: {
-            'Data.Noidung': {
+            'Data.Content': {
                 required: true
             },
             'FileDinhKem': {
@@ -408,7 +382,7 @@ function initFormValidate() {
             }
         },
         messages: {
-            'Data.Noidung': {
+            'Data.Content': {
                 required: "Vui lòng nhập nội dung tin nhắn"
             },
             'FileDinhKem': {

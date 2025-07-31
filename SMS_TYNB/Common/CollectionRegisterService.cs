@@ -1,6 +1,5 @@
 ﻿using SMS_TYNB.Repository;
 using SMS_TYNB.Service;
-using SMS_TYNB.Service.Implement;
 
 namespace SMS_TYNB.Common
 {
@@ -8,30 +7,32 @@ namespace SMS_TYNB.Common
 	{
 		public static IServiceCollection AddRepositories(this IServiceCollection services)
 		{
-			services.AddScoped<WpCanboRepository>();
-			services.AddScoped<WpNhomRepository>();
-			services.AddScoped<WpDanhmucRepository>();
-			services.AddScoped<WpNhomCanboRepository>();
-			services.AddScoped<WpSmsRepository>();
-			services.AddScoped<WpSmsCanboRepository>();
-			services.AddScoped<WpFileRepository>();
 			services.AddScoped<WpUsersRepository>();
 			services.AddScoped<SmsConfigRepository>();
 			services.AddScoped<ConfigRepository>();
-			services.AddScoped<WpSmsFileRepository>();
+			services.AddScoped<MEmployeeRepository>();
+			services.AddScoped<MGroupRepository>();
+			services.AddScoped<MGroupEmployeeRepository>();
+			services.AddScoped<MSmsRepository>();
+			services.AddScoped<MSmsEmployeeRepository>();
+			services.AddScoped<MSmsFileRepository>();
+			services.AddScoped<MFileRepository>();
+			services.AddScoped<MHistoryRepository>();
+
 			return services;
 		}
 
 		public static IServiceCollection AddServices(this IServiceCollection services)
 		{
-			services.AddScoped<IWpCanboService, WpCanboService>();
-			services.AddScoped<IWpNhomService, WpNhomService>();
-			services.AddScoped<IWpDanhmucService, WpDanhmucService>();
-			services.AddScoped<IWpSmsService, WpSmsService>();
-			services.AddScoped<IWpFileService, WpFileService>();
 			services.AddScoped<ISmsConfigService, SmsConfigService>();
 			services.AddScoped<IConfigService, ConfigService>();
 			services.AddScoped<IDataTransportService, DataTransportService>();
+			services.AddScoped<IMEmployeeService, MEmployeeService>();
+			services.AddScoped<IMGroupService, MGroupService>();
+			services.AddScoped<IMSmsService, MSmsService>();
+			services.AddScoped<IMFileService, MFileService>();
+			services.AddScoped<ICurrentUserService, CurrentUserService>();
+
 			return services;
 		}
 		public static IServiceCollection AddApplicationServices(this IServiceCollection services) 

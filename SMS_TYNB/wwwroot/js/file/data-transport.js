@@ -120,7 +120,7 @@ function readFile(callback) {
                 if (jsonData.length > 0) {
                     // Loại bỏ bản ghi trùng nhau
                     let uniqueData = removeDuplicates(jsonData);
-                    uniqueData = removeDuplicatesByFields(uniqueData, ['SoDt']);
+                    uniqueData = removeDuplicatesByFields(uniqueData, ['PhoneNumber']);
 
                     dataPreview = uniqueData;
                     displayDataPreview();
@@ -163,7 +163,7 @@ function removeDuplicates(data) {
 /**
  * 
  * @param {list} data - Data
- * @param {list} fields - danh sách tên trường
+ * @param {fields} fields - danh sách tên trường
  * @returns {list} Data đã loại bỏ trùng theo fields
  */
 function removeDuplicatesByFields(data, fields) {

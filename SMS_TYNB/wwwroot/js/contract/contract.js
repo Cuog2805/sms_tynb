@@ -70,12 +70,16 @@
 	});
 
 	createImportFileConfig({
-		headers: ["TenCanbo", "SoDt", "Gioitinh", "Mota"],
+		headers: ["Name", "PhoneNumber", "Gender", "Description"],
 		headersLabel: ["Tên cán bộ", "Số điện thoại", "Giới tính", "Mô tả"],
 		range: 1
 	});
 
 	//modal thông báo import thành công
+	$('#successImportModal').on('hidden.bs.modal', function () {
+		loadData();
+	});
+
 	const succeedImportWpCanboPaginationId = $("#succeedImportWpCanboPagination").attr("id");
 	$("#pageSize-" + succeedImportWpCanboPaginationId).on("change", function () {
 		succeedImportWpCanboPagination.pageNumber = 1;
@@ -129,7 +133,7 @@ function loadData() {
 	let pageable = {
 		pageNumber: currentPagination.pageNumber,
 		pageSize: currentPagination.pageSize,
-		sort: 'TenCanbo'
+		sort: ''
 	};
 
 	$.ajax({
@@ -153,7 +157,8 @@ function loadData() {
 				CreatePagination(paginationData.total, currentPagination.pageNumber, currentPagination.pageSize, $("#pagination"));
 			}
 		},
-		error: function () {
+		error: function (xhr) {
+			console.log('xhr', xhr);
 			alertify.error('Có lỗi xảy ra khi load dữ liệu');
 		}
 	});
@@ -173,18 +178,18 @@ function displayItems(items, pageNumber, pageSize) {
 			tableHtml += `
                 <tr>
                     <td class="text-center">${startIndex + index + 1}</td>
-                    <td>${item.TenCanbo}</td>
-                    <td>${item.SoDt}</td>
-                    <td>${item.Gioitinh}</td>
-                    <td>${item.Mota || ''}</td>
-					<td>${item.Trangthai}</td>
+                    <td>${item.Name}</td>
+                    <td>${item.PhoneNumber}</td>
+                    <td>${item.Gender}</td>
+                    <td>${item.Description || ''}</td>
+					<td>${item.IsDeleted}</td>
                     <td class="text-center">
                         <button 
                             class="btn btn-sm btn-primary" 
                             type="button"  
                             data-bs-toggle="modal" 
                             data-bs-target="#data-form" 
-                            onclick="startEdit(${item.IdCanbo})"
+                            onclick="startEdit(${item.IdEmployee})"
                             title="Sửa">
                             <i class="bi bi-pencil-square"></i>
                         </button>
@@ -227,8 +232,8 @@ function loadDetail(id) {
 
 function importWpCanbos(data) {
 	const validData = data.filter(item => {
-		return item.TenCanbo && item.TenCanbo.trim() !== '' &&
-			item.SoDt && item.SoDt.trim() !== '';
+		return item.Name && item.Name.trim() !== '' &&
+			item.PhoneNumber && item.PhoneNumber.trim() !== '';
 	});
 
 	if (validData.length === 0) {
@@ -238,11 +243,11 @@ function importWpCanbos(data) {
 
 	const importData = {
 		model: validData.map(item => ({
-			TenCanbo: item.TenCanbo?.toString().trim() || '',
-			SoDt: item.SoDt?.toString().trim() || '',
-			Gioitinh: item.Gioitinh?.toString().trim() == 'Nam' ? 1 : 0,
-			Mota: item.Mota?.toString().trim() || '',
-			Trangthai: 1, // Mặc định active
+			Name: item.Name?.toString().trim() || '',
+			PhoneNumber: item.PhoneNumber?.toString().trim() || '',
+			Gender: item.Gender?.toString().trim() == 'Nam' ? 1 : 0,
+			Description: item.Description?.toString().trim() || '',
+			IsDeleted: 1, // Mặc định active
 		}))
 	};
 	$.ajax({
@@ -258,8 +263,8 @@ function importWpCanbos(data) {
 
 				//hiển thị kết quả
 				$("#successImportModal").modal('show');
-				succeedImportWpCanbo = response.data.WpCanboNew;
-				failImportWpCanbo = response.data.WpCanboDupplicate;
+				succeedImportWpCanbo = response.data.MEmployeeNew;
+				failImportWpCanbo = response.data.MEmployeeDupplicate;
 				displayResultImport(response.data);
 			} else {
 				alertify.error(response.msg || 'Đã có lỗi xảy ra');
@@ -284,10 +289,10 @@ function displayResultImport() {
 			succeedTableHtml += `
                 <tr>
                     <td class="text-center">${index + 1}</td>
-                    <td>${item.TenCanbo}</td>
-                    <td>${item.SoDt}</td>
-                    <td>${item.Gioitinh}</td>
-                    <td>${item.Mota || ''}</td>
+                    <td>${item.Name}</td>
+                    <td>${item.PhoneNumber}</td>
+                    <td>${item.Gender}</td>
+                    <td>${item.Description || ''}</td>
                 </tr>
             `;
 		});
@@ -309,10 +314,10 @@ function displayResultImport() {
 			failTableHtml += `
                 <tr>
                     <td class="text-center">${index + 1}</td>
-                    <td>${item.TenCanbo}</td>
-                    <td>${item.SoDt}</td>
-                    <td>${item.Gioitinh}</td>
-                    <td>${item.Mota}</td>
+                    <td>${item.Name}</td>
+                    <td>${item.PhoneNumber}</td>
+                    <td>${item.Gender}</td>
+                    <td>${item.Description || ''}</td>
                 </tr>
             `;
 		});
@@ -326,9 +331,7 @@ function displayResultImport() {
 	}
 
 	// Thêm header cho danh sách thành công
-	if (succeedImportWpCanbo && succeedImportWpCanbo.length > 0) {
-		$('#succeedImportWpCanboTotal').text(`${succeedImportWpCanbo.length}`);
-	}
+	$('#succeedImportWpCanboTotal').text(`${succeedImportWpCanbo.length}`);
 
 	// Tạo phân trang
 	CreatePaginationMinimal(
@@ -359,7 +362,7 @@ function loadFailImportWpCanboPage(pageNumber) {
 	displayResultImport();
 }
 
-function addWpCanbo(formData) {
+function addEmployee(formData) {
 	$.ajax({
 		url: '/Contact/Create',
 		type: 'POST',
@@ -379,13 +382,14 @@ function addWpCanbo(formData) {
 				alertify.error(response.msg || 'Đã có lỗi xảy ra');
 			}
 		},
-		error: function () {
+		error: function (xhr) {
+			console.log('xhr', xhr);
 			alertify.error('Có lỗi xảy ra khi thêm dữ liệu');
 		}
 	});
 }
 
-function editWpCanbo(formData) {
+function editEmployee(formData) {
 	$.ajax({
 		url: '/Contact/Update',
 		type: 'POST',
@@ -416,30 +420,30 @@ function editWpCanbo(formData) {
 function initFormValidate() {
 	$('#contactForm').validate({
 		rules: {
-			'Data.TenCanbo': {
+			'Data.Name': {
 				required: true
 			},
-			'Data.Gioitinh': {
+			'Data.Gender': {
 				required: true
 			},
-			'Data.SoDt': {
+			'Data.PhoneNumber': {
 				required: true
 			},
-			'Data.Trangthai': {
+			'Data.IsDeleted': {
 				required: true
 			},
 		},
 		messages: {
-			'Data.TenCanbo': {
+			'Data.Name': {
 				required: "Vui lòng nhập tên cán bộ"
 			},
-			'Data.Gioitinh': {
+			'Data.Gender': {
 				required: "Vui lòng chọn giới tính"
 			},
-			'Data.SoDt': {
+			'Data.PhoneNumber': {
 				required: "Vui lòng nhập số điện thoại"
 			},
-			'Data.Trangthai': {
+			'Data.IsDeleted': {
 				required: "Vui lòng chọn trạng thái"
 			}
 		},
@@ -464,11 +468,13 @@ function beforeAdd() {
 }
 
 function clearForm() {
-	$('#IdCanbo').val('');
-	$('#MaCanbo').val('');
-	$('#TenCanbo').val('');
-	$('#SoDt').val('');
-	$('#Mota').val('');
+	$('#IdEmployee').val('');
+	$('#IdOrganization').val('');
+	$('#CreateBy').val('');
+	$('#CreateAt').val('');
+	$('#Name').val('');
+	$('#PhoneNumber').val('');
+	$('#Description').val('');
 
 	// Reset validation
 	if ($('#contactForm').data('validator')) {
@@ -485,19 +491,21 @@ function submitForm() {
 
 	if ($('#contactForm').valid()) {
 		const formData = {
-			IdCanbo: $('#IdCanbo').val(),
-			MaCanbo: $('#MaCanbo').val(),
-			TenCanbo: $('#TenCanbo').val(),
-			Gioitinh: $('#Gioitinh').val(),
-			SoDt: $('#SoDt').val(),
-			Mota: $('#Mota').val(),
-			Trangthai: $('#Trangthai').val(),
+			IdEmployee: $('#IdEmployee').val(),
+			IdOrganization: $('#IdOrganization').val(),
+			CreateBy: $('#CreateBy').val(),
+			CreateAt: $('#CreateAt').val(),
+			Name: $('#Name').val(),
+			Gender: $('#Gender').val(),
+			PhoneNumber: $('#PhoneNumber').val(),
+			Description: $('#Description').val(),
+			IsDeleted: $('#IsDeleted').val(),
 		};
 
 		if (formState.isEditing && formState.currentEditId) {
-			editWpCanbo(formData);
+			editEmployee(formData);
 		} else {
-			addWpCanbo(formData);
+			addEmployee(formData);
 		}
 	}
 }

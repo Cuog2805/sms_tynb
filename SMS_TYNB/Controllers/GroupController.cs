@@ -3,9 +3,10 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using SMS_TYNB.Common;
+using SMS_TYNB.Common.Enum;
+using SMS_TYNB.Helper;
 using SMS_TYNB.Models.Master;
 using SMS_TYNB.Service;
-using SMS_TYNB.Service.Implement;
 using SMS_TYNB.ViewModel;
 using System.Threading.Tasks;
 
@@ -14,37 +15,35 @@ namespace SMS_TYNB.Controllers
 	[Authorize(Roles = "Admin")]
 	public class GroupController : Controller
 	{
-		private readonly IWpNhomService _wpNhomService;
-		private readonly IWpDanhmucService _wpDanhmucService;
-		public GroupController(IWpNhomService wpNhomService, IWpDanhmucService wpDanhmucService)
+		private readonly IMGroupService _mGroupService;
+		public GroupController(IMGroupService mGroupService)
 		{
-			_wpNhomService = wpNhomService;
-			_wpDanhmucService = wpDanhmucService;
+			_mGroupService = mGroupService;
 		}
 		private async Task<Dictionary<string, SelectList>> CreateSelectList()
 		{
-			SelectList wpNhomSelectList = new SelectList(await _wpNhomService.GetAllWpNhom(), "IdNhom", "TenNhom");
-			SelectList wpTrangThaiSelectList = new SelectList(await _wpDanhmucService.GetWpDanhmucByType("TRANGTHAI"), "Value", "TenDanhmuc");
+			SelectList mGroupSelectList = new SelectList(await _mGroupService.GetAllMGroup(), "IdGroup", "Name");
+			SelectList statusSelectList = new SelectList(EnumHelper.ToSelectListItem<DeletedEnum>(), "Value", "Text");
 			var selectLists = new Dictionary<string, SelectList>
 			{
-				{ "wpNhomSelectList", wpNhomSelectList },
-				{ "wpTrangThaiSelectList", wpTrangThaiSelectList }
+				{ "mGroupSelectList", mGroupSelectList },
+				{ "statusSelectList", statusSelectList }
 			};
 			return selectLists;
 		}
 		public async Task<IActionResult> Index()
 		{
-			BaseFormViewModel<WpNhom> formViewModel = new BaseFormViewModel<WpNhom>()
+			BaseFormViewModel<MGroup> formViewModel = new BaseFormViewModel<MGroup>()
 			{
-				Data = new WpNhom(),
+				Data = new MGroup(),
 				SelectLists = await CreateSelectList()
 			};
 			return View(formViewModel);
 		}
 		[HttpGet]
-		public async Task<IActionResult> LoadData(WpNhomSearchViewModel model, Pageable pageable)
+		public async Task<IActionResult> LoadData(MGroupSearchViewModel model, Pageable pageable)
 		{
-			var datas = await _wpNhomService.SearchWpNhom(model, pageable);
+			var datas = await _mGroupService.SearchMGroup(model, pageable);
 			return Json(new
 			{
 				state = "success",
@@ -55,18 +54,18 @@ namespace SMS_TYNB.Controllers
 		[HttpGet]
 		public async Task<IActionResult> LoadDetail(int id)
 		{
-			var data = await _wpNhomService.GetById(id);
-			BaseFormViewModel<WpNhom> formViewModel = new BaseFormViewModel<WpNhom>()
+			var data = await _mGroupService.GetById(id);
+			BaseFormViewModel<MGroup> formViewModel = new BaseFormViewModel<MGroup>()
 			{
-				Data = data ?? new WpNhom(),
+				Data = data ?? new MGroup(),
 				SelectLists = await CreateSelectList()
 			};
 			return PartialView("_Form", formViewModel);
 		}
 		[HttpPost]
-		public async Task<JsonResult> Create(WpNhom model)
+		public async Task<JsonResult> Create(MGroup model)
 		{
-			WpNhom result = await _wpNhomService.Create(model);
+			MGroup result = await _mGroupService.Create(model);
 			return Json(new
 			{
 				state = "success",
@@ -75,9 +74,9 @@ namespace SMS_TYNB.Controllers
 			});
 		}
 		[HttpPost]
-		public async Task<JsonResult> Update(WpNhom model)
+		public async Task<JsonResult> Update(MGroup model)
 		{
-			WpNhom result = await _wpNhomService.Update(model);
+			MGroup? result = await _mGroupService.Update(model);
 			return Json(new
 			{
 				state = "success",
@@ -87,39 +86,39 @@ namespace SMS_TYNB.Controllers
 		}
 		public async Task<IActionResult> Assign()
 		{
-			BaseFormViewModel<WpNhom> formViewModel = new BaseFormViewModel<WpNhom>()
+			BaseFormViewModel<MGroup> formViewModel = new BaseFormViewModel<MGroup>()
 			{
-				Data = new WpNhom(),
+				Data = new MGroup(),
 				SelectLists = await CreateSelectList()
 			};
 			return View(formViewModel);
 		}
 		[HttpGet]
-		public async Task<JsonResult> LoadDataWpNhomCanbos(WpNhomSearchViewModel model)
+		public async Task<JsonResult> LoadDataGroupEmployee(MGroupSearchViewModel model)
 		{
-			List<WpNhomViewModel> result = await _wpNhomService.GetAllWpNhomCanbos(model);
+			List<MGroupViewModel> result = await _mGroupService.GetAllMGroupEmployees(model);
 			return Json(new
 			{
 				state = "success",
-				msg = "LoadDataWpNhomCanbos thành công!",
+				msg = "LoadDataGroupEmployee thành công!",
 				data = result
 			});
 		}
 		[HttpGet]
-		public async Task<JsonResult> LoadDetailWpNhomCanbos(int id)
+		public async Task<JsonResult> LoadDetailGroupEmployee(int id)
 		{
-			WpNhomViewModel result = await _wpNhomService.GetWpNhomCanbosById(id);
+			MGroupViewModel result = await _mGroupService.GetGroupEmployeeById(id);
 			return Json(new
 			{
 				state = "success",
-				msg = "LoadDetailWpNhomCanbos thành công!",
+				msg = "LoadDetailGroupEmployee thành công!",
 				data = result
 			});
 		}
 		[HttpPost]
-		public async Task<JsonResult> Assign(WpNhomViewModel model)
+		public async Task<JsonResult> Assign(MGroupViewModel model)
 		{
-			WpNhomViewModel result = await _wpNhomService.Assign(model);
+			MGroupViewModel result = await _mGroupService.Assign(model);
 			return Json(new
 			{
 				state = "success",

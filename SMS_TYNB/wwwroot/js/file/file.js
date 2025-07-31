@@ -80,33 +80,55 @@ function loadPage(pageNumber) {
 }
 
 function displayFiles(items) {
-    $("#fileInputList").empty();
+    const container = $("#fileInputList");
+    container.empty();
+
     if (items && items.length > 0) {
-        items.forEach((item, index) => {
-			const isSelected = selectedFiles.some(selected => selected.IdFile === item.IdFile);
-            const row = $("<div>").addClass("checkbox-item").append(
-                $("<div>").addClass("form-check").append(
-                    $("<input>")
-                        .addClass("form-check-input")
-                        .attr("type", "checkbox")
-						.attr("id", `check-${item.IdFile}`)
-                        .prop("checked", isSelected)
-                        .data("item", item)
-                        .on("change", function () {
-                            handleItemSelect($(this));
-                        }),
-                    $("<label>")
-                        .addClass("form-check-label")
-						.attr("for", `check-${item.IdFile}`)
-						.html(`${item.TenFile}`)
-                )
-            );
-            $("#fileInputList").append(row);
+        let html = `
+            <table class="table table-hover">
+                <tbody>
+        `;
+
+        items.forEach(item => {
+            const isChecked = selectedFiles.some(selected => selected.IdFile === item.IdFile) ? "checked" : "";
+
+            html += `
+                <tr>
+                    <td>
+                        <input type="checkbox" class="form-check-input" id="check-${item.IdFile}" ${isChecked}>
+                    </td>
+                    <td>
+                        <label class="form-check-label" for="check-${item.IdFile}">
+                            ${item.Name}
+                        </label>
+                    </td>
+                    <td>
+                        <a href="${item.FileUrl}" target="_blank" class="btn btn-link btn-sm">
+                            <i class="fas fa-external-link-alt"></i> Xem nội dung
+                        </a>
+                    </td>
+                </tr>
+            `;
         });
+
+        html += `
+                </tbody>
+            </table>
+        `;
+
+        container.html(html);
+
+        items.forEach(item => {
+            $(`#check-${item.IdFile}`).data("item", item).on("change", function () {
+                handleItemSelect($(this));
+            });
+        });
+
     } else {
-        $("#fileInputList").append($("<div>").append("Không có dữ liệu"));
+        container.html(`<div class="alert alert-info text-center">Không có dữ liệu</div>`);
     }
 }
+
 
 function displaySelectedFiles() {
 	const filesList = $('#selectedFilesList').empty();
@@ -137,7 +159,7 @@ function displaySelectedFiles() {
                 <div class="selected-file-item d-flex align-items-center justify-content-between mb-2 p-2 border rounded bg-white">
                     <div class="d-flex align-items-center">
                         <i class="bi bi-folder me-2"></i>
-                        <span class="file-name">${file.TenFile}</span>
+                        <span class="file-name">${file.Name}</span>
                     </div>
                 </div>
             `;

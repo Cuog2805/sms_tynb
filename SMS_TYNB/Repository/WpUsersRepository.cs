@@ -2,7 +2,6 @@
 using Microsoft.EntityFrameworkCore;
 using SMS_TYNB.Models.Identity;
 using SMS_TYNB.Models.Master;
-using TodoApi.Repository;
 
 namespace SMS_TYNB.Repository
 {

@@ -1,18 +1,18 @@
 ﻿$(document).ready(function () {
     // Khởi tạo Select2 cho dropdown IdNhom
-    $('#IdNhom').select2({
+    $('#IdGroup').select2({
         theme: 'bootstrap-5',
         placeholder: '--Chọn nhóm--',
         allowClear: true,
         width: '100%',
-        dropdownParent: $('#IdNhom').parent()
+        dropdownParent: $('#IdGroup').parent()
     });
-    $('#IdCanBo').select2({
+    $('#IdEmployee').select2({
         theme: 'bootstrap-5',
         placeholder: '--Chọn cán bộ--',
         allowClear: true,
         width: '100%',
-        dropdownParent: $('#IdCanBo').parent()
+        dropdownParent: $('#IdEmployee').parent()
     });
     $('#IdFile').select2({
         theme: 'bootstrap-5',
@@ -88,9 +88,7 @@ let paginationData = {
 let currentEditingFile = {
     IdFile: '',
     FileUrl: '',
-    TenFile: '',
-    DuoiFile: '',
-    BangLuuFileId: ''
+    Name: '',
 };
 
 let canBoPagination = {
@@ -111,10 +109,10 @@ function loadData() {
 
 
     let searchInput = $('#searchInput').val();
-    let IdNhom = $('#IdNhom').val();
-    let IdCanBo = $('#IdCanBo').val();
+    let IdGroup = $('#IdGroup').val();
+    let IdEmployee = $('#IdEmployee').val();
     let IdFile = $('#IdFile').val();
-    let Trangthai = $('#Trangthai').val();
+    let Status = $('#Status').val();
 
     let pageable = {
         pageNumber: currentPagination.pageNumber,
@@ -127,10 +125,10 @@ function loadData() {
         type: 'GET',
         data: $.param({
             'model.searchInput': searchInput,
-            'model.IdNhom': IdNhom,
-            'model.IdCanBo': IdCanBo,
+            'model.IdGroup': IdGroup,
+            'model.IdEmployee': IdEmployee,
             'model.IdFile': IdFile,
-            'model.Trangthai': Trangthai,
+            'model.Status': Status,
             'model.dateFrom': dateFrom,
             'model.dateTo': dateTo,
             'pageable.PageNumber': pageable.pageNumber,
@@ -169,23 +167,29 @@ function displayItems(items, pageNumber, pageSize) {
         items.forEach((item, index) => {
             //danh sách file
             let fileHtml = '';
-            if (item.FileDinhKem && Array.isArray(item.FileDinhKem)) {
-                fileHtml = item.FileDinhKem.map(file => {
+            if (item.FileAttach && Array.isArray(item.FileAttach)) {
+                fileHtml = item.FileAttach.map(file => {
                     if (file) {
                         return `
                         <div class="position-relative d-inline-block m-1">
                             <a class="text-primary text-decoration-underline cursor-pointer" onclick="toggleFileActions(this)">
-                                ${file.TenFile}
+                                ${file.Name}
                             </a>
                             <div class="card shadow-sm p-2 position-absolute top-100 start-0 d-none" style="z-index: 1000; min-width: 150px;">
                                 <div class="mb-2">
                                     <a class="btn btn-primary btn-sm w-100 small" href="${file.FileUrl}" target="_blank">
-                                        Xem
+                                        Xem nội dung
                                     </a>
                                 </div>
                                 <div class="mb-2">
+                                    <button class="btn btn-primary btn-sm w-100 small"
+                                            onclick="fileChangeDetail('${file.IdFile}')">
+                                        Xem lịch sử
+                                    </button>
+                                </div>
+                                <div class="mb-2">
                                     <button class="btn btn-primary btn-sm w-100 small" 
-                                            onclick="editFile('${file.IdFile}', '${file.TenFile}','${file.DuoiFile}','${file.FileUrl}','${file.BangLuuFileId}')">
+                                            onclick="editFile('${file.IdFile}', '${file.Name}', '${file.FileUrl}')">
                                         Sửa
                                     </button>
                                 </div>
@@ -201,12 +205,12 @@ function displayItems(items, pageNumber, pageSize) {
             tableHtml += `
                 <tr id="row-${item.IdSms}">
                     <td class="text-center">${startIndex + index + 1}</td>
-                    <td>${item.Noidung}</td>
+                    <td>${item.Content}</td>
                     <td>${fileHtml}</td>
-                    <td>${item.TenNguoigui}</td>
-                    <td>${item.Ngaygui.replace("T", " ")}</td>
-                    <td>${item.SoTn}</td>
-                    <td>${item.SoTnLoi}</td>
+                    <td>${item.CreateBy}</td>
+                    <td>${formatDateTime(new Date(item.CreateAt))}</td>
+                    <td>${item.NumberMessages}</td>
+                    <td>${item.NumberMessageError}</td>
                     <td class="text-center">
                         <button
                             class="btn btn-sm btn-primary"
@@ -235,16 +239,16 @@ function displayItems(items, pageNumber, pageSize) {
 function showCanBoDetail(smsId) {
     if (Number(smsId) && Number(smsId) > 0) {
         smsSelected = Number(smsId);
-        const IdNhom = $("#IdNhom").val();
-        const IdCanBo = $("#IdCanBo").val();
+        const IdGroup = $("#IdGroup").val();
+        const IdEmployee = $("#IdEmployee").val();
 
         $.ajax({
             url: '/Message/LoadDetail',
             type: 'GET',
             data: {
                 'model.IdSms': smsSelected,
-                'model.IdNhom': IdNhom,
-                'model.IdCanBo': IdCanBo,
+                'model.IdGroup': IdGroup,
+                'model.IdEmployee': IdEmployee,
             },
             success: function (response) {
                 if (response.state === "success") {
@@ -257,10 +261,10 @@ function showCanBoDetail(smsId) {
                     }
 
                     // Lưu danh sách cán bộ hiện tại và reset pagination
-                    currentCanBoList = (smsData.WpCanbosView && Array.isArray(smsData.WpCanbosView)) ? smsData.WpCanbosView : [];
+                    currentCanBoList = (smsData.EmployeesView && Array.isArray(smsData.EmployeesView)) ? smsData.EmployeesView : [];
                     canBoPagination.pageNumber = 1;
 
-                    $('#detailMessaegStatisticalLabel').text(`Danh sách cán bộ - ${smsData.Noidung}`);
+                    $('#detailMessaegStatisticalLabel').text(`Danh sách cán bộ - ${smsData.Content}`);
 
                     // Hiển thị dữ liệu
                     displayCanBoList();
@@ -297,9 +301,9 @@ function displayCanBoList() {
                 tableBodyHtml += `
                     <tr>
                         <td class="text-center">${index + 1}</td>
-                        <td>${canbo.TenCanbo}</td>
-                        <td>${canbo.SoDt}</td>
-                        <td>${canbo.TenNhom}</td>
+                        <td>${canbo.Name}</td>
+                        <td>${canbo.PhoneNumber}</td>
+                        <td>${canbo.GroupName}</td>
                         <td class="text-center">${trangThaiHtml}</td>
                     </tr>
                 `;
@@ -359,14 +363,63 @@ function toggleFileActions(element) {
         }, 100);
     }
 }
+function fileChangeDetail(IdFile) {
+    $.ajax({
+        url: '/File/LoadFileChangeHistory',
+        type: 'GET',
+        data: { id: IdFile },
+        success: function (response) {
+            if (response.state === "success") {
+                // Hiển thị lịch sử thay đổi
+                $("#historyModal").modal('show');
+                displayFileChangeHistory(response.content);
+            } else {
+                alertify.error(response.msg);
+            }
+        },
+        error: function (xhr) {
+            console.log("xhr", xhr);
+            alertify.error("Lỗi khi tải lịch sử thay đổi");
+        }
+    });
+}
 
-function editFile(IdFile, TenFile, DuoiFile, FileUrl, SmsId) {
+function displayFileChangeHistory(data) {
+    const historyTableBody = $('#historyTableBody');
+    historyTableBody.empty();
+
+    //header
+    $('#historyModalLabel').text(`${data.Name}`);
+
+    if (data.History && data.History.length > 0) {
+        data.History.forEach((item, index) => {
+            const row = `
+                <tr>
+                    <td class="text-center">${index + 1}</td>
+                    <td>${item.Action}</td>
+                    <td>${item.CreatedBy}</td>
+                    <td>${formatDateTime(new Date(item.CreatedAt))}</td>
+                </tr>
+            `;
+            historyTableBody.append(row);
+        });
+    } else {
+        historyTableBody.append(`
+            <tr>
+                <td colspan="3" class="text-center text-muted">
+                    <i class="fas fa-info-circle"></i>
+                    Không có lịch sử thay đổi
+                </td>
+            </tr>
+        `);
+    }   
+}
+
+function editFile(IdFile, Name, FileUrl) {
     currentEditingFile = {
         IdFile: IdFile,
-        TenFile: TenFile,
-        DuoiFile: DuoiFile,
-        FileUrl: FileUrl,
-        BangLuuFileId: SmsId
+        Name: Name,
+        FileUrl: FileUrl
     };
 
     // Reset form
@@ -382,17 +435,9 @@ function uploadNewFile() {
 
     if ($('#updateFileModalForm').valid()) {
         const formData = new FormData();
-        //model WpFile - thông tin file ban đầu
-        const oldFile = {
-            IdFile: currentEditingFile.IdFile,
-            FileUrl: currentEditingFile.FileUrl,
-            TenFile: currentEditingFile.TenFile,
-            DuoiFile: currentEditingFile.DuoiFile,
-            BangLuuFileId: currentEditingFile.BangLuuFileId
-        };
-        for (const key in oldFile) {
-            formData.append(`oldFile.${key}`, oldFile[key]);
-        }
+        //model oldFileId - thông tin idfile ban đầu
+        formData.append('oldFileId', currentEditingFile.IdFile);
+
         //file đính kèm mới
         const file = $('#newFileInput')[0].files[0];
         formData.append('fileDinhKem', file);
@@ -449,15 +494,14 @@ function initUpdateFileModalFormValidate() {
         rules: {
             'newFileInput': {
                 required: true,
-                extension: currentEditingFile.DuoiFile.slice(1),
-                //extension: "doc|docx|pdf|png|jpg",
+                extension: currentEditingFile.Name.split('.').pop(),
                 filesize: 5 * 1024 * 1024
             },
         },
         messages: {
             'newFileInput': {
                 required: "Vui lòng nhập file mới",
-                extension: "Chỉ chấp nhận định dạng file cũ: " + currentEditingFile.DuoiFile,
+                extension: "Chỉ chấp nhận định dạng file cũ: " + currentEditingFile.Name.split('.').pop(),
                 filesize: "Kích thước mỗi tệp không được vượt quá 5MB"
             },
         },

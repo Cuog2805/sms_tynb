@@ -3,13 +3,13 @@ using SMS_TYNB.Common;
 using SMS_TYNB.Models.Master;
 using System.Linq.Dynamic.Core;
 
-namespace TodoApi.Repository
+namespace SMS_TYNB.Repository
 {
 	public class BaseRepository<T, TKey> where T : class where TKey : notnull
 	{
-		protected readonly SmsTynContext context;
+		protected readonly VnptSmsBrandnameContext context;
 
-		public BaseRepository(SmsTynContext _context)
+		public BaseRepository(VnptSmsBrandnameContext _context)
 		{
 			context = _context;
 		}

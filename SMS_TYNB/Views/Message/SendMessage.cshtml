@@ -1,4 +1,4 @@
-﻿@model SMS_TYNB.ViewModel.BaseFormViewModel<SMS_TYNB.Models.Master.WpSms>
+﻿@model SMS_TYNB.ViewModel.BaseFormViewModel<SMS_TYNB.Models.Master.MSms>
 
 @{
 	ViewBag.Title = "Gửi tin nhắn";
@@ -14,17 +14,17 @@
 				<div class="row justify-content-center">
 						<div class="col-md-6">
 							<div class="form-group mb-3">
-								<label for="Noidung" class="form-label">Nội dung tin nhắn <span class="text-danger">*</span></label>
+								<label for="Content" class="form-label">Nội dung tin nhắn <span class="text-danger">*</span></label>
 								@Html.TextAreaFor(
-									model => model.Data.Noidung,
+									model => model.Data.Content,
 									htmlAttributes: new {
 										@class = "form-control",
-										@name = "Data.Noidung", 
-										@id = "Noidung",
+										@name = "Data.Content", 
+										@id = "Content",
 										rows = "5"
 									}
 								 )
-								@Html.ValidationMessageFor(model => model.Data.Noidung, "", new { @class = "text-danger" })
+								@Html.ValidationMessageFor(model => model.Data.Content, "", new { @class = "text-danger" })
 							</div>
 						</div>
 						<div class="col-md-6">
@@ -97,7 +97,7 @@
 			<div class="modal-body">
 				<!-- Thống kê gửi tin -->
 				<div class="alert alert-success d-flex align-items-center mb-3">
-                    <strong id="smsSucceedNumber">0</strong>&ensp;Tin nhắn thành công
+                    <strong id="smsSucceedNumber">0</strong>&ensp;Tin nhắn gửi đi
                 </div>
                 <div class="alert alert-danger d-flex align-items-center mb-3">
                     <strong id="smsErrorNumber">0</strong>&ensp;Tin nhắn thất bại

@@ -1,12 +1,11 @@
 ﻿using SMS_TYNB.Models.Master;
 using SMS_TYNB.ViewModel;
-using TodoApi.Repository;
 
 namespace SMS_TYNB.Repository
 {
     public class SmsConfigRepository : BaseRepository<SmsConfig, long>
     {
-        public SmsConfigRepository(SmsTynContext _context) : base(_context)
+        public SmsConfigRepository(VnptSmsBrandnameContext _context) : base(_context)
         {
         }
 		public SmsConfig? GetSmsConfigActive(bool isActive) {

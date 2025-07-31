@@ -17,7 +17,7 @@ namespace SMS_TYNB
         public static void Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
-            var connectionString = "Server=localhost;Port=3306;Database=VnptSmsBrandName;Uid=root;Pwd=280503;CharSet=utf8mb4;";
+            var connectionString = "Server=localhost;Port=3306;Database=sms_tunb;Uid=root;Pwd=280503;CharSet=utf8mb4;";
             // Add services to the container.
             builder.Services.AddControllersWithViews()
                 .AddNewtonsoftJson(options =>
@@ -26,7 +26,7 @@ namespace SMS_TYNB
                 });
             //builder.Services.AddControllersWithViews();
 
-            builder.Services.AddDbContext<SmsTynContext>(options =>
+            builder.Services.AddDbContext<VnptSmsBrandnameContext>(options =>
             {
                 options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString));
             });
@@ -35,10 +35,10 @@ namespace SMS_TYNB
 
             builder.Services.AddIdentity<WpUsers, IdentityRole>(options => options.SignIn.RequireConfirmedAccount = true)
                 .AddDefaultUI()
-                .AddEntityFrameworkStores<SmsTynIdentityContext>()
+                .AddEntityFrameworkStores<VnptSmsBrandnameIdentityContext>()
                 .AddDefaultTokenProviders();
 
-            builder.Services.AddDbContext<SmsTynIdentityContext>(options =>
+            builder.Services.AddDbContext<VnptSmsBrandnameIdentityContext>(options =>
             {
                 options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString));
             });

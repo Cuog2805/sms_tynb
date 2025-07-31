@@ -1,0 +1,102 @@
+﻿@model SMS_TYNB.ViewModel.BaseFormViewModel<SMS_TYNB.Models.Master.MEmployee>
+
+<div class="modal-dialog modal-dialog-centered modal-lg">
+	<div class="modal-content">
+		<div class="modal-header">
+			<h1 class="modal-title fs-5" id="data-form-header"></h1>
+			<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+		</div>
+		<div class="modal-body">
+			<!-- Form thêm/sửa -->
+			@using (Html.BeginForm("", "", FormMethod.Post, new { id = "contactForm" }))
+            {
+                @Html.AntiForgeryToken()
+                @Html.HiddenFor(model => model.Data.IdEmployee, new { id = "IdEmployee" })
+                @Html.HiddenFor(model => model.Data.IdOrganization, new { id = "IdOrganization" })
+                @Html.HiddenFor(model => model.Data.CreateBy, new { id = "CreateBy" })
+                @Html.HiddenFor(model => model.Data.CreateAt, new { id = "CreateAt" })
+        
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group mb-3">
+                            <label class="form-label">Tên cán bộ <span class="text-danger">*</span></label>
+                            @Html.EditorFor(model => model.Data.Name, 
+                                new { 
+                                    htmlAttributes = new { 
+                                        @class = "form-control",
+                                        @name = "Data.Name",
+                                        @id = "Name",
+                                        @placeholder = "Nhập tên cán bộ",
+                                    } 
+                                }
+                            )
+                            @Html.ValidationMessageFor(model => model.Data.Name, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group mb-3">
+                            <label class="form-label">Giới tính <span class="text-danger">*</span></label>
+                            @Html.DropDownListFor(
+                                model => model.Data.Gender,
+                                Model.SelectLists["genderSelectList"],
+                                htmlAttributes: new { @class = "form-select", @name = "Data.Gender", @id = "Gender" }
+                            )
+                        </div>
+                    </div>
+                </div>
+        
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group mb-3">
+                            <label class="form-label">Số điện thoại <span class="text-danger">*</span></label>
+                            @Html.EditorFor(model => model.Data.PhoneNumber, 
+                                new { 
+                                    htmlAttributes = new { 
+                                        @class = "form-control",
+                                        @name = "Data.PhoneNumber",
+                                        @id = "PhoneNumber",
+                                        @placeholder = "Nhập số điện thoại"
+                                    } 
+                                }
+                            )
+                            @Html.ValidationMessageFor(model => model.Data.PhoneNumber, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group mb-3">
+                            <label class="form-label">Mô tả</label>
+                            @Html.EditorFor(model => model.Data.Description, 
+                                new { 
+                                    htmlAttributes = new { 
+                                        @class = "form-control",
+                                        @name = "Data.Description",
+                                        @id = "Description",
+                                        @placeholder = "Nhập mô tả"
+                                    }
+                                }
+                            )
+                            @Html.ValidationMessageFor(model => model.Data.Description, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+                </div>
+        
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group mb-3">
+                            <label for="Trangthai" class="form-label">Trạng thái <span class="text-danger">*</span></label>
+                            @Html.DropDownListFor(
+						        model => model.Data.IsDeleted,
+						        Model.SelectLists["statusSelectList"],
+						        htmlAttributes: new { @class = "form-select", @name = "Data.IsDeleted", @id = "IsDeleted" }
+					        )
+                        </div>
+                    </div>
+                </div>		
+            }
+		</div>
+		<div class="modal-footer">
+		    <button type="button" class="btn btn-primary" id="btnSave">Lưu</button>
+			<button type="button" class="btn btn-secondary" id="btnClose" data-bs-dismiss="modal">Đóng</button>
+		</div>
+	</div>
+</div>

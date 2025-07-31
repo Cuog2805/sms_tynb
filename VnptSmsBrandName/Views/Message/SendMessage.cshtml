@@ -1,0 +1,128 @@
+﻿@model SMS_TYNB.ViewModel.BaseFormViewModel<SMS_TYNB.Models.Master.MSms>
+
+@{
+	ViewBag.Title = "Gửi tin nhắn";
+	Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container-fluid">
+	<div class="card p-0">
+		@* form *@
+		<div class="card-body">
+			@using (Html.BeginForm("", "", FormMethod.Post, new { id = "messageForm", enctype = "multipart/form-data" }))
+			{
+				<div class="row justify-content-center">
+						<div class="col-md-6">
+							<div class="form-group mb-3">
+								<label for="Content" class="form-label">Nội dung tin nhắn <span class="text-danger">*</span></label>
+								@Html.TextAreaFor(
+									model => model.Data.Content,
+									htmlAttributes: new {
+										@class = "form-control",
+										@name = "Data.Content", 
+										@id = "Content",
+										rows = "5"
+									}
+								 )
+								@Html.ValidationMessageFor(model => model.Data.Content, "", new { @class = "text-danger" })
+							</div>
+						</div>
+						<div class="col-md-6">
+							<div class="form-group mb-3">
+								<label for="FileDinhKem" class="form-label">File đính kèm </label>
+								<button type="button" class="btn btn-outline-primary d-block mt-2" data-bs-toggle="modal" data-bs-target="#inputFileModal" style="width: 200px">
+									<i class="bi bi-folder2-open"></i> Chọn File
+								</button>
+								<div class="mt-2" id="selectedFilesList"></div>
+							</div>
+						</div>
+				</div>
+			}
+			
+			<!-- Tìm kiếm -->
+			<div class="search-controls">
+				<div class="d-flex justify-content-start align-items-center gap-2 flex-wrap">
+					<input type="text" class="form-control" id="searchInput" placeholder="Tìm kiếm theo tên cán bộ" style="width: 250px;">
+					<button type="button" class="btn btn-primary btn-sm" onclick="selectAll()">
+						<i class="fas fa-check-square"></i> Chọn tất cả
+					</button>
+					<button type="button" class="btn btn-secondary btn-sm" onclick="unselectAll()">
+						<i class="fas fa-times"></i> Bỏ chọn tất cả
+					</button>
+				</div>
+			</div>
+			
+			<div class="row mt-4">
+				<!-- Cột trái - Danh sách -->
+				<div class="col-md-6 border-end border-1 border-light">
+					<div class="checkbox-list overflow-auto" id="messageCheckBoxTree" style="max-height: 600px; overflow-y: auto;">
+					</div>
+					<div class="mt-4">
+						<p>Số cán bộ đã chọn: <span id="messageAssignTotal">0</span> cán bộ</p>
+					</div>
+				</div>
+				
+				<!-- Cột phải - Danh sách đã chọn -->
+				<div class="col-md-6">
+					<div class="checkbox-list overflow-auto" id="messageAssignList" style="max-height: 600px; overflow-y: auto;">
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<div class="card-footer">
+			<div class="row justify-content-center">
+				<button type="button" class="btn btn-primary" id="btnSendMessage" style="width: 200px">Gửi tin nhắn</button>
+			</div>
+		</div>
+
+	</div>
+</div>
+
+<!-- Modal file input -->
+@{
+	await Html.RenderPartialAsync("_InputFile");
+}
+
+<!-- Modal popup thông báo khi gửi tin thành công -->
+<div class="modal fade" id="successMessageModal" tabindex="-1" aria-labelledby="successMessageModalLabel" aria-hidden="true">
+	<div class="modal-dialog modal-lg">
+		<div class="modal-content">
+			<div class="modal-header bg-success text-white">
+				<h5 class="modal-title" id="successMessageModalLabel">
+					Gửi tin nhắn thành công
+				</h5>
+				<button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+			</div>
+			<div class="modal-body">
+				<!-- Thống kê gửi tin -->
+				<div class="alert alert-success d-flex align-items-center mb-3">
+                    <strong id="smsSucceedNumber">0</strong>&ensp;Tin nhắn gửi đi
+                </div>
+                <div class="alert alert-danger d-flex align-items-center mb-3">
+                    <strong id="smsErrorNumber">0</strong>&ensp;Tin nhắn thất bại
+                </div>
+				
+				<!-- Nội dung -->
+				<div class="mb-3">
+					<label class="form-label fw-semibold text-muted mb-2">Nội dung:</label>
+					<div class="border rounded-3 p-3" style="background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%); min-height: 80px;">
+						<p id="smsContent" class="mb-0 text-dark" style="line-height: 1.6; white-space: pre-wrap;"></p>
+					</div>
+				</div>
+						
+			</div>
+			<div class="modal-footer justify-content-between">
+				<!-- Thông tin người gửi và thời gian -->
+				<div class="d-flex align-items-center text-muted">
+						Người gửi:&ensp;<small id="smsInfo" class="mb-0"></small>
+				</div>
+				<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+			</div>
+		</div>
+	</div>
+</div>
+
+@section Scripts {
+	<script src="~/js/message/message.js?v=@DateTime.Now.Ticks"></script>
+}

@@ -1,0 +1,150 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Hệ thống tin nhắn điều hành</title>
+    <script type="importmap"></script>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link href="~/css/site.css" rel="stylesheet" />
+    <link rel="stylesheet" href="~/SMS_TYNB.styles.css" asp-append-version="true" />
+	<link href="~/lib/AlertifyJS/css/alertify.css" rel="stylesheet" />
+	<link href="~/lib/AlertifyJS/css/alertify.min.css" rel="stylesheet" />
+	<link href="~/lib/jstree/themes/default/style.min.css" rel="stylesheet" />
+	<link href="~/lib/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet" />
+	<link href="~/lib/bootstrap-icons/font/bootstrap-icons.min.css" rel="stylesheet" />
+	<link href="~/lib/select2/css/select2.css" rel="stylesheet" />
+	<link href="~/lib/select2/css/select2.min.css" rel="stylesheet" />
+    <style>
+        .select2-container--bootstrap-5 .select2-selection--single {
+            height: calc(2.25rem + 2px) !important;
+            padding: 0.375rem 0.75rem !important;
+            font-size: 1rem !important;
+            line-height: 1.5 !important;
+            border: 1px solid #ced4da !important;
+            border-radius: 0.375rem !important;
+        }
+
+            .select2-container--bootstrap-5 .select2-selection--single .select2-selection__rendered {
+                padding: 0 !important;
+                line-height: inherit !important;
+            }
+
+            .select2-container--bootstrap-5 .select2-selection--single .select2-selection__arrow {
+                height: calc(2.25rem) !important;
+            }
+
+            .select2-container--bootstrap-5 .select2-results > .select2-results__options {
+                max-height: 300px !important; 
+                overflow-y: auto !important;
+            }
+
+        .select2-container {
+            width: 100% !important;
+        }
+
+        .select2-dropdown {
+            border: 1px solid #ced4da !important;
+            border-radius: 0.375rem !important;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom p-2">
+            <div class="container-fluid justify-content-center">
+                <img class="me-2" src="~/images/logo_vnpt.png" style="height: 50px; width:auto;">
+                <a class="navbar-brand font-weight-bold text-uppercase" asp-area="" asp-controller="Home" asp-action="Index">Hệ thống tin nhắn</a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
+                        aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+            </div>
+        </nav>
+        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light border-bottom p-0" id="navbar-menu-list">
+            <div class="container-fluid">
+                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
+                    <ul class="navbar-nav flex-grow-1">
+                        <li class="nav-item">
+                            <a class="nav-link text-light @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Home" ? "active" : "")"
+                               asp-area="" asp-controller="Home" asp-action="Index">Trang chủ</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-light @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Message" && ViewContext.RouteData.Values["Action"]?.ToString() == "SendMessage" ? "active" : "")"
+                               asp-area="" asp-controller="Message" asp-action="SendMessage">Gửi tin nhắn</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-light @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Message" && ViewContext.RouteData.Values["Action"]?.ToString() == "MessageStatistical" ? "active" : "")"
+                               asp-area="" asp-controller="Message" asp-action="MessageStatistical">Thống kê tin nhắn</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-light @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Contact" ? "active" : "")"
+                               asp-area="" asp-controller="Contact" asp-action="Index">Quản lý danh bạ</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-light @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Group" && ViewContext.RouteData.Values["Action"]?.ToString() == "Index" ? "active" : "")"
+                               asp-area="" asp-controller="Group" asp-action="Index">Quản lý nhóm</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-light @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Group" && ViewContext.RouteData.Values["Action"]?.ToString() == "Assign" ? "active" : "")"
+                               asp-area="" asp-controller="Group" asp-action="Assign">Phân nhóm</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-light @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Config" && ViewContext.RouteData.Values["Action"]?.ToString() == "Index" ? "active" : "")"
+                               asp-area="" asp-controller="Config" asp-action="Index">Cấu hình hệ thống</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-light @(ViewContext.RouteData.Values["Controller"]?.ToString() == "SmsConfig" ? "active" : "")"
+                               asp-area="" asp-controller="SmsConfig" asp-action="Index">SMS Config</a>
+                        </li>
+                    </ul>
+                    <div class="d-flex align-items-center">
+                        @if (User.Identity?.IsAuthenticated ?? false)
+                        {
+                            <div class="dropdown">
+                                <a class="nav-link dropdown-toggle text-light" href="#" role="button" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                                    @User.Identity.Name
+                                </a>
+                                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+                                    <li class="nav-item">
+                                        <a class="dropdown-item" id="change-password" asp-area="Identity" asp-page="/Account/Manage/ChangePassword">Đổi mật khẩu</a>
+                                    </li>
+                                    <li>
+                                        <form asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Page("/", new { area = "" })" method="post" class="dropdown-item m-0 p-0">
+                                            <button type="submit" class="dropdown-item">Đăng xuất</button>
+                                        </form>
+                                    </li>
+                                </ul>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+        </nav>
+    </header>
+    <div class="container mt-5">
+        <main role="main" class="pb-3">
+            @RenderBody()
+        </main>
+    </div>
+
+	<script src="~/lib/jquery/dist/jquery.min.js"></script>
+	<script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
+	<script src="~/lib/jquery-validation/dist/jquery.validate.js"></script>
+	<script src="~/lib/jquery-validation/dist/additional-methods.min.js"></script>
+	<script src="~/lib/jquery-validation/dist/additional-methods.js"></script>
+	<script src="~/lib/jstree/jstree.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+	<script src="~/lib/AlertifyJS/alertify.js"></script>
+	<script src="~/lib/AlertifyJS/alertify.min.js"></script>
+	<script src="~/js/common.js?v=@DateTime.Now.Ticks"></script>
+	<script src="~/js/file/file.js?v=@DateTime.Now.Ticks"></script>
+	<script src="~/lib/xlsx/xlsx.full.min.js"></script>
+	<script src="~/lib/select2/js/select2.full.js"></script>
+	<script src="~/lib/select2/js/select2.full.min.js"></script>
+	<script src="~/lib/select2/js/select2.js"></script>
+	<script src="~/lib/select2/js/select2.min.js"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

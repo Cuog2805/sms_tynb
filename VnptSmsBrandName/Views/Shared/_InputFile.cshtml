@@ -1,0 +1,63 @@
+﻿<div class="modal fade" id="inputFileModal" tabindex="-1" aria-labelledby="inputFileModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="inputFileModalLabel">
+                    Tải lên file đính kèm
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <ul class="nav nav-pills mb-3" id="fileModalTabs" role="tablist">
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link active" id="upload-tab" data-bs-toggle="pill" data-bs-target="#upload-panel" type="button" role="tab">
+                            Tải file
+                        </button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="media-tab" data-bs-toggle="pill" data-bs-target="#media-panel" type="button" role="tab">
+                            Media
+                        </button>
+                    </li>
+                </ul>
+
+                <div class="tab-content" id="fileModalTabContent">
+                    <!-- Input file -->
+                    <div class="tab-pane fade show active" id="upload-panel" role="tabpanel">
+                        <form id="uploadFileModalForm" method="post" enctype="multipart/form-data">
+                            <div class="mb-3">
+                                <label for="FileDinhKem" class="form-label">File đính kèm</label>
+                                <input class="form-control" type="file" name="FileDinhKem" id="FileDinhKem" multiple />
+                            </div>
+                        </form>
+                    </div>
+
+                    <!-- File có sẵn -->
+                    <div class="tab-pane fade" id="media-panel" role="tabpanel">
+                        <div class="filter-section">
+                            <div class="search-box">
+                                <label for="mediaSearch" class="form-label mb-0">Tìm kiếm</label>
+                                <input type="text" class="form-control form-control" id="searchFileInput" placeholder="Nhập tên file để tìm kiếm..." style="width: 300px">
+                            </div>
+                        </div>
+
+                        <div class="file-grid mt-4" id="fileInputList">
+                        </div>
+                        @{
+                            await Html.RenderPartialAsync("_Pagination");
+                        }
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" id="uploadNewFileBtn" class="btn btn-primary">
+                    Upload
+                </button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                    Hủy
+                </button>
+            </div>
+        </div>
+    </div>
+</div>

@@ -31,9 +31,9 @@ namespace VnptSmsBrandName.Service
 			Config? newObj = await _configRepository.Update(obj.Id, obj);
             return newObj;
         }
-		public async Task<Config?> FindByKey(string key)
+		public async Task<List<Config>> FindByKey(string key)
 		{
-			var result = await _configRepository.Query().Where(t => t.Key == key).FirstOrDefaultAsync();
+			var result = await _configRepository.Query().Where(t => t.Key == key).ToListAsync();
 			return result;
 		}
 
@@ -49,7 +49,7 @@ namespace VnptSmsBrandName.Service
 		Task<Config?> Update(Config obj, Users user);
 		Task<Config> Create(Config obj, Users user);
 		Task<List<Config>> GetAllByOrgId(long orgId);
-		Task<Config?> FindByKey(string key);
+		Task<List<Config>> FindByKey(string key);
 		Task<Config?> FindByKeyAndOrgId(string key, long orgId);
 	}
 }

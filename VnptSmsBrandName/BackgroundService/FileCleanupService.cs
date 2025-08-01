@@ -46,15 +46,23 @@ namespace VnptSmsBrandName.BackgoundSercvice
 
                 try
                 {
-                    var cfg = await configService.FindByKey("file_delete_after");
-                    if (cfg != null && cfg.IsUsed == 1 && int.TryParse(cfg.Value, out int days))
+                    List<Config> configs = await configService.FindByKey("file_delete_after");
+                    if(configs == null || !configs.Any())
                     {
-                        await DeleteOldFilesAsync(days);
-                    }
-                    else
-                    {
-                        _logger.LogInformation("Auto-delete disabled or invalid config.");
-                    }
+                        _logger.LogWarning("No file deletion configuration found.");
+                        continue;
+					}
+					foreach (var cfg in configs)
+					{
+					    if (cfg != null && cfg.IsUsed == 1 && int.TryParse(cfg.Value, out int days))
+                        {
+                            await DeleteOldFilesAsync(days, cfg.OrganizationId);
+                        }
+                        else
+                        {
+                            _logger.LogInformation("Auto-delete disabled or invalid config.");
+                        }
+					}
                 }
                 catch (Exception ex)
                 {
@@ -63,18 +71,19 @@ namespace VnptSmsBrandName.BackgoundSercvice
             }
         }
 
-        private Task DeleteOldFilesAsync(int maxAgeDays)
+        private Task DeleteOldFilesAsync(int maxAgeDays, long orgId)
         {
-            if (!Directory.Exists(_uploadRoot))
+            string path = Path.Combine(_uploadRoot, orgId.ToString());
+			if (!Directory.Exists(path))
             {
-                _logger.LogWarning("Upload directory does not exist: {UploadRoot}", _uploadRoot);
+                _logger.LogWarning("Upload directory does not exist: {path}", path);
                 return Task.CompletedTask;
             }
 
             var cutoff = DateTime.Now.AddDays(-maxAgeDays);
             //var cutoff = DateTime.Now.AddSeconds(-maxAgeDays);
 
-            var files = Directory.EnumerateFiles(_uploadRoot, "*.*", SearchOption.AllDirectories);
+            var files = Directory.EnumerateFiles(path, "*.*", SearchOption.AllDirectories);
             int deletedCount = 0;
 
             foreach (var filePath in files)

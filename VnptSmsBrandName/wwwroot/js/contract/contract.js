@@ -429,7 +429,8 @@ function initFormValidate() {
 				required: true
 			},
 			'Data.PhoneNumber': {
-				required: true
+				required: true,
+                pattern: /^0\d{9,10}$/	
 			},
 			'Data.IsDeleted': {
 				required: true
@@ -443,7 +444,8 @@ function initFormValidate() {
 				required: "Vui lòng chọn giới tính"
 			},
 			'Data.PhoneNumber': {
-				required: "Vui lòng nhập số điện thoại"
+				required: "Vui lòng nhập số điện thoại",
+				pattern: "Định dạng số điện thoại không hợp lệ"
 			},
 			'Data.IsDeleted': {
 				required: "Vui lòng chọn trạng thái"

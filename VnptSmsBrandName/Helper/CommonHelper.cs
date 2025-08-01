@@ -1,5 +1,6 @@
 using System.Globalization;
 using System.Text;
+using System.Text.RegularExpressions;
 
 namespace VnptSmsBrandName.Helper
 {
@@ -62,5 +63,14 @@ namespace VnptSmsBrandName.Helper
 			return new string(filtered).Normalize(NormalizationForm.FormC);
 		}
 
+		public static bool IsValidPhoneNumber(string phoneNumber)
+		{
+			if (string.IsNullOrWhiteSpace(phoneNumber))
+				return false;
+
+			string pattern = @"^0\d{9,10}$";
+			bool isValid = Regex.IsMatch(phoneNumber, pattern);
+			return isValid;
+		}
 	}
 }

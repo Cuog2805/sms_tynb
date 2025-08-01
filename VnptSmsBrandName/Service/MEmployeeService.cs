@@ -1,4 +1,4 @@
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using VnptSmsBrandName.Common;
 using VnptSmsBrandName.Common.Enum;
 using VnptSmsBrandName.Helper;
@@ -28,6 +28,10 @@ namespace VnptSmsBrandName.Service
 		}
 		public async Task<MEmployee> Create(MEmployee mEmployee, Users user)
 		{
+			if(!CommonHelper.IsValidPhoneNumber(mEmployee.PhoneNumber))
+			{
+				throw new ArgumentNullException(nameof(mEmployee.PhoneNumber), "Số điện thoại không đúng định dạng");
+			}
 			AuditHelper.SetCreateAudit(mEmployee, user);
 			MEmployee mEmployeeNew = await _employeeRepository.Create(mEmployee);
 			return mEmployeeNew;

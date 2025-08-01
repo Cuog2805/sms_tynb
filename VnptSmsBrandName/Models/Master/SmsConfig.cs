@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace VnptSmsBrandName.Models.Master
 {
-    public class SmsConfig
+    public class SmsConfig: BaseModel
     {
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         [Key]
@@ -21,7 +21,6 @@ namespace VnptSmsBrandName.Models.Master
         public string PackageId { get; set; }
         public string UrlSms { get; set; }
         public bool IssEnSms { get; set; }
-        public bool IsActive { get; set; }
         public string Domain { get; set; }
     }
 }

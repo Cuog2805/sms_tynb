@@ -6,15 +6,15 @@ namespace VnptSmsBrandName.Models.Master
 	public class BaseModel
 	{
 		/// <summary>
-		/// người tao
+		/// người tạo
 		/// </summary>
 		[MaxLength(250)]
 		[Column(TypeName = "nvarchar(250)")]
-		public string CreateBy { get; set; }
+		public string CreatedBy { get; set; }
 		/// <summary>
 		/// ngày tạo
 		/// </summary>
-		public DateTime CreateAt { get; set; }
+		public DateTime CreatedAt { get; set; }
 		/// <summary>
 		/// người update
 		/// </summary>
@@ -28,7 +28,7 @@ namespace VnptSmsBrandName.Models.Master
 		/// <summary>
 		/// id tổ chức
 		/// </summary>
-		public long IdOrganization { get; set; }
+		public long OrganizationId { get; set; }
 		/// <summary>
 		/// trạng thái xóa, default value = 0
 		/// </summary>

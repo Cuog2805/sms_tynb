@@ -1,27 +1,55 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using System.Threading.Tasks;
 using VnptSmsBrandName.Common;
+using VnptSmsBrandName.Common.Enum;
+using VnptSmsBrandName.Helper;
+using VnptSmsBrandName.Models.Identity;
 using VnptSmsBrandName.Models.Master;
 using VnptSmsBrandName.Service;
 using VnptSmsBrandName.ViewModel;
 
 namespace VnptSmsBrandName.Controllers
 {
-	public class SmsConfigController : Controller
+	public class SmsConfigController : BaseController
 	{
 		private readonly ISmsConfigService _smsConfigService;
-		public SmsConfigController(ISmsConfigService smsConfigService) 
+		public SmsConfigController
+		(
+			ISmsConfigService smsConfigService,
+			IHttpContextAccessor httpContextAccessor,
+			UserManager<Users> userManager
+		): base(userManager, httpContextAccessor)
 		{ 
 			_smsConfigService = smsConfigService;
 		}
-		public IActionResult Index()
+
+		private async Task<Dictionary<string, SelectList>> CreateSelectList()
 		{
-			return View();
+			SelectList statusSelectList = new SelectList(EnumHelper.ToSelectListItem<DeletedEnum>(), "Value", "Text");
+			var selectLists = new Dictionary<string, SelectList>
+			{
+				{ "statusSelectList", statusSelectList }
+			};
+			return selectLists;
+		}
+
+		public async Task<IActionResult> Index()
+		{
+			BaseFormViewModel<SmsConfig> formViewModel = new BaseFormViewModel<SmsConfig>()
+			{
+				Data = new SmsConfig(),
+				SelectLists = await CreateSelectList()
+			};
+			return View(formViewModel);
 		}
 
 		[HttpGet]
 		public async Task<IActionResult> LoadData(SmsConfigSearchViewModel model, Pageable pageable)
 		{
-			var datas = await _smsConfigService.SearchSmsConfig(model, pageable);
+			var currentUser = await GetCurrentUser();
+			var datas = await _smsConfigService.SearchSmsConfig(model, pageable, currentUser.OrganizationId);
 			return Json(new
 			{
 				state = "success",
@@ -32,13 +60,20 @@ namespace VnptSmsBrandName.Controllers
 		[HttpGet]
 		public async Task<IActionResult> LoadDetail(int id)
 		{
-			var data = await _smsConfigService.GetById(id);
-			return PartialView("_Form", data);
+			var currentUser = await GetCurrentUser();
+			var data = await _smsConfigService.GetByIdAndOrgId(id, currentUser.OrganizationId);
+			BaseFormViewModel<SmsConfig> formViewModel = new BaseFormViewModel<SmsConfig>()
+			{
+				Data = data ?? new SmsConfig(),
+				SelectLists = await CreateSelectList()
+			};
+			return PartialView("_Form", formViewModel);
 		}
 		[HttpPost]
 		public async Task<JsonResult> Create(SmsConfig model)
 		{
-			SmsConfig result = await _smsConfigService.Create(model);
+			var currentUser = await GetCurrentUser();
+			SmsConfig result = await _smsConfigService.Create(model, currentUser);
 			return Json(new
 			{
 				state = "success",
@@ -49,7 +84,8 @@ namespace VnptSmsBrandName.Controllers
 		[HttpPost]
 		public async Task<JsonResult> Update(SmsConfig model)
 		{
-			SmsConfig? result = await _smsConfigService.Update(model);
+			var currentUser = await GetCurrentUser();
+			SmsConfig? result = await _smsConfigService.Update(model, currentUser);
 			return Json(new
 			{
 				state = "success",

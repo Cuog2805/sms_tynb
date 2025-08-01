@@ -5,7 +5,7 @@ namespace VnptSmsBrandName.ViewModel
 {
 	public class MSmsViewModel
 	{
-		public long IdSms { get; set; }
+		public long SmsId { get; set; }
 
 		public string? Content { get; set; }
 		public string? ContentSend { get; set; }
@@ -15,8 +15,8 @@ namespace VnptSmsBrandName.ViewModel
 		public int? NumberMessageError { get; set; }
 
 		public string? CreatorId { get; set; }
-		public string? CreateBy { get; set; }
-		public DateTime? CreateAt { get; set; }
+		public string? CreatedBy { get; set; }
+		public DateTime? CreatedAt { get; set; }
 
 		/// <summary>
 		/// dùng cho truyền danh sách cán bộ được tin nhắn gửi đến
@@ -30,13 +30,13 @@ namespace VnptSmsBrandName.ViewModel
 
 	public class MSmsSearchViewModel
 	{
-		public long? IdSms { get; set; }
+		public long? SmsId { get; set; }
 		public string? searchInput { get; set; }
 		public DateTime? dateFrom { get; set; }
 		public DateTime? dateTo { get; set; }
-		public long? IdGroup { get; set; }
-		public long? IdEmployee { get; set; }
-		public long? IdFile { get; set; }
+		public long? GroupId { get; set; }
+		public long? EmployeeId { get; set; }
+		public long? FileId { get; set; }
 		public long? Status { get; set; }
 	}
 }

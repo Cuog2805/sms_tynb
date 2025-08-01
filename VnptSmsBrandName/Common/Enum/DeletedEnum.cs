@@ -1,15 +1,15 @@
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace VnptSmsBrandName.Common.Enum
 {
 	/// <summary>
-	/// enum tr?ng th�i x�a
+	/// enum tr?ng thái xóa
 	/// </summary>
 	public enum DeletedEnum
 	{
-		[Display(Name = "S? d?ng")]
+		[Display(Name = "Sử dụng")]
 		NotDeleted = 0,
-		[Display(Name = "X�a")]
+		[Display(Name = "Xóa")]
 		Deleted = 1,
 	}
 }

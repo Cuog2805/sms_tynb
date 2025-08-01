@@ -4,9 +4,9 @@ namespace VnptSmsBrandName.ViewModel
 {
 	public class MGroupViewModel
 	{
-		public long IdGroup { get; set; }
+		public long GroupId { get; set; }
 
-		public long? IdGroupParent { get; set; }
+		public long? GroupParentId { get; set; }
 
 		public string? Name { get; set; }
 		public string? ParentName { get; set; }

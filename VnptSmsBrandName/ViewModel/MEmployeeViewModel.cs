@@ -1,8 +1,8 @@
-namespace VnptSmsBrandName.ViewModel
+﻿namespace VnptSmsBrandName.ViewModel
 {
 	public class MEmployeeViewModel
 	{
-		public long? IdEmployee { get; set; }
+		public long? EmployeeId { get; set; }
 
 		public string? Name { get; set; }
 
@@ -21,35 +21,35 @@ namespace VnptSmsBrandName.ViewModel
 
 	public class MEmployeeMessageStatisticalViewModel
 	{
-		public long? IdEmployee { get; set; }
+		public long? EmployeeId { get; set; }
 
 		public string? Name { get; set; }
 
 		public string? PhoneNumber { get; set; }
 
-		public long? IdGroup { get; set; }
+		public long? GroupId { get; set; }
 		public string? GroupName { get; set; }
 		/// <summary>
-		/// tr?ng th�i tin nh?n g?i d?n c�n b?
+		/// trạng thái tin nhắn gửi đến cán bộ
 		/// </summary>
 		public string? ERROR { get; set; }
 		/// <summary>
-		/// m� t? l?i c?a tin nh?n g?i d?n c�n b?
+		/// mô tả lỗi của tin nhắn gửi đến cán bộ
 		/// </summary>
 		public string? ERROR_DESC { get; set; }
 	}
 
 	/// <summary>
-	/// ViewModel cho import danh s�ch c�n b? t? file excel
+	/// ViewModel cho import danh sách cán bộ từ file excel
 	/// </summary>
 	public class MEmployeeCreateRangeViewModel
 	{
 		/// <summary>
-		/// danh s�ch c�n b? d� du?c import th�nh c�ng
+		/// danh sách cán bộ đã được import thành công
 		/// </summary>
 		public List<MEmployeeViewModel>? MEmployeeNew { get; set; }
 		/// <summary>
-		/// danh s�ch c�n b? b? tr�ng s? di?n tho?i
+		/// danh sách cán bộ bị trùng số điện thoại
 		/// </summary>
 		public List<MEmployeeViewModel>? MEmployeeDupplicate { get; set; }
 	}

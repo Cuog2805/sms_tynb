@@ -4,18 +4,23 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace VnptSmsBrandName.Models.Master
 {
 	[Table(name: "m_sms_employee")]
-	public class MSmsEmployee
+	public class MSmsEmployee: BaseModel
 	{
 		[DatabaseGenerated(DatabaseGeneratedOption.Identity)]
 		[Key]
-		public long IdSmsEmployee { get; set; }
-		public long IdSms { get; set; }
-		public long IdEmployee { get; set; }
-		public long IdGroup { get; set; }
+		public long SmsEmployeeId { get; set; }
 		/// <summary>
-		/// id tổ chức
+		/// key tin nhắn
 		/// </summary>
-		public long IdOrganization { get; set; }
+		public long SmsId { get; set; }
+		/// <summary>
+		/// key cán bộ
+		/// </summary>
+		public long EmployeeId { get; set; }
+		/// <summary>
+		/// key nhóm
+		/// </summary>
+		public long GroupId { get; set; }
 
 		/// <summary>
 		/// id của req trả về khi gửi tin nhắn

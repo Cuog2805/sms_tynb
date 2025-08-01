@@ -33,29 +33,34 @@
 			</div>
 		</div>
 		@* danh sách *@
-		<table class="table table-bordered" id="smsConfigTable">
-			<thead class="table-primary text-white">
-				<tr>
-					<th class="text-center">STT</th>
-					<th>LabelId</th>
-					<th>ContractId</th>
-					<th>TemplateId</th>
-					<th>IsTelCoSub</th>
-					<th>AgentId</th>
-					<th>ApiUser</th>
-					<th>ApiPass</th>
-					<th>UserName</th>
-					<th>DataCoding</th>
-					<th>SaleOrderId</th>
-					<th>PakageId</th>
-					<th>UrlSms</th>
-					<th>IssEnSms</th>
-					<th class="text-center">Thao tác</th>
-				</tr>
-			</thead>
-			<tbody id="smsConfigTableBody">
-			</tbody>
-		</table>
+		<div class="table-responsive">
+			<table class="table table-bordered" id="smsConfigTable">
+				<thead class="table-primary text-white">
+					<tr>
+						<th class="text-center">STT</th>
+						<th>LabelId</th>
+						<th>ContractId</th>
+						<th>TemplateId</th>
+						<th>IsTelCoSub</th>
+						<th>AgentId</th>
+						<th>ApiUser</th>
+						<th>ApiPass</th>
+						<th>UserName</th>
+						<th>DataCoding</th>
+						<th>SaleOrderId</th>
+						<th>PakageId</th>
+						<th>UrlSms</th>
+						<th>Domain</th>
+						<th>Người tạo</th>
+						<th>Thời gian tạo</th>
+						<th>Trạng thái</th>
+						<th class="text-center">Thao tác</th>
+					</tr>
+				</thead>
+				<tbody id="smsConfigTableBody">
+				</tbody>
+			</table>
+		</div>
 	</div>
 	@{
 		await Html.RenderPartialAsync("_Pagination");

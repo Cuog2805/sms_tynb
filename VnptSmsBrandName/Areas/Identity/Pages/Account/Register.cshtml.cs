@@ -125,7 +125,7 @@ namespace VnptSmsBrandName.Areas.Identity.Pages.Account
                 //
                 // await _userStore.SetUserNameAsync(user, Input.UserName, CancellationToken.None);
                 // await _emailStore.SetEmailAsync(user, Input.UserName, CancellationToken.None);
-                var user = new Users { UserName = Input.UserName, FullName = Input.FullName, Email = Input.Email, PhoneNumber = Input.PhoneNumber, UserRole ="4fe2fb87-b228-4131-97b6-aad71d0ae3e9",  OrgId = 1, UserId = 1, State = 1 };
+                var user = new Users { UserName = Input.UserName, FullName = Input.FullName, Email = Input.Email, PhoneNumber = Input.PhoneNumber, UserRole ="4fe2fb87-b228-4131-97b6-aad71d0ae3e9",  OrganizationId = 1, UserId = 1, State = 1 };
                 var result = await _userManager.CreateAsync(user, Input.Password);
 
                 if (result.Succeeded)

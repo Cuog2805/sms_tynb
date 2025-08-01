@@ -25,8 +25,16 @@ namespace VnptSmsBrandName.Migrations.Master
                         .ValueGeneratedOnAdd()
                         .HasColumnType("bigint");
 
-                    b.Property<long>("IdOrganization")
-                        .HasColumnType("bigint");
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<string>("CreatedBy")
+                        .IsRequired()
+                        .HasMaxLength(250)
+                        .HasColumnType("nvarchar(250)");
+
+                    b.Property<int>("IsDeleted")
+                        .HasColumnType("int");
 
                     b.Property<int>("IsUsed")
                         .HasColumnType("int");
@@ -34,6 +42,16 @@ namespace VnptSmsBrandName.Migrations.Master
                     b.Property<string>("Key")
                         .IsRequired()
                         .HasColumnType("longtext");
+
+                    b.Property<long>("OrganizationId")
+                        .HasColumnType("bigint");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasMaxLength(250)
+                        .HasColumnType("nvarchar(250)");
 
                     b.Property<string>("Value")
                         .IsRequired()
@@ -46,14 +64,14 @@ namespace VnptSmsBrandName.Migrations.Master
 
             modelBuilder.Entity("VnptSmsBrandName.Models.Master.MEmployee", b =>
                 {
-                    b.Property<long>("IdEmployee")
+                    b.Property<long>("EmployeeId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("bigint");
 
-                    b.Property<DateTime>("CreateAt")
+                    b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime(6)");
 
-                    b.Property<string>("CreateBy")
+                    b.Property<string>("CreatedBy")
                         .IsRequired()
                         .HasMaxLength(250)
                         .HasColumnType("nvarchar(250)");
@@ -65,9 +83,6 @@ namespace VnptSmsBrandName.Migrations.Master
                     b.Property<int>("Gender")
                         .HasColumnType("int");
 
-                    b.Property<long>("IdOrganization")
-                        .HasColumnType("bigint");
-
                     b.Property<int>("IsDeleted")
                         .HasColumnType("int");
 
@@ -75,6 +90,9 @@ namespace VnptSmsBrandName.Migrations.Master
                         .IsRequired()
                         .HasMaxLength(500)
                         .HasColumnType("nvarchar(500)");
+
+                    b.Property<long>("OrganizationId")
+                        .HasColumnType("bigint");
 
                     b.Property<string>("PhoneNumber")
                         .IsRequired()
@@ -93,21 +111,21 @@ namespace VnptSmsBrandName.Migrations.Master
                         .HasMaxLength(250)
                         .HasColumnType("nvarchar(250)");
 
-                    b.HasKey("IdEmployee");
+                    b.HasKey("EmployeeId");
 
                     b.ToTable("m_employee");
                 });
 
             modelBuilder.Entity("VnptSmsBrandName.Models.Master.MFile", b =>
                 {
-                    b.Property<long>("IdFile")
+                    b.Property<long>("FileId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("bigint");
 
-                    b.Property<DateTime>("CreateAt")
+                    b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime(6)");
 
-                    b.Property<string>("CreateBy")
+                    b.Property<string>("CreatedBy")
                         .IsRequired()
                         .HasMaxLength(250)
                         .HasColumnType("nvarchar(250)");
@@ -117,9 +135,6 @@ namespace VnptSmsBrandName.Migrations.Master
                         .HasMaxLength(500)
                         .HasColumnType("nvarchar(500)");
 
-                    b.Property<long>("IdOrganization")
-                        .HasColumnType("bigint");
-
                     b.Property<int>("IsDeleted")
                         .HasColumnType("int");
 
@@ -127,6 +142,9 @@ namespace VnptSmsBrandName.Migrations.Master
                         .IsRequired()
                         .HasMaxLength(500)
                         .HasColumnType("nvarchar(500)");
+
+                    b.Property<long>("OrganizationId")
+                        .HasColumnType("bigint");
 
                     b.Property<string>("Type")
                         .IsRequired()
@@ -140,29 +158,26 @@ namespace VnptSmsBrandName.Migrations.Master
                         .HasMaxLength(250)
                         .HasColumnType("nvarchar(250)");
 
-                    b.HasKey("IdFile");
+                    b.HasKey("FileId");
 
                     b.ToTable("m_file");
                 });
 
             modelBuilder.Entity("VnptSmsBrandName.Models.Master.MGroup", b =>
                 {
-                    b.Property<long>("IdGroup")
+                    b.Property<long>("GroupId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("bigint");
 
-                    b.Property<DateTime>("CreateAt")
+                    b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime(6)");
 
-                    b.Property<string>("CreateBy")
+                    b.Property<string>("CreatedBy")
                         .IsRequired()
                         .HasMaxLength(250)
                         .HasColumnType("nvarchar(250)");
 
-                    b.Property<long?>("IdGroupParent")
-                        .HasColumnType("bigint");
-
-                    b.Property<long>("IdOrganization")
+                    b.Property<long?>("GroupParentId")
                         .HasColumnType("bigint");
 
                     b.Property<int>("IsDeleted")
@@ -173,6 +188,9 @@ namespace VnptSmsBrandName.Migrations.Master
                         .HasMaxLength(500)
                         .HasColumnType("nvarchar(500)");
 
+                    b.Property<long>("OrganizationId")
+                        .HasColumnType("bigint");
+
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("datetime(6)");
 
@@ -180,34 +198,52 @@ namespace VnptSmsBrandName.Migrations.Master
                         .HasMaxLength(250)
                         .HasColumnType("nvarchar(250)");
 
-                    b.HasKey("IdGroup");
+                    b.HasKey("GroupId");
 
                     b.ToTable("m_group");
                 });
 
             modelBuilder.Entity("VnptSmsBrandName.Models.Master.MGroupEmployee", b =>
                 {
-                    b.Property<long>("IdGroupEmployee")
+                    b.Property<long>("GroupEmployeeId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("bigint");
 
-                    b.Property<long>("IdEmployee")
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<string>("CreatedBy")
+                        .IsRequired()
+                        .HasMaxLength(250)
+                        .HasColumnType("nvarchar(250)");
+
+                    b.Property<long>("EmployeeId")
                         .HasColumnType("bigint");
 
-                    b.Property<long>("IdGroup")
+                    b.Property<long>("GroupId")
                         .HasColumnType("bigint");
 
-                    b.Property<long>("IdOrganization")
+                    b.Property<int>("IsDeleted")
+                        .HasColumnType("int");
+
+                    b.Property<long>("OrganizationId")
                         .HasColumnType("bigint");
 
-                    b.HasKey("IdGroupEmployee");
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasMaxLength(250)
+                        .HasColumnType("nvarchar(250)");
+
+                    b.HasKey("GroupEmployeeId");
 
                     b.ToTable("m_group_employee");
                 });
 
             modelBuilder.Entity("VnptSmsBrandName.Models.Master.MHistory", b =>
                 {
-                    b.Property<long>("IdHistory")
+                    b.Property<long>("HistoryId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("bigint");
 
@@ -223,10 +259,10 @@ namespace VnptSmsBrandName.Migrations.Master
                         .IsRequired()
                         .HasColumnType("longtext");
 
-                    b.Property<long>("IdOrganization")
+                    b.Property<long>("OrganizationId")
                         .HasColumnType("bigint");
 
-                    b.Property<long>("IdRecord")
+                    b.Property<long>("RecordId")
                         .HasColumnType("bigint");
 
                     b.Property<string>("TableName")
@@ -234,14 +270,14 @@ namespace VnptSmsBrandName.Migrations.Master
                         .HasMaxLength(500)
                         .HasColumnType("nvarchar(500)");
 
-                    b.HasKey("IdHistory");
+                    b.HasKey("HistoryId");
 
                     b.ToTable("m_history");
                 });
 
             modelBuilder.Entity("VnptSmsBrandName.Models.Master.MSms", b =>
                 {
-                    b.Property<long>("IdSms")
+                    b.Property<long>("SmsId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("bigint");
 
@@ -250,16 +286,13 @@ namespace VnptSmsBrandName.Migrations.Master
                         .HasMaxLength(500)
                         .HasColumnType("nvarchar(500)");
 
-                    b.Property<DateTime>("CreateAt")
+                    b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime(6)");
 
-                    b.Property<string>("CreateBy")
+                    b.Property<string>("CreatedBy")
                         .IsRequired()
                         .HasMaxLength(250)
                         .HasColumnType("nvarchar(250)");
-
-                    b.Property<long>("IdOrganization")
-                        .HasColumnType("bigint");
 
                     b.Property<int>("IsDeleted")
                         .HasColumnType("int");
@@ -270,6 +303,9 @@ namespace VnptSmsBrandName.Migrations.Master
                     b.Property<int?>("NumberMessages")
                         .HasColumnType("int");
 
+                    b.Property<long>("OrganizationId")
+                        .HasColumnType("bigint");
+
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("datetime(6)");
 
@@ -277,16 +313,24 @@ namespace VnptSmsBrandName.Migrations.Master
                         .HasMaxLength(250)
                         .HasColumnType("nvarchar(250)");
 
-                    b.HasKey("IdSms");
+                    b.HasKey("SmsId");
 
                     b.ToTable("m_sms");
                 });
 
             modelBuilder.Entity("VnptSmsBrandName.Models.Master.MSmsEmployee", b =>
                 {
-                    b.Property<long>("IdSmsEmployee")
+                    b.Property<long>("SmsEmployeeId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("bigint");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<string>("CreatedBy")
+                        .IsRequired()
+                        .HasMaxLength(250)
+                        .HasColumnType("nvarchar(250)");
 
                     b.Property<string>("ERROR")
                         .IsRequired()
@@ -296,54 +340,82 @@ namespace VnptSmsBrandName.Migrations.Master
                         .IsRequired()
                         .HasColumnType("longtext");
 
-                    b.Property<long>("IdEmployee")
+                    b.Property<long>("EmployeeId")
                         .HasColumnType("bigint");
 
-                    b.Property<long>("IdGroup")
+                    b.Property<long>("GroupId")
                         .HasColumnType("bigint");
 
-                    b.Property<long>("IdOrganization")
-                        .HasColumnType("bigint");
+                    b.Property<int>("IsDeleted")
+                        .HasColumnType("int");
 
-                    b.Property<long>("IdSms")
+                    b.Property<long>("OrganizationId")
                         .HasColumnType("bigint");
 
                     b.Property<string>("REQID")
                         .IsRequired()
                         .HasColumnType("longtext");
 
+                    b.Property<long>("SmsId")
+                        .HasColumnType("bigint");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasMaxLength(250)
+                        .HasColumnType("nvarchar(250)");
+
                     b.Property<string>("name")
                         .IsRequired()
                         .HasColumnType("longtext");
 
-                    b.HasKey("IdSmsEmployee");
+                    b.HasKey("SmsEmployeeId");
 
                     b.ToTable("m_sms_employee");
                 });
 
             modelBuilder.Entity("VnptSmsBrandName.Models.Master.MSmsFile", b =>
                 {
-                    b.Property<long>("IdSmsFile")
+                    b.Property<long>("SmsFileId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("bigint");
 
-                    b.Property<long>("IdFile")
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<string>("CreatedBy")
+                        .IsRequired()
+                        .HasMaxLength(250)
+                        .HasColumnType("nvarchar(250)");
+
+                    b.Property<long>("FileId")
                         .HasColumnType("bigint");
 
-                    b.Property<long>("IdOrganization")
+                    b.Property<int>("IsDeleted")
+                        .HasColumnType("int");
+
+                    b.Property<long>("OrganizationId")
                         .HasColumnType("bigint");
 
-                    b.Property<long>("IdSms")
+                    b.Property<long>("SmsId")
                         .HasColumnType("bigint");
 
-                    b.HasKey("IdSmsFile");
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasMaxLength(250)
+                        .HasColumnType("nvarchar(250)");
+
+                    b.HasKey("SmsFileId");
 
                     b.ToTable("m_sms_file");
                 });
 
             modelBuilder.Entity("VnptSmsBrandName.Models.Master.Organization", b =>
                 {
-                    b.Property<long>("IdOrganization")
+                    b.Property<long>("OrganizationId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("bigint");
 
@@ -352,7 +424,7 @@ namespace VnptSmsBrandName.Migrations.Master
                         .HasMaxLength(500)
                         .HasColumnType("nvarchar(500)");
 
-                    b.HasKey("IdOrganization");
+                    b.HasKey("OrganizationId");
 
                     b.ToTable("organization");
                 });
@@ -378,6 +450,14 @@ namespace VnptSmsBrandName.Migrations.Master
                         .IsRequired()
                         .HasColumnType("longtext");
 
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<string>("CreatedBy")
+                        .IsRequired()
+                        .HasMaxLength(250)
+                        .HasColumnType("nvarchar(250)");
+
                     b.Property<string>("DataCoding")
                         .IsRequired()
                         .HasColumnType("longtext");
@@ -386,8 +466,8 @@ namespace VnptSmsBrandName.Migrations.Master
                         .IsRequired()
                         .HasColumnType("longtext");
 
-                    b.Property<bool>("IsActive")
-                        .HasColumnType("tinyint(1)");
+                    b.Property<int>("IsDeleted")
+                        .HasColumnType("int");
 
                     b.Property<string>("IsTelCoSub")
                         .IsRequired()
@@ -400,6 +480,9 @@ namespace VnptSmsBrandName.Migrations.Master
                         .IsRequired()
                         .HasColumnType("longtext");
 
+                    b.Property<long>("OrganizationId")
+                        .HasColumnType("bigint");
+
                     b.Property<string>("PackageId")
                         .IsRequired()
                         .HasColumnType("longtext");
@@ -411,6 +494,13 @@ namespace VnptSmsBrandName.Migrations.Master
                     b.Property<string>("TemplateId")
                         .IsRequired()
                         .HasColumnType("longtext");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasMaxLength(250)
+                        .HasColumnType("nvarchar(250)");
 
                     b.Property<string>("UrlSms")
                         .IsRequired()

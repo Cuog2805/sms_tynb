@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using VnptSmsBrandName.Common;
 using VnptSmsBrandName.Models.Master;
 using System.Linq.Dynamic.Core;
+using System.ComponentModel.DataAnnotations;
 
 namespace VnptSmsBrandName.Repository
 {
@@ -38,6 +39,26 @@ namespace VnptSmsBrandName.Repository
 			return await context.Set<T>().FindAsync(id);
 		}
 
+		public virtual async Task<T?> FindByIdAndOrgId(TKey id, long orgId)
+		{
+			string? idProperty = GetKeyPropertyName();
+			if (idProperty == null) return null;
+
+			return await context.Set<T>()
+				.Where(e =>
+					EF.Property<TKey>(e, idProperty).Equals(id) &&
+					EF.Property<long>(e, "OrganizationId") == orgId
+				)
+				.FirstOrDefaultAsync();
+		}
+		private static string? GetKeyPropertyName()
+		{
+			var keyProperty = typeof(T).GetProperties()
+				.FirstOrDefault(prop => Attribute.IsDefined(prop, typeof(KeyAttribute)));
+
+			return keyProperty?.Name;
+		}
+
 		public virtual async Task<T> Create(T entity)
 		{
 			var entityNew = await context.Set<T>().AddAsync(entity);
@@ -71,7 +92,7 @@ namespace VnptSmsBrandName.Repository
 
 		public IQueryable<T> GetAllByOrgId(long orgId)
 		{
-			return context.Set<T>().Where(e => EF.Property<long>(e, "IdOrganization") == orgId);
+			return context.Set<T>().Where(e => EF.Property<long>(e, "OrganizationId") == orgId);
 		}
 
 		public async Task Delete(TKey id)

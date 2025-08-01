@@ -1,9 +1,11 @@
 ﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using VnptSmsBrandName.Common;
 using VnptSmsBrandName.Common.Enum;
 using VnptSmsBrandName.Helper;
+using VnptSmsBrandName.Models.Identity;
 using VnptSmsBrandName.Models.Master;
 using VnptSmsBrandName.Service;
 using VnptSmsBrandName.ViewModel;
@@ -11,10 +13,15 @@ using VnptSmsBrandName.ViewModel;
 namespace VnptSmsBrandName.Controllers
 {
 	[Authorize(Roles = "Admin")]
-	public class ContactController : Controller
+	public class ContactController : BaseController
 	{
 		private readonly IMEmployeeService _employeeService;
-		public ContactController(IMEmployeeService employeeService) 
+		public ContactController
+		(
+			IMEmployeeService employeeService, 
+			IHttpContextAccessor httpContextAccessor, 
+			UserManager<Users> userManager
+		) : base(userManager, httpContextAccessor)
 		{
 			_employeeService = employeeService;
 		}
@@ -42,7 +49,8 @@ namespace VnptSmsBrandName.Controllers
 		[HttpGet]
 		public async Task<IActionResult> LoadData(MEmployeeSearchViewModel model, Pageable pageable)
 		{
-			var datas = await _employeeService.SearchMEmployee(model, pageable);
+			var currentUser = await GetCurrentUser();
+			var datas = await _employeeService.SearchMEmployee(model, pageable, currentUser.OrganizationId);
 			return Json(new
 			{
 				state = "success",
@@ -53,14 +61,16 @@ namespace VnptSmsBrandName.Controllers
 		[HttpGet]
 		public async Task<IActionResult> LoadDetail(int id)
 		{
-			var data = await _employeeService.GetById(id);
+			var currentUser = await GetCurrentUser();
+			var data = await _employeeService.GetByIdAndOrgId(id, currentUser.OrganizationId);
 			BaseFormViewModel<MEmployee> formViewModel = await CreateFormViewModel(data);
 			return PartialView("_Form", formViewModel);
 		}
 		[HttpPost]
 		public async Task<JsonResult> Create(MEmployee model)
 		{
-			MEmployee result = await _employeeService.Create(model);
+			var currentUser = await GetCurrentUser();
+			MEmployee result = await _employeeService.Create(model, currentUser);
 			return Json(new
 			{
 				state = "success",
@@ -71,7 +81,8 @@ namespace VnptSmsBrandName.Controllers
 		[HttpPost]
 		public async Task<JsonResult> Update(MEmployee model)
 		{
-			MEmployee? result = await _employeeService.Update(model);
+			var currentUser = await GetCurrentUser();
+			MEmployee? result = await _employeeService.Update(model, currentUser);
 			return Json(new
 			{
 				state = "success",
@@ -82,7 +93,8 @@ namespace VnptSmsBrandName.Controllers
 		[HttpPost]
 		public async Task<JsonResult> Import(List<MEmployee> model)
 		{
-			MEmployeeCreateRangeViewModel data = await _employeeService.CreateMulti(model);
+			var currentUser = await GetCurrentUser();
+			MEmployeeCreateRangeViewModel data = await _employeeService.CreateMulti(model, currentUser);
 			return Json(new
 			{
 				state = "success",

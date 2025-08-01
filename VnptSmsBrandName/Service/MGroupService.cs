@@ -2,13 +2,14 @@ using Microsoft.EntityFrameworkCore;
 using VnptSmsBrandName.Common;
 using VnptSmsBrandName.Common.Enum;
 using VnptSmsBrandName.Helper;
+using VnptSmsBrandName.Models.Identity;
 using VnptSmsBrandName.Models.Master;
 using VnptSmsBrandName.Repository;
 using VnptSmsBrandName.ViewModel;
 
 namespace VnptSmsBrandName.Service
 {
-	public class MGroupService: BaseService, IMGroupService
+	public class MGroupService: IMGroupService
 	{
 		private readonly MGroupRepository _mGroupRepository;
 		private readonly MGroupEmployeeRepository _mGroupEmployeeRepository;
@@ -16,59 +17,56 @@ namespace VnptSmsBrandName.Service
 		private readonly IMEmployeeService _mEmployeeService;
 		public MGroupService
 		(
-			ICurrentUserService currentUserService,
 			MGroupRepository mGroupRepository,
 			MGroupEmployeeRepository mGroupEmployeeRepository,
 			MEmployeeRepository mEmployeeRepository,
 			IMEmployeeService mEmployeeService
-		): base(currentUserService)
+		)
 		{
 			_mGroupRepository = mGroupRepository;
 			_mGroupEmployeeRepository = mGroupEmployeeRepository;
 			_mEmployeeRepository = mEmployeeRepository;
 			_mEmployeeService = mEmployeeService;
 		}
-		public async Task<MGroup> Create(MGroup model)
+		public async Task<MGroup> Create(MGroup model, Users user)
 		{
-			await SetCreateAudit(model);
+			AuditHelper.SetCreateAudit(model, user);
 			MGroup mGroup = await _mGroupRepository.Create(model);
 			return mGroup;
 		}
 
-		public async Task<MGroup?> Update(MGroup model)
+		public async Task<MGroup?> Update(MGroup model, Users user)
 		{
-			await SetUpdateAudit(model);
-			MGroup? mGroup = await _mGroupRepository.Update(model.IdGroup, model);
+			AuditHelper.SetUpdateAudit(model, user);
+			MGroup? mGroup = await _mGroupRepository.Update(model.GroupId, model);
 			return mGroup;
 		}
 
-		public async Task<IEnumerable<MGroup>> GetAllMGroup()
+		public async Task<IEnumerable<MGroup>> GetMGroupList(long orgId)
 		{
-			var user = await _currentUserService.GetCurrentUser();
-			IEnumerable<MGroup> mGroups = _mGroupRepository.Query().Where(item => item.IdOrganization == user.OrgId);
+			IEnumerable<MGroup> mGroups = _mGroupRepository.GetAllByOrgId(orgId);
 			return mGroups;
 		}
 
-		public async Task<MGroup?> GetById(int id)
+		public async Task<MGroup?> GetByIdAndOrgId(long id, long orgId)
 		{
-			MGroup? mGroup = await _mGroupRepository.FindById(id);
+			MGroup? mGroup = await _mGroupRepository.FindByIdAndOrgId(id, orgId);
 			return mGroup;
 		}
-		public async Task<PageResult<MGroupViewModel>> SearchMGroup(MGroupSearchViewModel model, Pageable pageable)
+		public async Task<PageResult<MGroupViewModel>> SearchMGroup(MGroupSearchViewModel model, Pageable pageable, long orgId)
 		{
-			var user = await _currentUserService.GetCurrentUser();
-			IQueryable<MGroup> mGroups = await _mGroupRepository.Search(model.searchInput, user.OrgId);
+			IQueryable<MGroup> mGroups = await _mGroupRepository.Search(model.searchInput, orgId);
 			IEnumerable<MGroup> mGroupsPage = await _mGroupRepository.GetPagination(mGroups, pageable);
 
 			var deletedMapping = EnumHelper.ToDictionary<DeletedEnum>();
 			var mGroupViewModels = from mgroup in mGroupsPage
-								   join mgroupParent in mGroups on mgroup.IdGroupParent equals mgroupParent.IdGroup into mgroupGroup
+								   join mgroupParent in mGroups on mgroup.GroupParentId equals mgroupParent.GroupId into mgroupGroup
 								   from mgroupParent in mgroupGroup.DefaultIfEmpty()
 								   where (mgroup.IsDeleted == model.IsDeleted || model.IsDeleted == null)
 								   select new MGroupViewModel
 								   {
-									   IdGroup = mgroup.IdGroup,
-									   IdGroupParent = mgroup.IdGroupParent,
+									   GroupId = mgroup.GroupId,
+									   GroupParentId = mgroup.GroupParentId,
 									   Name = mgroup.Name,
 									   ParentName = mgroupParent?.Name ?? "",
 									   IsDeleted = deletedMapping[mgroup.IsDeleted],
@@ -81,36 +79,38 @@ namespace VnptSmsBrandName.Service
 			};
 		}
 
-		public async Task<List<MGroupViewModel>> GetAllMGroupEmployees(MGroupSearchViewModel model)
+		public async Task<List<MGroupViewModel>> GetAllMGroupEmployees(MGroupSearchViewModel model, long orgId)
 		{
-			var user = await _currentUserService.GetCurrentUser();
+			IQueryable<MEmployee> mEmployees = await _mEmployeeRepository.Search(model.searchInput, orgId);
+			var mGroups = _mGroupRepository.GetAllByOrgId(orgId);
 
-			var employeeQuery = await _mEmployeeRepository.Search(model.searchInput, user.OrgId);
+			if (model.IsDeleted.HasValue)
+			{
+				mEmployees = mEmployees.Where(item => item.IsDeleted == model.IsDeleted);
+				mGroups = mGroups.Where(item => item.IsDeleted == model.IsDeleted);
+			}
 
-			var employees = await employeeQuery.ToListAsync();
-			var mGroupList = await GetAllMGroup();
-			var groupEmployees = await _mGroupEmployeeRepository.GetAllByOrgId(user.OrgId).ToListAsync();
+			var groupEmployees = _mGroupEmployeeRepository.GetAllByOrgId(orgId);
 
-			var res = (from mgroup in mGroupList
-					   join mgroup_emp in groupEmployees on mgroup.IdGroup equals mgroup_emp.IdGroup into mgroupGroup
+			var res = (from mgroup in mGroups
+					   join mgroup_emp in groupEmployees on mgroup.GroupId equals mgroup_emp.GroupId into mgroupGroup
 					   from mgroup_emp in mgroupGroup.DefaultIfEmpty()
-					   join emp in employees on mgroup_emp?.IdEmployee equals emp.IdEmployee into empGroup
+					   join emp in mEmployees on mgroup_emp.EmployeeId equals emp.EmployeeId into empGroup
 					   from emp in empGroup.DefaultIfEmpty()
-					   where mgroup.IsDeleted == model.IsDeleted || model.IsDeleted == null
-					   group new { emp, mgroup } by new { mgroup.IdGroup, mgroup.IdGroupParent, mgroup.Name } into mgroup_empGroup
+					   group new { emp, mgroup } by new { mgroup.GroupId, mgroup.GroupParentId, mgroup.Name } into mgroup_empGroup
 					   select new MGroupViewModel
 					   {
-						   IdGroup = mgroup_empGroup.Key.IdGroup,
-						   IdGroupParent = mgroup_empGroup.Key.IdGroupParent,
+						   GroupId = mgroup_empGroup.Key.GroupId,
+						   GroupParentId = mgroup_empGroup.Key.GroupParentId,
 						   Name = mgroup_empGroup.Key.Name,
 						   Employees = mgroup_empGroup.Where(item => item.emp != null)
 							   .Select(item => new MEmployeeViewModel
 							   {
-								   IdEmployee = item.emp.IdEmployee,
+								   EmployeeId = item.emp.EmployeeId,
 								   Name = item.emp.Name,
 								   PhoneNumber = item.emp.PhoneNumber,
 								   Description = item.emp.Description,
-								   IdGroup = mgroup_empGroup.Key.IdGroup,
+								   IdGroup = mgroup_empGroup.Key.GroupId,
 								   GroupName = mgroup_empGroup.Key.Name,
 							   }).ToList(),
 					   }).ToList();
@@ -118,23 +118,19 @@ namespace VnptSmsBrandName.Service
 			return res;
 		}
 
-		public async Task<MGroupViewModel> GetGroupEmployeeById(int id)
+		public async Task<MGroupViewModel> GetGroupEmployeeByIdAndOrgId(long id, long orgId)
 		{
-			var user = await _currentUserService.GetCurrentUser();
-
-			var mGroupList = await GetAllMGroup();
-			var mEmployeeList = await _mEmployeeService.GetAllMEmployee();
+			var mGroups = _mGroupRepository.GetAllByOrgId(orgId);
+			var mEmployees = _mEmployeeRepository.GetAllByOrgId(orgId);
 			var mGroup = await _mGroupRepository.FindById(id);
 
-			var groupEmployees = await _mGroupEmployeeRepository.GetAllByOrgId(user.OrgId)
-				.Where(ge => ge.IdGroup == mGroup.IdGroup)
-				.ToListAsync();
+			var groupEmployees = _mGroupEmployeeRepository.GetAllByOrgId(orgId);
 
-			List<MEmployeeViewModel> employees = (from emp in mEmployeeList
-												  join mgroup_emp in groupEmployees on emp.IdEmployee equals mgroup_emp.IdEmployee
+			List<MEmployeeViewModel> employees = (from emp in mEmployees
+												  join mgroup_emp in groupEmployees on emp.EmployeeId equals mgroup_emp.EmployeeId
 												  select new MEmployeeViewModel
 												  {
-													  IdEmployee = emp.IdEmployee,
+													  EmployeeId = emp.EmployeeId,
 													  Name = emp.Name,
 													  PhoneNumber = emp.PhoneNumber,
 													  Description = emp.Description,
@@ -142,26 +138,25 @@ namespace VnptSmsBrandName.Service
 
 			return new MGroupViewModel()
 			{
-				IdGroup = mGroup.IdGroup,
+				GroupId = mGroup.GroupId,
 				Name = mGroup.Name,
 				Employees = employees,
 			};
 		}
 
-		public async Task<MGroupViewModel> Assign(MGroupViewModel model)
+		public async Task<MGroupViewModel> Assign(MGroupViewModel model, Users user)
 		{
-			var user = await _currentUserService.GetCurrentUser();
-			await _mGroupEmployeeRepository.DeleteByGroupId(model.IdGroup);
+			await _mGroupEmployeeRepository.DeleteByGroupId(model.GroupId);
 			foreach (var item in model.Employees)
 			{
-				var wpNhomCanbo = new MGroupEmployee
+				var nhomCanbo = new MGroupEmployee
 				{
-					IdGroup = model.IdGroup,
-					IdEmployee = item.IdEmployee.Value,
-					IdOrganization = user.OrgId,
+					GroupId = model.GroupId,
+					EmployeeId = item.EmployeeId.Value,
+					OrganizationId = user.OrganizationId,
 				};
-
-				await _mGroupEmployeeRepository.Create(wpNhomCanbo);
+				AuditHelper.SetCreateAudit(nhomCanbo, user);
+				await _mGroupEmployeeRepository.Create(nhomCanbo);
 			}
 
 			return model;
@@ -170,13 +165,13 @@ namespace VnptSmsBrandName.Service
 
 	public interface IMGroupService
 	{
-		Task<MGroup> Create(MGroup model);
-		Task<MGroup?> Update(MGroup model);
-		Task<IEnumerable<MGroup>> GetAllMGroup();
-		Task<MGroup?> GetById(int id);
-		Task<PageResult<MGroupViewModel>> SearchMGroup(MGroupSearchViewModel model, Pageable pageable);
-		Task<List<MGroupViewModel>> GetAllMGroupEmployees(MGroupSearchViewModel model);
-		Task<MGroupViewModel> GetGroupEmployeeById(int id);
-		Task<MGroupViewModel> Assign(MGroupViewModel model);
+		Task<MGroup> Create(MGroup model, Users user);
+		Task<MGroup?> Update(MGroup model, Users user);
+		Task<IEnumerable<MGroup>> GetMGroupList(long orgId);
+		Task<MGroup?> GetByIdAndOrgId(long id, long orgId);
+		Task<PageResult<MGroupViewModel>> SearchMGroup(MGroupSearchViewModel model, Pageable pageable, long orgId);
+		Task<List<MGroupViewModel>> GetAllMGroupEmployees(MGroupSearchViewModel model, long orgId);
+		Task<MGroupViewModel> GetGroupEmployeeByIdAndOrgId(long id, long orgId);
+		Task<MGroupViewModel> Assign(MGroupViewModel model, Users user);
 	}
 }

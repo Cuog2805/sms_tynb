@@ -111,7 +111,7 @@ function displayItems(items, pageNumber, pageSize) {
                             type="button"
                             data-bs-toggle="modal"
                             data-bs-target="#data-form"
-                            onclick="startEdit(${item.IdGroup})"
+                            onclick="startEdit(${item.GroupId})"
                             title="Sửa">
                             <i class="bi bi-pencil-square"></i>
                         </button>
@@ -245,12 +245,12 @@ function beforeAdd() {
 }
 
 function clearForm() {
-    $('#IdGroup').val('');
-    $('#IdOrganization').val('');
-    $('#CreateBy').val('');
-    $('#CreateAt').val('');
+    $('#GroupId').val('');
+    $('#OrganizationId').val('');
+    $('#CreatedBy').val('');
+    $('#CreatedAt').val('');
     $('#Name').val('');
-    $('#IdGroupParent').val('');
+    $('#GroupParentId').val('');
 
     // Reset validation
     if ($('#groupForm').data('validator')) {
@@ -267,12 +267,12 @@ function submitForm() {
 
     if ($('#groupForm').valid()) {
         const formData = {
-            IdGroup: $('#IdGroup').val(),
-            IdOrganization: $('#IdOrganization').val(),
-            CreateBy: $('#CreateBy').val(),
-            CreateAt: $('#CreateAt').val(),
+            GroupId: $('#GroupId').val(),
+            OrganizationId: $('#OrganizationId').val(),
+            CreatedBy: $('#CreatedBy').val(),
+            CreatedAt: $('#CreatedAt').val(),
             Name: $('#Name').val(),
-            IdGroupParent: $('#IdGroupParent').val(),
+            GroupParentId: $('#GroupParentId').val(),
             IsDeleted: $('#IsDeleted').val(),
         };
 

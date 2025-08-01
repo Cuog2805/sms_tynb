@@ -11,7 +11,7 @@ namespace VnptSmsBrandName.Repository
 
 		public Task<IQueryable<MFile>> Search(string? searchInput, long orgId)
 		{
-			var query = context.Set<MFile>().AsQueryable().Where(item => item.IdOrganization == orgId);
+			var query = context.Set<MFile>().AsQueryable().Where(item => item.OrganizationId == orgId);
 
 			if (!string.IsNullOrWhiteSpace(searchInput))
 			{
@@ -29,7 +29,7 @@ namespace VnptSmsBrandName.Repository
 
 			if (ids != null && ids.Any())
 			{
-				query = query.Where(item => ids.Contains(item.IdFile));
+				query = query.Where(item => ids.Contains(item.FileId));
 			}
 
 			return await query.ToListAsync();

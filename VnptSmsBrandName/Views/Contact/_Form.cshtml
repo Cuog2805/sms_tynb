@@ -11,10 +11,10 @@
 			@using (Html.BeginForm("", "", FormMethod.Post, new { id = "contactForm" }))
             {
                 @Html.AntiForgeryToken()
-                @Html.HiddenFor(model => model.Data.IdEmployee, new { id = "IdEmployee" })
-                @Html.HiddenFor(model => model.Data.IdOrganization, new { id = "IdOrganization" })
-                @Html.HiddenFor(model => model.Data.CreateBy, new { id = "CreateBy" })
-                @Html.HiddenFor(model => model.Data.CreateAt, new { id = "CreateAt" })
+                @Html.HiddenFor(model => model.Data.EmployeeId, new { id = "EmployeeId" })
+                @Html.HiddenFor(model => model.Data.OrganizationId, new { id = "OrganizationId" })
+                @Html.HiddenFor(model => model.Data.CreatedBy, new { id = "CreatedBy" })
+                @Html.HiddenFor(model => model.Data.CreatedAt, new { id = "CreatedAt" })
         
                 <div class="row">
                     <div class="col-md-6">

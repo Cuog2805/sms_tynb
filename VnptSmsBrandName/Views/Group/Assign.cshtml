@@ -13,16 +13,16 @@
 					<div class="form-group mb-3">
 						<label for="IdGroup" class="form-label">Tên nhóm <span class="text-danger">*</span></label>
 						@Html.DropDownListFor(
-							model => model.Data.IdGroup,
+							model => model.Data.GroupId,
 							Model.SelectLists["mGroupSelectList"],
 							"--Chọn nhóm--",
 							htmlAttributes: new {
 								@class = "form-select",
-								@name = "Data.IdGroup", 
-								@id = "IdGroup",
+								@name = "Data.GroupId", 
+								@id = "GroupId",
 							}
 						 )
-						@Html.ValidationMessageFor(model => model.Data.IdGroup, "", new { @class = "text-danger" })
+						@Html.ValidationMessageFor(model => model.Data.GroupId, "", new { @class = "text-danger" })
 					</div>
 				</div>
 			</div>

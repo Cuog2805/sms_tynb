@@ -14,7 +14,7 @@ namespace VnptSmsBrandName.Repository
 
 			if (idrecord > 0)
 			{
-				query = query.Where(item => item.IdRecord == idrecord);
+				query = query.Where(item => item.RecordId == idrecord);
 			}
 
 			if (!string.IsNullOrEmpty(tablename))

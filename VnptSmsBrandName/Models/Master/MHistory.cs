@@ -8,8 +8,8 @@ namespace VnptSmsBrandName.Models.Master
 	{
 		[DatabaseGenerated(DatabaseGeneratedOption.Identity)]
 		[Key]
-		public long IdHistory { get; set; }
-		public long IdOrganization { get; set; }
+		public long HistoryId { get; set; }
+		public long OrganizationId { get; set; }
 		/// <summary>
 		/// tên bảng lưu lịch sử
 		/// </summary>
@@ -21,7 +21,7 @@ namespace VnptSmsBrandName.Models.Master
 		/// <summary>
 		/// id của bản ghi ở bảng lưu lịch sử
 		/// </summary>
-		public long IdRecord { get; set; }
+		public long RecordId { get; set; }
 
 		[Required]
 		[MaxLength(255)]

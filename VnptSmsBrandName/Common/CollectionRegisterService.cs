@@ -31,7 +31,6 @@ namespace VnptSmsBrandName.Common
 			services.AddScoped<IMGroupService, MGroupService>();
 			services.AddScoped<IMSmsService, MSmsService>();
 			services.AddScoped<IMFileService, MFileService>();
-			services.AddScoped<ICurrentUserService, CurrentUserService>();
 
 			return services;
 		}

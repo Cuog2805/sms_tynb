@@ -36,7 +36,7 @@
         displaySelectedItems();
     })
 
-    $("#IdGroup").on("change", function () {
+    $("#GroupId").on("change", function () {
         var selectedValue = $(this).val();
 
         if (!selectedValue || selectedValue === "" || selectedValue === null) {
@@ -69,7 +69,7 @@ let selectedItems = [];
 function loadData() {
     let model = {
         searchInput: $('#searchInput').val(),
-        IsDeleted: 1
+        IsDeleted: 0
     };
     let pageable = {
         pageNumber: currentPagination.pageNumber,
@@ -138,17 +138,17 @@ function loadDetail(id) {
 }
 
 function submitGroupAssign() {
-    const selectedGroupId = $("#IdGroup").val();
+    const selectedGroupId = $("#GroupId").val();
 
     const canbos = selectedItems.map(item => ({
-        IdEmployee: item.IdEmployee,
+        EmployeeId: item.EmployeeId,
         Name: item.Name,
         PhoneNumber: item.PhoneNumber,
         Description: item.Description,
     }));
 
     const groupViewModel = {
-        IdGroup: parseInt(selectedGroupId) || 0,
+        GroupId: parseInt(selectedGroupId) || 0,
         Employees: canbos
     };
 
@@ -175,7 +175,7 @@ function displayItems(items) {
     $("#groupCheckBoxTableBody").empty();
     if (items && items.length > 0) {
         items.forEach((item, index) => {
-            const isSelected = selectedItems.some(selected => selected.IdEmployee === item.IdEmployee);
+            const isSelected = selectedItems.some(selected => selected.EmployeeId === item.EmployeeId);
             const row = $("<tr>").css("cursor", "pointer")
                 .append(
                     $("<td>").append(
@@ -183,7 +183,7 @@ function displayItems(items) {
                             .css("cursor", "pointer")
                             .addClass("form-check-input")
                             .attr("type", "checkbox")
-                            .attr("id", `check-${item.IdEmployee}`)
+                            .attr("id", `check-${item.EmployeeId}`)
                             .prop("checked", isSelected)
                             .data("item", item)
                             .on("change", function (e) {
@@ -264,12 +264,12 @@ function handleItemSelect(checkbox) {
 
     if (isChecked) {
         // Thêm vào danh sách đã chọn nếu chưa có
-        if (!selectedItems.some(selected => selected.IdEmployee === item.IdEmployee)) {
+        if (!selectedItems.some(selected => selected.EmployeeId === item.EmployeeId)) {
             selectedItems.push(item);
         }
     } else {
         // Bỏ khỏi danh sách đã chọn
-        selectedItems = selectedItems.filter(selected => selected.IdEmployee !== item.IdEmployee);
+        selectedItems = selectedItems.filter(selected => selected.EmployeeId !== item.EmployeeId);
     }
 
     // Kiểm tra và điều chỉnh trang hiện tại nếu cần
@@ -319,7 +319,7 @@ function selectAll() {
 
     // Thêm vào danh sách đã chọn - tránh trùng
     visibleItems.forEach(item => {
-        if (!selectedItems.some(selected => selected.IdEmployee === item.IdEmployee)) {
+        if (!selectedItems.some(selected => selected.EmployeeId === item.EmployeeId)) {
             selectedItems.push(item);
         }
     });

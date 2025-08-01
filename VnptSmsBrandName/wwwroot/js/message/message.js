@@ -72,7 +72,7 @@ function sendMessage() {
         // selectedFiles từ modal
         if (selectedFiles && selectedFiles.length > 0) {
             selectedFiles.forEach((file, index) => {
-                formData.append(`selectedFileIds[${index}]`, file.IdFile);
+                formData.append(`selectedFileIds[${index}]`, file.FileId);
             });
         }
 
@@ -129,7 +129,7 @@ function sendMessage() {
 function showSuccessModal(data) {
     // nội dung tin nhắn
     $('#smsContent').text(data.ContentSend);
-    $('#smsInfo').text(data.CreateBy + " - " + formatDateTime(new Date(data.CreateAt)));
+    $('#smsInfo').text(data.CreatedBy + " - " + formatDateTime(new Date(data.CreatedAt)));
 
     // số lượng người nhận
     $('#smsSucceedNumber').html(data.NumberMessages);
@@ -185,7 +185,7 @@ function displaySelectedItems() {
                         }),
                     $("<label>")
                         .addClass("form-check-label")
-                        .attr("for", `selected-${item.IdEmployee}`)
+                        .attr("for", `selected-${item.EmployeeId}`)
                         .html(`${item.Name} ${item.PhoneNumber ? '- ' + item.PhoneNumber : ''} ${item.Description ? '- ' + item.Description : ''} - ${item.GroupName}`)
                 )
             );
@@ -207,8 +207,8 @@ function buildTreeDataFromGroups(items) {
 
     // Tạo node nhóm
     items.forEach(item => {
-        idToNodeMap[item.IdGroup] = {
-            id: "nhom_" + item.IdGroup,
+        idToNodeMap[item.GroupId] = {
+            id: "nhom_" + item.GroupId,
             text: item.Name,
             children: [],
         };
@@ -216,9 +216,9 @@ function buildTreeDataFromGroups(items) {
 
     // Gắn vào cha hoặc root
     items.forEach(item => {
-        const node = idToNodeMap[item.IdGroup];
-        if (item.IdGroupParent && idToNodeMap[item.IdGroupParent]) {
-            idToNodeMap[item.IdGroupParent].children.push(node);
+        const node = idToNodeMap[item.GroupId];
+        if (item.GroupParentId && idToNodeMap[item.GroupParentId]) {
+            idToNodeMap[item.GroupParentId].children.push(node);
         } else {
             roots.push(node);
         }
@@ -228,15 +228,15 @@ function buildTreeDataFromGroups(items) {
             item.Employees.forEach(cb => {
                 // Kiểm tra cán bộ này từ nhóm này đã được chọn chưa
                 const isSelected = selectedItems.some(selected =>
-                    selected.IdEmployee === cb.IdEmployee && selected.IdGroup === item.IdGroup
+                    selected.EmployeeId === cb.EmployeeId && selected.GroupId === item.GroupId
                 );
 
-                const uniqueId = `canbo_${cb.IdEmployee}_nhom_${item.IdGroup}`;
+                const uniqueId = `canbo_${cb.EmployeeId}_nhom_${item.GroupId}`;
 
-                // Thêm IdGroup vào data của cán bộ
+                // Thêm GroupId vào data của cán bộ
                 const canboWithGroup = {
                     ...cb,
-                    IdGroup: item.IdGroup
+                    GroupId: item.GroupId
                 };
 
                 node.children.push({
@@ -323,12 +323,12 @@ function syncSelectedItems() {
 
 function removeSelectedItem(item) {
     selectedItems = selectedItems.filter(selected => 
-        !(selected.IdEmployee === item.IdEmployee && selected.IdGroup === item.IdGroup)
+        !(selected.EmployeeId === item.EmployeeId && selected.GroupId === item.GroupId)
     );
 
     const treeRef = $.jstree.reference('#messageCheckBoxTree');
     if (treeRef) {
-        const uniqueId = `canbo_${item.IdEmployee}_nhom_${item.IdGroup}`;
+        const uniqueId = `canbo_${item.EmployeeId}_nhom_${item.GroupId}`;
         treeRef.uncheck_node(uniqueId);
     }
 

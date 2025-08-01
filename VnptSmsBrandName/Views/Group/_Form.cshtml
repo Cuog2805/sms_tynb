@@ -11,10 +11,10 @@
 			@using (Html.BeginForm("", "", FormMethod.Post, new { id = "groupForm" }))
 			{
 				@Html.AntiForgeryToken()
-				@Html.HiddenFor(model => model.Data.IdGroup, new { id = "IdGroup" })
-				@Html.HiddenFor(model => model.Data.IdOrganization, new { id = "IdOrganization" })
-				@Html.HiddenFor(model => model.Data.CreateBy, new { id = "CreateBy" })
-				@Html.HiddenFor(model => model.Data.CreateAt, new { id = "CreateAt" })
+				@Html.HiddenFor(model => model.Data.GroupId, new { id = "GroupId" })
+				@Html.HiddenFor(model => model.Data.OrganizationId, new { id = "OrganizationId" })
+				@Html.HiddenFor(model => model.Data.CreatedBy, new { id = "CreatedBy" })
+				@Html.HiddenFor(model => model.Data.CreatedAt, new { id = "CreatedAt" })
 				<div class="row">
 					<div class="col-md-6">
 						<div class="form-group mb-3">
@@ -34,12 +34,12 @@
 					</div>
 					<div class="col-md-6">
 						<div class="form-group mb-3">
-							<label for="IdGroupParent" class="form-label">Nhóm cha</label>
+							<label for="GroupParentId" class="form-label">Nhóm cha</label>
 							@Html.DropDownListFor(
-								model => model.Data.IdGroupParent,
+								model => model.Data.GroupParentId,
 								Model.SelectLists["mGroupSelectList"],
 								"--Chọn nhóm cha--",
-								htmlAttributes: new { @class = "form-select", @name = "Data.IdGroupParent", @id = "IdGroupParent" }
+								htmlAttributes: new { @class = "form-select", @name = "Data.GroupParentId", @id = "GroupParentId" }
 							)
 						</div>
 					</div>

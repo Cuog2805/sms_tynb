@@ -4,6 +4,8 @@ using VnptSmsBrandName.Models.Master;
 using VnptSmsBrandName.Repository;
 using VnptSmsBrandName.ViewModel;
 using System.Threading.Tasks;
+using VnptSmsBrandName.Helper;
+using VnptSmsBrandName.Models.Identity;
 
 namespace VnptSmsBrandName.Service
 {
@@ -16,9 +18,9 @@ namespace VnptSmsBrandName.Service
             _smsConfigRepository = smsConfigRepository;
         }
 
-        public async Task<PageResult<SmsConfig>> SearchSmsConfig(SmsConfigSearchViewModel model, Pageable pageable)
+        public async Task<PageResult<SmsConfig>> SearchSmsConfig(SmsConfigSearchViewModel model, Pageable pageable, long orgId)
         {
-            IQueryable<SmsConfig> smsConfigs = await _smsConfigRepository.Search(model);
+            IQueryable<SmsConfig> smsConfigs = await _smsConfigRepository.Search(model, orgId);
             var wpCanbosPage = await _smsConfigRepository.GetPagination(smsConfigs, pageable);
 
             int total = await smsConfigs.CountAsync();
@@ -30,51 +32,46 @@ namespace VnptSmsBrandName.Service
             };
         }
 
-        public async Task<List<SmsConfig>> GetAll()
-        {
-            var data = await _smsConfigRepository.GetAll();
-            return data.ToList();
-        }
+		public List<SmsConfig> GetAll(long orgId)
+		{
+			var data = _smsConfigRepository.GetAllByOrgId(orgId);
+			return data.ToList();
+		}
 
-        public SmsConfig GetSmsConfigActive(bool isActive)
+		public SmsConfig GetSmsConfigByOrgIdAndActive(long orgId)
+		{
+			var data = _smsConfigRepository.GetSmsConfigByOrgIdAndActive(orgId) ?? new SmsConfig();
+			return data;
+		}
+
+		public async Task<SmsConfig?> GetByIdAndOrgId(long id, long orgId)
         {
-            var data = _smsConfigRepository.GetSmsConfigActive(isActive) ?? new SmsConfig();
+            SmsConfig? data = await _smsConfigRepository.FindByIdAndOrgId(id, orgId);
             return data;
         }
 
-        public async Task<SmsConfig?> GetById(int id)
+        public async Task<SmsConfig> Create(SmsConfig obj, Users user)
         {
-            SmsConfig? data = await _smsConfigRepository.FindById(id);
-            return data;
-        }
-
-        public async Task<SmsConfig> Create(SmsConfig obj)
-        {
+            AuditHelper.SetCreateAudit(obj, user);
             SmsConfig newObj = await _smsConfigRepository.Create(obj);
             return obj;
         }
 
-        public async Task<SmsConfig?> Update(SmsConfig obj)
+        public async Task<SmsConfig?> Update(SmsConfig obj, Users user)
         {
+            AuditHelper.SetUpdateAudit(obj, user);
             SmsConfig? newObj = await _smsConfigRepository.Update(obj.Id, obj);
             return newObj;
-        }
-
-        public async Task Delete(SmsConfig obj)
-        {
-            await _smsConfigRepository.Delete(obj.Id);
         }
     }
 
 	public interface ISmsConfigService
 	{
-		Task Delete(SmsConfig obj);
-		Task<SmsConfig?> Update(SmsConfig obj);
-		Task<SmsConfig> Create(SmsConfig obj);
-		Task<SmsConfig?> GetById(int id);
-		Task<List<SmsConfig>> GetAll();
-		SmsConfig GetSmsConfigActive(bool isActive);
-		Task<PageResult<SmsConfig>> SearchSmsConfig(SmsConfigSearchViewModel model, Pageable pageable);
-
+		Task<SmsConfig?> Update(SmsConfig obj, Users user);
+		Task<SmsConfig> Create(SmsConfig obj, Users user);
+		Task<SmsConfig?> GetByIdAndOrgId(long id, long orgId);
+		List<SmsConfig> GetAll(long orgId);
+        SmsConfig GetSmsConfigByOrgIdAndActive(long orgId);
+		Task<PageResult<SmsConfig>> SearchSmsConfig(SmsConfigSearchViewModel model, Pageable pageable, long orgId);
 	}
 }

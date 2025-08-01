@@ -6,7 +6,7 @@ namespace VnptSmsBrandName.ViewModel
 {
 	public class MFileViewModel
 	{
-		public long IdFile { get; set; }
+		public long FileId { get; set; }
 		public string? Name { get; set; }
 		public string? FileUrl { get; set; }
 		public string? Type { get; set; }

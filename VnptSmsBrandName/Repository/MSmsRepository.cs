@@ -11,7 +11,7 @@ namespace VnptSmsBrandName.Repository
 
 		public Task<IQueryable<MSms>> Search(string? searchInput, long orgId)
 		{
-			var query = context.Set<MSms>().AsQueryable().Where(item => item.IdOrganization == orgId);
+			var query = context.Set<MSms>().AsQueryable().Where(item => item.OrganizationId == orgId);
 
 			if (!string.IsNullOrWhiteSpace(searchInput))
 			{

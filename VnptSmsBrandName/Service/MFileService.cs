@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace VnptSmsBrandName.Service
 {
-	public class MFileService: BaseService, IMFileService
+	public class MFileService: IMFileService
 	{
 		private readonly IWebHostEnvironment _environment;
 		private readonly MFileRepository _mFileRepository;
@@ -17,12 +17,11 @@ namespace VnptSmsBrandName.Service
 		private readonly MHistoryRepository _mHistoryRepository;
 		public MFileService
 		(
-			ICurrentUserService currentUserService,
 			IWebHostEnvironment environment,
 			MFileRepository mFileRepository,
 			MSmsFileRepository mSmsFileRepository,
 			MHistoryRepository mHistoryRepository
-		) : base(currentUserService)
+		)
 		{
 			_environment = environment;
 			_mFileRepository = mFileRepository;
@@ -30,17 +29,15 @@ namespace VnptSmsBrandName.Service
 			_mHistoryRepository = mHistoryRepository;
 		}
 
-		public async Task<IEnumerable<MFile>> GetAllFile()
+		public async Task<IEnumerable<MFile>> GetAllFile(long orgId)
 		{
-			var user = await _currentUserService.GetCurrentUser();
-			IEnumerable<MFile> files = _mFileRepository.Query().Where(item => item.IdOrganization == user.OrgId);
+			IEnumerable<MFile> files = _mFileRepository.Query().Where(item => item.OrganizationId == orgId);
 			return files;
 		}
 
-		public async Task<PageResult<MFile>> SearchFile(string searchInput, Pageable pageable)
+		public async Task<PageResult<MFile>> SearchFile(string searchInput, Pageable pageable, long orgId)
 		{
-			var user = await _currentUserService.GetCurrentUser();
-			IQueryable<MFile> files = await _mFileRepository.Search(searchInput, user.OrgId);
+			IQueryable<MFile> files = await _mFileRepository.Search(searchInput, orgId);
 
 			var filesPage = await _mFileRepository.GetPagination(files, pageable);
 
@@ -52,20 +49,20 @@ namespace VnptSmsBrandName.Service
 				Total = total,
 			};
 		}
-		public async Task<MFile> Create(MFile model)
+		public async Task<MFile> Create(MFile model, Users user)
 		{
-			await SetCreateAudit(model);
+			AuditHelper.SetCreateAudit(model, user);
 			MFile file = await _mFileRepository.Create(model);
 
 			// Luu l?ch s? t?o file
 			var history = new MHistory
 			{
-				IdOrganization = file.IdOrganization,
+				OrganizationId = file.OrganizationId,
 				TableName = "m_file",
-				IdRecord = file.IdFile,
+				RecordId = file.FileId,
 				Action = "CREATE",
-				CreatedBy = file.CreateBy,
-				CreatedAt = file.CreateAt,
+				CreatedBy = file.CreatedBy,
+				CreatedAt = file.CreatedAt,
 			};
 			await _mHistoryRepository.Create(history);
 
@@ -78,7 +75,7 @@ namespace VnptSmsBrandName.Service
 				throw new Exception("File không hợp lệ");
 
 			// Tạo thư mục upload nếu chưa tồn tại
-			var subFolderUser = Path.Combine(subFolder, DateTime.Now.ToString("ddMMyyyy"));
+			var subFolderUser = Path.Combine(subFolder, creator.OrganizationId.ToString(), creator.Id, DateTime.Now.ToString("ddMMyyyy"));
 			var uploadPath = Path.Combine(_environment.WebRootPath, subFolderUser);
 			if (!Directory.Exists(uploadPath))
 			{
@@ -114,15 +111,16 @@ namespace VnptSmsBrandName.Service
 				Type = file.ContentType,
 			};
 
-			fileSave = await Create(fileSave);
+			fileSave = await Create(fileSave, creator);
 
 			// Luu thông tin SmsFile
 			var smsfile = new MSmsFile()
 			{
-				IdSms = smsId,
-				IdFile = fileSave.IdFile,
-				IdOrganization = creator.OrgId,
+				SmsId = smsId,
+				FileId = fileSave.FileId,
+				OrganizationId = creator.OrganizationId,
 			};
+			AuditHelper.SetCreateAudit(smsfile, creator);
 			await _mSmsFileRepository.Create(smsfile);
 
 			return fileSave;
@@ -136,16 +134,16 @@ namespace VnptSmsBrandName.Service
 				foreach (var existingFile in existingFiles)
 				{
 					// kiểm tra xem file đã được liên kết với SMS chưa
-					var existingSmsFile = _mSmsFileRepository.GetBySmsIdAndFileIdAndOrgId(smsId, existingFile.IdFile, creator.OrgId);
+					var existingSmsFile = _mSmsFileRepository.GetBySmsIdAndFileIdAndOrgId(smsId, existingFile.FileId, creator.OrganizationId);
 					if (existingSmsFile == null)
 					{
 						var smsFile = new MSmsFile
 						{
-							IdSms = smsId,
-							IdFile = existingFile.IdFile,
-							IdOrganization = creator.OrgId
+							SmsId = smsId,
+							FileId = existingFile.FileId,
+							OrganizationId = creator.OrganizationId
 						};
-
+						AuditHelper.SetCreateAudit(smsFile, creator);
 						await _mSmsFileRepository.Create(smsFile);
 					}
 
@@ -155,7 +153,7 @@ namespace VnptSmsBrandName.Service
 			return linkedFiles;
 		}
 
-		public async Task UpdateContentFile(IFormFile file, long oldFileId)
+		public async Task UpdateContentFile(IFormFile file, long oldFileId, Users user)
 		{
 			if (file == null || file.Length == 0)
 				throw new Exception("File không họp lệ");
@@ -202,15 +200,14 @@ namespace VnptSmsBrandName.Service
 					await file.CopyToAsync(stream);
 				}
 
-				await SetUpdateAudit(oldFile);
-				await _mFileRepository.Update(oldFile.IdFile, oldFile);
-				// Luu l?ch s? thay d?i file
-				var user = await _currentUserService.GetCurrentUser();
+				AuditHelper.SetUpdateAudit(oldFile, user);
+				await _mFileRepository.Update(oldFile.FileId, oldFile);
+				// Lưu lịch sử thay đổi file
 				var history = new MHistory
 				{
-					IdOrganization = oldFile.IdOrganization,
+					OrganizationId = oldFile.OrganizationId,
 					TableName = "m_file",
-					IdRecord = oldFile.IdFile,
+					RecordId = oldFile.FileId,
 					Action = "UPDATE",
 					CreatedBy = user.UserName,
 					CreatedAt = DateTime.Now,
@@ -242,35 +239,16 @@ namespace VnptSmsBrandName.Service
 			}
 		}
 
-		public void DeleteFile(string fileUrl)
+		public async Task<MFileViewModel> GetAllFileHistory(long id, long orgId)
 		{
-			try
-			{
-				if (!string.IsNullOrEmpty(fileUrl))
-				{
-					var filePath = Path.Combine(_environment.WebRootPath, fileUrl.TrimStart('/'));
-					if (File.Exists(filePath))
-					{
-						File.Delete(filePath);
-					}
-				}
-			}
-			catch (Exception ex)
-			{
-				throw new Exception($"Error: {ex.Message}");
-			}
-		}
-
-		public async Task<MFileViewModel> GetAllFileHistory(long id)
-		{
-			MFile? mFile = await _mFileRepository.FindById(id);
+			MFile? mFile = await _mFileRepository.FindByIdAndOrgId(id, orgId);
 			if(mFile == null)
 			{
 				return new MFileViewModel() { };
 			}
 			return new MFileViewModel()
 			{
-				IdFile = mFile.IdFile,
+				FileId = mFile.FileId,
 				Name = mFile.Name,
 				History = await _mHistoryRepository.GetByIdRecordAndTableName(id, "m_file")
 			};
@@ -279,12 +257,12 @@ namespace VnptSmsBrandName.Service
 
 	public interface IMFileService
 	{
-		Task<MFile> Create(MFile model);
-		Task<IEnumerable<MFile>> GetAllFile();
-		Task<PageResult<MFile>> SearchFile(string searchInput, Pageable pageable);
+		Task<MFile> Create(MFile model, Users user);
+		Task<IEnumerable<MFile>> GetAllFile(long orgId);
+		Task<PageResult<MFile>> SearchFile(string searchInput, Pageable pageable, long orgId);
 		Task<MFile> SaveFile(IFormFile file, Users creator, long smsId, string subFolder = "upload");
 		Task<IEnumerable<MFile>> CreateFromFileExisted(List<long> selectedFileIds, Users creator, long smsId);
-		Task UpdateContentFile(IFormFile file, long oldFileId);
-		Task<MFileViewModel> GetAllFileHistory(long id);
+		Task UpdateContentFile(IFormFile file, long oldFileId, Users user);
+		Task<MFileViewModel> GetAllFileHistory(long id, long orgId);
 	}
 }

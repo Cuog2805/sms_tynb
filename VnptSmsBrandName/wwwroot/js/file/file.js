@@ -90,15 +90,15 @@ function displayFiles(items) {
         `;
 
         items.forEach(item => {
-            const isChecked = selectedFiles.some(selected => selected.IdFile === item.IdFile) ? "checked" : "";
+            const isChecked = selectedFiles.some(selected => selected.FileId === item.FileId) ? "checked" : "";
 
             html += `
                 <tr>
                     <td>
-                        <input type="checkbox" class="form-check-input" id="check-${item.IdFile}" ${isChecked}>
+                        <input type="checkbox" class="form-check-input" id="check-${item.FileId}" ${isChecked}>
                     </td>
                     <td>
-                        <label class="form-check-label" for="check-${item.IdFile}">
+                        <label class="form-check-label" for="check-${item.FileId}">
                             ${item.Name}
                         </label>
                     </td>
@@ -119,7 +119,7 @@ function displayFiles(items) {
         container.html(html);
 
         items.forEach(item => {
-            $(`#check-${item.IdFile}`).data("item", item).on("change", function () {
+            $(`#check-${item.FileId}`).data("item", item).on("change", function () {
                 handleItemSelect($(this));
             });
         });
@@ -179,11 +179,11 @@ function handleItemSelect(checkbox) {
 	const isChecked = checkbox.prop("checked");
 
 	if (isChecked) {
-		if (!selectedFiles.some(selected => selected.IdFile === item.IdFile)) {
+        if (!selectedFiles.some(selected => selected.FileId === item.FileId)) {
 			selectedFiles.push(item);
 		}
 	} else {
-		selectedFiles = selectedFiles.filter(selected => selected.IdFile !== item.IdFile);
+        selectedFiles = selectedFiles.filter(selected => selected.FileId !== item.FileId);
 	}
 }
 

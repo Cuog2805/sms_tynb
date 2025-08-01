@@ -9,13 +9,19 @@ namespace VnptSmsBrandName.Models.Master
 	{
 		[DatabaseGenerated(DatabaseGeneratedOption.Identity)]
 		[Key]
-		public long IdEmployee { get; set; }
+		public long EmployeeId { get; set; }
 
+		/// <summary>
+		/// tên cán bộ
+		/// </summary>
 		[Required]
 		[MaxLength(500)]
 		[Column(TypeName = "nvarchar(500)")]
 		public string Name { get; set; }
 
+		/// <summary>
+		/// số điện thoại cán bộ
+		/// </summary>
 		[Required]
 		[MaxLength(15)]
 		[Column(TypeName = "nvarchar(15)")]
@@ -29,10 +35,16 @@ namespace VnptSmsBrandName.Models.Master
 		[Column(TypeName = "nvarchar(15)")]
 		public string PhoneNumberSend { get; set; }
 
+		/// <summary>
+		/// mô tả cán bộ
+		/// </summary>
 		[MaxLength(2000)]
 		[Column(TypeName = "nvarchar(2000)")]
 		public string? Description { get; set; }
 
+		/// <summary>
+		/// giới tính
+		/// </summary>
 		public int Gender { get; set; }
 	}
 }

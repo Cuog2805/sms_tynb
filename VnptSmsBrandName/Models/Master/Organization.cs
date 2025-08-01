@@ -9,7 +9,7 @@ namespace VnptSmsBrandName.Models.Master
 	{
 		[DatabaseGenerated(DatabaseGeneratedOption.Identity)]
 		[Key]
-		public long IdOrganization { get; set; }
+		public long OrganizationId { get; set; }
 
 		[MaxLength(500)]
 		[Column(TypeName = "nvarchar(500)")]

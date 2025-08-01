@@ -18,9 +18,8 @@ using static VnptSmsBrandName.ViewModel.ApiModel.SmsApiViewModel;
 namespace VnptSmsBrandName.Controllers
 {
     [Authorize(Roles = "Admin, User")]
-    public class MessageController : Controller
+    public class MessageController : BaseController
     {
-        private readonly UserManager<Users> _userManager;
         private readonly IMSmsService _mSmsService;
         private readonly IMGroupService _mGroupService;
         private readonly IMEmployeeService _mEmployeeService;
@@ -28,14 +27,14 @@ namespace VnptSmsBrandName.Controllers
 
 		public MessageController
         (
-            UserManager<Users> userManager, 
             IMSmsService mSmsService, 
 			IMGroupService mGroupService, 
             IMEmployeeService mEmployeeService, 
-            IMFileService mFileService
-		)
+            IMFileService mFileService,
+			IHttpContextAccessor httpContextAccessor,
+			UserManager<Users> userManager
+		): base(userManager, httpContextAccessor)
         {
-			_userManager = userManager;
 			_mSmsService = mSmsService;
 			_mGroupService = mGroupService;
 			_mEmployeeService = mEmployeeService;
@@ -51,13 +50,13 @@ namespace VnptSmsBrandName.Controllers
 		[HttpPost]
 		public async Task<IActionResult> SendMessage(string content, string canbos, List<IFormFile> fileDinhKem, List<long> selectedFileIds)
 		{
-			Users? user = await _userManager.GetUserAsync(HttpContext.User);
+			var currentUser = await GetCurrentUser();
 			var model = new MSmsViewModel()
 			{
 				Content = content,
 				Employees = JsonConvert.DeserializeObject<List<MEmployeeViewModel>>(canbos) ?? new List<MEmployeeViewModel>()
 			};
-			var result = await _mSmsService.SendMessage(model, fileDinhKem, selectedFileIds, user);
+			var result = await _mSmsService.SendMessage(model, fileDinhKem, selectedFileIds, currentUser);
 
 			if (result.IsSuccess)
 			{
@@ -89,7 +88,8 @@ namespace VnptSmsBrandName.Controllers
         [HttpGet]
         public async Task<IActionResult> LoadData(MSmsSearchViewModel model, Pageable pageable)
         {
-            var datas = await _mSmsService.SearchMessage(model, pageable);
+			var currentUser = await GetCurrentUser();
+			var datas = await _mSmsService.SearchMessage(model, pageable, currentUser.OrganizationId);
             return Json(new
             {
                 state = "success",
@@ -100,7 +100,8 @@ namespace VnptSmsBrandName.Controllers
 		[HttpGet]
 		public async Task<IActionResult> LoadDetail(MSmsSearchViewModel model)
 		{
-			var datas = await _mSmsService.GetSmsEmployeesById(model);
+			var currentUser = await GetCurrentUser();
+			var datas = await _mSmsService.GetSmsEmployeesById(model, currentUser.OrganizationId);
 			return Json(new
 			{
 				state = "success",
@@ -112,7 +113,8 @@ namespace VnptSmsBrandName.Controllers
 		[HttpPost]
         public async Task<IActionResult> MessageUpdateFile([FromForm] long oldFileId, IFormFile fileDinhKem)
         {
-            await _mFileService.UpdateContentFile(fileDinhKem, oldFileId);
+			var currentUser = await GetCurrentUser();
+			await _mFileService.UpdateContentFile(fileDinhKem, oldFileId, currentUser);
             return Json(new
             {
                 state = "success",
@@ -122,9 +124,10 @@ namespace VnptSmsBrandName.Controllers
         }
 		private async Task<Dictionary<string, SelectList>> CreateSelectList()
 		{
-			SelectList mGroupSelectList = new SelectList(await _mGroupService.GetAllMGroup(), "IdGroup", "Name");
-			SelectList mEmployeeSelectList = new SelectList(await _mEmployeeService.GetAllMEmployee(), "IdEmployee", "Name");
-			SelectList mFileSelectList = new SelectList(await _mFileService.GetAllFile(), "IdFile", "Name");
+			var currentUser = await GetCurrentUser();
+			SelectList mGroupSelectList = new SelectList(await _mGroupService.GetMGroupList(currentUser.OrganizationId), "GroupId", "Name");
+			SelectList mEmployeeSelectList = new SelectList(await _mEmployeeService.GetAllMEmployee(currentUser.OrganizationId), "EmployeeId", "Name");
+			SelectList mFileSelectList = new SelectList(await _mFileService.GetAllFile(currentUser.OrganizationId), "FileId", "Name");
 			SelectList statusSelectList = new SelectList(EnumHelper.ToSelectListItem<SmsStatusEnum>(), "Value", "Text");
 
 			var selectLists = new Dictionary<string, SelectList>

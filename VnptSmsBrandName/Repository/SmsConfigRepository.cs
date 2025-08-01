@@ -8,12 +8,15 @@ namespace VnptSmsBrandName.Repository
         public SmsConfigRepository(VnptSmsBrandnameContext _context) : base(_context)
         {
         }
-		public SmsConfig? GetSmsConfigActive(bool isActive) {
-            return context.SmsConfig.FirstOrDefault(x => x != null && x.IsActive == isActive);
-		}
-        public Task<IQueryable<SmsConfig>> Search(SmsConfigSearchViewModel model)
+
+		public SmsConfig? GetSmsConfigByOrgIdAndActive(long orgId)
 		{
-			var query = context.Set<SmsConfig>().AsQueryable();
+			return context.SmsConfig
+				.FirstOrDefault(x => x != null && x.OrganizationId == orgId && x.IsDeleted == 0);
+		}
+		public Task<IQueryable<SmsConfig>> Search(SmsConfigSearchViewModel model, long orgId)
+		{
+			var query = context.Set<SmsConfig>().AsQueryable().Where(item => item.OrganizationId == orgId);
 
 			if (!string.IsNullOrWhiteSpace(model.searchInput))
 			{

@@ -10,7 +10,7 @@ namespace VnptSmsBrandName.Repository
 
 		public async Task<IEnumerable<MGroupEmployee>> FindByGroupId(long id)
 		{
-			IEnumerable<MGroupEmployee> groupEmployees = context.Set<MGroupEmployee>().Where(item => item.IdGroup == id);
+			IEnumerable<MGroupEmployee> groupEmployees = context.Set<MGroupEmployee>().Where(item => item.GroupId == id);
 			return groupEmployees;
 		}
 

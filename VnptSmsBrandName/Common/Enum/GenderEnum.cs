@@ -1,13 +1,13 @@
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace VnptSmsBrandName.Common.Enum
 {
 	/// <summary>
-	/// enum gi?i t�nh
+	/// enum gi?i tính
 	/// </summary>
 	public enum GenderEnum
 	{
-		[Display(Name = "N?")]
+		[Display(Name = "Nữ")]
 		Female = 0,
 		[Display(Name = "Nam")]
 		Male = 1,

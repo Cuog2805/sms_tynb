@@ -1,25 +1,25 @@
 ﻿$(document).ready(function () {
     // Khởi tạo Select2 cho dropdown IdNhom
-    $('#IdGroup').select2({
+    $('#GroupId').select2({
         theme: 'bootstrap-5',
         placeholder: '--Chọn nhóm--',
         allowClear: true,
         width: '100%',
-        dropdownParent: $('#IdGroup').parent()
+        dropdownParent: $('#GroupId').parent()
     });
-    $('#IdEmployee').select2({
+    $('#EmployeeId').select2({
         theme: 'bootstrap-5',
         placeholder: '--Chọn cán bộ--',
         allowClear: true,
         width: '100%',
-        dropdownParent: $('#IdEmployee').parent()
+        dropdownParent: $('#EmployeeId').parent()
     });
-    $('#IdFile').select2({
+    $('#FileId').select2({
         theme: 'bootstrap-5',
         placeholder: '--Chọn file đính kèm--',
         allowClear: true,
         width: '100%',
-        dropdownParent: $('#IdFile').parent()
+        dropdownParent: $('#FileId').parent()
     });
 
 
@@ -86,7 +86,7 @@ let paginationData = {
 };
 
 let currentEditingFile = {
-    IdFile: '',
+    FileId: '',
     FileUrl: '',
     Name: '',
 };
@@ -109,9 +109,9 @@ function loadData() {
 
 
     let searchInput = $('#searchInput').val();
-    let IdGroup = $('#IdGroup').val();
-    let IdEmployee = $('#IdEmployee').val();
-    let IdFile = $('#IdFile').val();
+    let GroupId = $('#GroupId').val();
+    let EmployeeId = $('#EmployeeId').val();
+    let FileId = $('#FileId').val();
     let Status = $('#Status').val();
 
     let pageable = {
@@ -125,9 +125,9 @@ function loadData() {
         type: 'GET',
         data: $.param({
             'model.searchInput': searchInput,
-            'model.IdGroup': IdGroup,
-            'model.IdEmployee': IdEmployee,
-            'model.IdFile': IdFile,
+            'model.GroupId': GroupId,
+            'model.EmployeeId': EmployeeId,
+            'model.FileId': FileId,
             'model.Status': Status,
             'model.dateFrom': dateFrom,
             'model.dateTo': dateTo,
@@ -183,13 +183,13 @@ function displayItems(items, pageNumber, pageSize) {
                                 </div>
                                 <div class="mb-2">
                                     <button class="btn btn-primary btn-sm w-100 small"
-                                            onclick="fileChangeDetail('${file.IdFile}')">
+                                            onclick="fileChangeDetail('${file.FileId}')">
                                         Xem lịch sử
                                     </button>
                                 </div>
                                 <div class="mb-2">
                                     <button class="btn btn-primary btn-sm w-100 small" 
-                                            onclick="editFile('${file.IdFile}', '${file.Name}', '${file.FileUrl}')">
+                                            onclick="editFile('${file.FileId}', '${file.Name}', '${file.FileUrl}')">
                                         Sửa
                                     </button>
                                 </div>
@@ -203,12 +203,12 @@ function displayItems(items, pageNumber, pageSize) {
             }
 
             tableHtml += `
-                <tr id="row-${item.IdSms}">
+                <tr id="row-${item.SmsId}">
                     <td class="text-center">${startIndex + index + 1}</td>
                     <td>${item.Content}</td>
                     <td>${fileHtml}</td>
-                    <td>${item.CreateBy}</td>
-                    <td>${formatDateTime(new Date(item.CreateAt))}</td>
+                    <td>${item.CreatedBy}</td>
+                    <td>${formatDateTime(new Date(item.CreatedAt))}</td>
                     <td>${item.NumberMessages}</td>
                     <td>${item.NumberMessageError}</td>
                     <td class="text-center">
@@ -216,7 +216,7 @@ function displayItems(items, pageNumber, pageSize) {
                             class="btn btn-sm btn-primary"
                             type="button"
                             title="Xem danh sách cán bộ"
-                            onclick="showCanBoDetail('${item.IdSms}')">
+                            onclick="showCanBoDetail('${item.SmsId}')">
                             <i class="bi bi-people"></i>
                         </button>
                     </td>
@@ -239,16 +239,16 @@ function displayItems(items, pageNumber, pageSize) {
 function showCanBoDetail(smsId) {
     if (Number(smsId) && Number(smsId) > 0) {
         smsSelected = Number(smsId);
-        const IdGroup = $("#IdGroup").val();
-        const IdEmployee = $("#IdEmployee").val();
+        const GroupId = $("#GroupId").val();
+        const EmployeeId = $("#EmployeeId").val();
 
         $.ajax({
             url: '/Message/LoadDetail',
             type: 'GET',
             data: {
-                'model.IdSms': smsSelected,
-                'model.IdGroup': IdGroup,
-                'model.IdEmployee': IdEmployee,
+                'model.SmsId': smsSelected,
+                'model.GroupId': GroupId,
+                'model.EmployeeId': EmployeeId,
             },
             success: function (response) {
                 if (response.state === "success") {
@@ -363,11 +363,11 @@ function toggleFileActions(element) {
         }, 100);
     }
 }
-function fileChangeDetail(IdFile) {
+function fileChangeDetail(FileId) {
     $.ajax({
         url: '/File/LoadFileChangeHistory',
         type: 'GET',
-        data: { id: IdFile },
+        data: { id: FileId },
         success: function (response) {
             if (response.state === "success") {
                 // Hiển thị lịch sử thay đổi
@@ -415,9 +415,9 @@ function displayFileChangeHistory(data) {
     }   
 }
 
-function editFile(IdFile, Name, FileUrl) {
+function editFile(FileId, Name, FileUrl) {
     currentEditingFile = {
-        IdFile: IdFile,
+        FileId: FileId,
         Name: Name,
         FileUrl: FileUrl
     };
@@ -435,8 +435,8 @@ function uploadNewFile() {
 
     if ($('#updateFileModalForm').valid()) {
         const formData = new FormData();
-        //model oldFileId - thông tin idfile ban đầu
-        formData.append('oldFileId', currentEditingFile.IdFile);
+        //model oldFileId - thông tin FileId ban đầu
+        formData.append('oldFileId', currentEditingFile.FileId);
 
         //file đính kèm mới
         const file = $('#newFileInput')[0].files[0];

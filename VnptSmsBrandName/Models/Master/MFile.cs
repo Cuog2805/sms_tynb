@@ -1,4 +1,4 @@
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace VnptSmsBrandName.Models.Master
@@ -8,18 +8,27 @@ namespace VnptSmsBrandName.Models.Master
 	{
 		[DatabaseGenerated(DatabaseGeneratedOption.Identity)]
 		[Key]
-		public long IdFile { get; set; }
+		public long FileId { get; set; }
 
+		/// <summary>
+		/// tên file
+		/// </summary>
 		[Required]
 		[MaxLength(500)]
 		[Column(TypeName = "nvarchar(500)")]
 		public string Name { get; set; }
 
+		/// <summary>
+		/// file url
+		/// </summary>
 		[Required]
 		[MaxLength(500)]
 		[Column(TypeName = "nvarchar(500)")]
 		public string FileUrl { get; set; }
 
+		/// <summary>
+		/// loại file, vd: image, video, audio, document
+		/// </summary>
 		[Required]
 		[MaxLength(255)]
 		[Column(TypeName = "nvarchar(255)")]

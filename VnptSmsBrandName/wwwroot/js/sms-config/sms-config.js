@@ -115,7 +115,10 @@ function displayItems(items, pageNumber, pageSize) {
 					<td>${item.SaleOrderId}</td>
 					<td>${item.PakageId}</td>
 					<td>${item.UrlSms}</td>
-					<td>${item.IssEnSms}</td>
+					<td>${item.Domain}</td>
+					<td>${item.CreatedBy}</td>
+					<td>${formatDateTime(new Date(item.CreatedAt))}</td>
+					<td>${item.IsDeleted}</td>
                     <td class="text-center">
                         <button 
                             class="btn btn-sm btn-primary" 
@@ -217,79 +220,91 @@ function editSmsConfig(formData) {
 function initFormValidate() {
 	$('#smsConfigForm').validate({
 		rules: {
-			LabelId: {
+			'Data.LabelId': {
 				required: true
 			},
-			ContractId: {
+			'Data.ContractId': {
 				required: true
 			},
-			TemplateId: {
+			'Data.TemplateId': {
 				required: true
 			},
-			IsTelCoSub: {
+			'Data.IsTelCoSub': {
 				required: true
 			},
-			AgentId: {
+			'Data.AgentId': {
 				required: true
 			},
-			ApiUser: {
+			'Data.ApiUser': {
 				required: true
 			},
-			ApiPass: {
+			'Data.ApiPass': {
 				required: true
 			},
-			UserName: {
+			'Data.UserName': {
 				required: true
 			},
-			DataCoding: {
+			'Data.DataCoding': {
 				required: true
 			},
-			SaleOrderId: {
+			'Data.SaleOrderId': {
 				required: true
 			},
-			PakageId: {
+			'Data.PackageId': {
 				required: true
 			},
-			UrlSms: {
+			'Data.UrlSms': {
+				required: true
+			},
+			'Data.Domain': {
+				required: true
+			},
+			'Data.IsDeleted': {
 				required: true
 			},
 		},
 		messages: {
-			LabelId: {
+			'Data.LabelId': {
 				required: "LabelId không được để trống!"
 			},
-			ContractId: {
+			'Data.ContractId': {
 				required: "ContractId không được để trống!"
 			},
-			TemplateId: {
+			'Data.TemplateId': {
 				required: "TemplateId không được để trống!"
 			},
-			IsTelCoSub: {
+			'Data.IsTelCoSub': {
 				required: "IsTelCoSub không được để trống!"
 			},
-			AgentId: {
+			'Data.AgentId': {
 				required: "AgentId không được để trống!"
 			},
-			ApiUser: {
+			'Data.ApiUser': {
 				required: "ApiUser không được để trống!"
 			},
-			ApiPass: {
+			'Data.ApiPass': {
 				required: "ApiPass không được để trống!"
 			},
-			UserName: {
+			'Data.UserName': {
 				required: "UserName không được để trống!"
 			},
-			DataCoding: {
+			'Data.DataCoding': {
 				required: "DataCoding không được để trống!"
 			},
-			SaleOrderId: {
+			'Data.SaleOrderId': {
 				required: "SaleOrderId không được để trống!"
 			},
-			PakageId: {
+			'Data.PackageId': {
 				required: "PakageId không được để trống!"
 			},
-			UrlSms: {
+			'Data.UrlSms': {
 				required: "UrlSms không được để trống!"
+			},
+			'Data.Domain': {
+				required: "Domain không được để trống!"
+			},
+			'Data.IsDeleted': {
+				required: "Trạng thái không được để trống!"
 			},
 		},
 		errorClass: "text-danger",
@@ -327,6 +342,8 @@ function clearForm() {
 	$('#PakageId').val('');
 	$('#UrlSms').val('');
 	$('#IssEnSms').prop('checked', false);
+	$('#IsDeleted').prop('checked', false);
+	$('#Domain').val('');
 
 	// Reset validation
 	if ($('#smsConfigForm').data('validator')) {
@@ -344,6 +361,9 @@ function submitForm() {
 	if ($('#smsConfigForm').valid()) {
 		const formData = {
 			Id: $("#Id").val(),
+			OrganizationId: $("#OrganizationId").val(),
+			CreatedBy: $("#CreatedBy").val(),
+			CreatedAt: $("#CreatedAt").val(),
 			LabelId: $('#LabelId').val(),
 			ContractId: $('#ContractId').val(),
 			TemplateId: $('#TemplateId').val(),
@@ -356,7 +376,10 @@ function submitForm() {
 			SaleOrderId: $('#SaleOrderId').val(),
 			PakageId: $('#PakageId').val(),
 			UrlSms: $('#UrlSms').val(),
-			IssEnSms: $('#IssEnSms').prop('checked')
+			IssEnSms: $('#IssEnSms').prop('checked'),
+			IsDeleted: $('#IsDeleted').val(),
+            Domain: $('#Domain').val(),
+			PackageId: $('#PackageId').val(),
 		};
 
 		if (formState.isEditing && formState.currentEditId) {

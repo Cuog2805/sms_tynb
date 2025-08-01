@@ -77,6 +77,8 @@
 
 	//modal thông báo import thành công
 	$('#successImportModal').on('hidden.bs.modal', function () {
+		failImportWpCanboPagination.pageNumber = 1;
+		succeedImportWpCanboPagination.pageNumber = 1;
 		loadData();
 	});
 
@@ -189,7 +191,7 @@ function displayItems(items, pageNumber, pageSize) {
                             type="button"  
                             data-bs-toggle="modal" 
                             data-bs-target="#data-form" 
-                            onclick="startEdit(${item.IdEmployee})"
+                            onclick="startEdit(${item.EmployeeId})"
                             title="Sửa">
                             <i class="bi bi-pencil-square"></i>
                         </button>
@@ -247,7 +249,7 @@ function importWpCanbos(data) {
 			PhoneNumber: item.PhoneNumber?.toString().trim() || '',
 			Gender: item.Gender?.toString().trim() == 'Nam' ? 1 : 0,
 			Description: item.Description?.toString().trim() || '',
-			IsDeleted: 1, // Mặc định active
+			IsDeleted: 0, // Mặc định active
 		}))
 	};
 	$.ajax({
@@ -468,10 +470,10 @@ function beforeAdd() {
 }
 
 function clearForm() {
-	$('#IdEmployee').val('');
-	$('#IdOrganization').val('');
-	$('#CreateBy').val('');
-	$('#CreateAt').val('');
+	$('#EmployeeId').val('');
+	$('#OrganizationId').val('');
+	$('#CreatedBy').val('');
+	$('#CreatedAt').val('');
 	$('#Name').val('');
 	$('#PhoneNumber').val('');
 	$('#Description').val('');
@@ -491,10 +493,10 @@ function submitForm() {
 
 	if ($('#contactForm').valid()) {
 		const formData = {
-			IdEmployee: $('#IdEmployee').val(),
-			IdOrganization: $('#IdOrganization').val(),
-			CreateBy: $('#CreateBy').val(),
-			CreateAt: $('#CreateAt').val(),
+			EmployeeId: $('#EmployeeId').val(),
+			OrganizationId: $('#OrganizationId').val(),
+			CreatedBy: $('#CreatedBy').val(),
+			CreatedAt: $('#CreatedAt').val(),
 			Name: $('#Name').val(),
 			Gender: $('#Gender').val(),
 			PhoneNumber: $('#PhoneNumber').val(),

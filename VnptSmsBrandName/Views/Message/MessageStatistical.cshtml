@@ -139,30 +139,30 @@
 				<div class="row justify-content-start">
 					<div class="col-md-4">
 						<div class="form-group mb-3">
-							<label for="IdGroup" class="form-label">Nhóm </label>
+							<label for="GroupId" class="form-label">Nhóm </label>
 							@Html.DropDownListFor(
-								model => model.Data.IdGroup,
+								model => model.Data.GroupId,
 								Model.SelectLists["mGroupSelectList"],
 								"--Chọn nhóm--",
 								htmlAttributes: new {
 									@class = "form-select",
-									@name = "Data.IdGroup",
-									@id = "IdGroup",
+									@name = "Data.GroupId",
+									@id = "GroupId",
 								}
 							 )
 						</div>
 					</div>
 					<div class="col-md-4">
 						<div class="form-group mb-3">
-							<label for="IdEmployee" class="form-label">Cán bộ </label>
+							<label for="EmployeeId" class="form-label">Cán bộ </label>
 							@Html.DropDownListFor(
-								model => model.Data.IdEmployee,
+								model => model.Data.EmployeeId,
 								Model.SelectLists["mEmployeeSelectList"],
 								"--Chọn cán bộ--",
 								htmlAttributes: new {
 									@class = "form-select",
-									@name = "Data.IdEmployee",
-									@id = "IdEmployee",
+									@name = "Data.EmployeeId",
+									@id = "EmployeeId",
 								}
 							 )
 						</div>

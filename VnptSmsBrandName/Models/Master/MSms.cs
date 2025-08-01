@@ -1,4 +1,4 @@
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace VnptSmsBrandName.Models.Master
@@ -8,13 +8,22 @@ namespace VnptSmsBrandName.Models.Master
 	{
 		[DatabaseGenerated(DatabaseGeneratedOption.Identity)]
 		[Key]
-		public long IdSms { get; set; }
+		public long SmsId { get; set; }
 
+		/// <summary>
+		/// Nội dung tin nhắn
+		/// </summary>
 		[Required]
 		[MaxLength(500)]
 		[Column(TypeName = "nvarchar(500)")]
 		public string Content { get; set; }
+		/// <summary>
+		/// số tin nhắn gửi đi
+		/// </summary>
 		public int? NumberMessages { get; set; }
+		/// <summary>
+		/// số tin nhắn gửi lỗi
+		/// </summary>
 		public int? NumberMessageError { get; set; }
 	}
 

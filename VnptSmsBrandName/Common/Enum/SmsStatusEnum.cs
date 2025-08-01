@@ -1,15 +1,15 @@
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace VnptSmsBrandName.Common.Enum
 {
 	/// <summary>
-	/// enum tr?ng th�i tin nh?n
+	/// enum tr?ng thái tin nh?n
 	/// </summary>
 	public enum SmsStatusEnum
 	{
-		[Display(Name = "L?i g?i")]
+		[Display(Name = "Lỗi gửi")]
 		Error = 0,
-		[Display(Name = "Th�nh c�ng")]
+		[Display(Name = "Thành công")]
 		Sent = 1,
 	}
 }

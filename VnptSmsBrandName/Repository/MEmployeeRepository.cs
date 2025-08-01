@@ -11,7 +11,7 @@ namespace VnptSmsBrandName.Repository
 
 		public Task<IQueryable<MEmployee>> Search(string? searchInput, long orgId)
 		{
-			var query = context.Set<MEmployee>().AsQueryable().Where(item => item.IdOrganization == orgId);
+			var query = context.Set<MEmployee>().AsQueryable().Where(item => item.OrganizationId == orgId);
 
 			if (!string.IsNullOrWhiteSpace(searchInput))
 			{
@@ -33,7 +33,7 @@ namespace VnptSmsBrandName.Repository
 		/// <returns></returns>
 		public Task<IQueryable<MEmployee>> FindByPhoneNumbersAndIdOrganization(List<string> phonenumbers, long orgId)
 		{
-			var query = context.Set<MEmployee>().Where(item => phonenumbers.Contains(item.PhoneNumber) && item.IdOrganization == orgId);
+			var query = context.Set<MEmployee>().Where(item => phonenumbers.Contains(item.PhoneNumber) && item.OrganizationId == orgId);
 
 			return Task.FromResult(query);
 		}
